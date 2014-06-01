@@ -1,6 +1,6 @@
 /*
 *
-*/
+ */
 package main
 
 import (
@@ -13,79 +13,78 @@ import (
 )
 
 type SMBIOS_EPS struct {
-	Anchor	[]byte //4
-	Checksum byte
-	Length byte
-	MajorVersion byte
-	MinorVersion byte
-	MaxSize uint16
-	Revision byte
+	Anchor        []byte //4
+	Checksum      byte
+	Length        byte
+	MajorVersion  byte
+	MinorVersion  byte
+	MaxSize       uint16
+	Revision      byte
 	FormattedArea []byte // 5
-	InterAnchor []byte // 5
+	InterAnchor   []byte // 5
 	InterChecksum byte
-	TableLength uint16
-	TableAddress uint32
-	NumberOfSM uint16
-	BCDRevision byte
+	TableLength   uint16
+	TableAddress  uint32
+	NumberOfSM    uint16
+	BCDRevision   byte
 }
 
 type DMIHeader struct {
-	Type byte
+	Type   byte
 	Length byte
 	Handle uint16
-	data []byte
+	data   []byte
 }
 
 type SMBIOS_Structure struct {
-
 }
 
 type BIOSInformation struct {
-	Type byte
-	Length byte
-	Handle uint16
-	Vendor string
-	BIOSVersion string
-	StartingAddressSegment uint16
-	ReleaseDate string
-	RomSize byte
-	Characteristics uint64
-	CharacteristicsExt []byte
-	SystemBIOSMajorRelease byte
-	SystemBIOSMinorRelease byte
+	Type                                   byte
+	Length                                 byte
+	Handle                                 uint16
+	Vendor                                 string
+	BIOSVersion                            string
+	StartingAddressSegment                 uint16
+	ReleaseDate                            string
+	RomSize                                byte
+	Characteristics                        uint64
+	CharacteristicsExt                     []byte
+	SystemBIOSMajorRelease                 byte
+	SystemBIOSMinorRelease                 byte
 	EmbeddedControllerFirmwareMajorRelease byte
 	EmbeddedControllerFirmawreMinorRelease byte
 }
 
 type SystemInformation struct {
-	Type byte
-	Length byte
-	Handle uint16
+	Type         byte
+	Length       byte
+	Handle       uint16
 	Manufacturer string
-	ProductName string
-	Version string
+	ProductName  string
+	Version      string
 	SerialNumber string
-	UUID string
-	WakeUpType byte
-	SKUNumber string
-	Family string
+	UUID         string
+	WakeUpType   byte
+	SKUNumber    string
+	Family       string
 }
 
 type BaseboardInformation struct {
-	Type byte
-	Length byte
-	Handle uint16
-	Manufacturer string
-	Product string
-	Version string
-	SerailNumber string
-	AssetTag string
-	FeatureFlags byte
-	LocationInChassis string
-	ChassisHandle uint16
-	BoardType byte
+	Type                           byte
+	Length                         byte
+	Handle                         uint16
+	Manufacturer                   string
+	Product                        string
+	Version                        string
+	SerailNumber                   string
+	AssetTag                       string
+	FeatureFlags                   byte
+	LocationInChassis              string
+	ChassisHandle                  uint16
+	BoardType                      byte
 	NumberOfContainedObjectHandles bytee
-	ContainedObjectHandles []byte
+	ContainedObjectHandles         []byte
 }
 
 func NewDMIHeader(data []byte) DMIHeader {
@@ -139,7 +138,7 @@ func (h DMIHeader) Next() DMIHeader {
 }
 
 func (h DMIHeader) Decode() {
-	switch (h.Type) {
+	switch h.Type {
 	case 0:
 		bi := h.GetBIOSInformation()
 		fmt.Println(bi)
@@ -152,7 +151,7 @@ func (h DMIHeader) Decode() {
 	}
 }
 
-func (h DMIHeader) FieldString(offset int) (string) {
+func (h DMIHeader) FieldString(offset int) string {
 	d := h.data
 	index := int(h.Length)
 	for i := offset; i > 1 && d[index] != 0; i-- {
@@ -163,7 +162,7 @@ func (h DMIHeader) FieldString(offset int) (string) {
 		}
 	}
 	ib := bytes.IndexByte(d[index:], 0)
-	return string(d[index:index+ib])
+	return string(d[index : index+ib])
 }
 
 func (h DMIHeader) GetBIOSInformation() BIOSInformation {
@@ -267,4 +266,3 @@ func main() {
 	eps.StructureTable()
 	//fmt.Printf("%2X", m)
 }
-
