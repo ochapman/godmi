@@ -44,10 +44,10 @@ type BIOSInformation struct {
 	Type byte
 	Length byte
 	Handle uint16
-	Vendor byte
-	BIOSVersion byte
+	Vendor string
+	BIOSVersion string
 	StartingAddressSegment uint16
-	ReleaseDate byte
+	ReleaseDate string
 	RomSize byte
 	Characteristics uint64
 	CharacteristicsExt []byte
@@ -107,13 +107,39 @@ func (h DMIHeader) NextHandle(eps SMBIOS_EPS) DMIHeader {
 */
 
 func (h DMIHeader) Decode() {
-	//data := h.data
 	switch (h.Type) {
 	case 0:
-		fmt.Println(h.Type)
+		bi := h.GetBIOSInformation()
+		fmt.Println(bi)
 	default:
 		fmt.Println("Unknow")
 	}
+}
+
+func (h DMIHeader) FieldString(offset int) (string) {
+	d := h.data
+	index := int(h.Length)
+	for i := offset; i > 1 && d[index] != 0; i-- {
+		ib := bytes.IndexByte(d[index:], 0)
+		if ib != -1 {
+			index += ib
+			index++
+		}
+	}
+	ib := bytes.IndexByte(d[index:], 0)
+	return string(d[index:index+ib])
+}
+
+func (h DMIHeader) GetBIOSInformation() BIOSInformation {
+	var bi BIOSInformation
+	data := h.data
+	if h.Type != 0 {
+		panic("h.Type is not 0")
+	}
+	bi.Vendor = h.FieldString(int(data[0x04]))
+	bi.BIOSVersion = h.FieldString(int(data[0x05]))
+	bi.ReleaseDate = h.FieldString(int(data[0x08]))
+	return bi
 }
 
 func (e SMBIOS_EPS) StructureTable() {
@@ -182,12 +208,8 @@ func version(mem []byte) string {
 }
 
 func main() {
-	mem, err := readMem()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-	}
-	m := anchor(mem)
-	fmt.Println(version(m))
+	eps := NewSMBIOS_EPS()
+	eps.StructureTable()
 	//fmt.Printf("%2X", m)
 }
 
