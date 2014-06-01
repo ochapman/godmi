@@ -40,6 +40,8 @@ type SMBIOS_Structure struct {
 }
 
 type Characteristics uint64
+type CharacteristicsExt1 byte
+type CharacteristicsExt2 byte
 
 type BIOSInformation struct {
 	Type                                   byte
@@ -51,7 +53,8 @@ type BIOSInformation struct {
 	ReleaseDate                            string
 	RomSize                                byte
 	Characteristics                        Characteristics
-	CharacteristicsExt                     []byte
+	CharacteristicsExt1                    CharacteristicsExt1
+	CharacteristicsExt2                    CharacteristicsExt2
 	SystemBIOSMajorRelease                 byte
 	SystemBIOSMinorRelease                 byte
 	EmbeddedControllerFirmwareMajorRelease byte
@@ -157,6 +160,25 @@ var fBIOSCharacteristics = [...]string {
 	"Printer services are supported (int 17h)",
 	"CGA/mono video services are supported (int 10h)",
 	"NEC PC-98", /* 31 */
+}
+
+var sCharateristicsExt1 = [...]string {
+	"ACPI is supported", /* 0 */
+	"USB legacy is supported",
+	"AGP is supported",
+	"I2O boot is supported",
+	"LS-120 boot is supported",
+	"ATAPI Zip drive boot is supported",
+	"IEEE 1394 boot is supported",
+	"Smart battery is supported", /* 7 */
+}
+
+var sCharateristicsExt2 = [...]string {
+	"BIOS boot specification is supported", /* 0 */
+	"Function key-initiated network boot is supported",
+	"Targeted content distribution is supported",
+	"UEFI is supported",
+	"System is a virtual machine", /* 4 */
 }
 
 // BIOS Characteristics Extension Bytes
@@ -311,6 +333,8 @@ func (h DMIHeader) GetBIOSInformation() BIOSInformation {
 	bi.StartingAddressSegment = U16(data[0x06:0x08])
 	bi.ReleaseDate = h.FieldString(int(data[0x08]))
 	bi.Characteristics = Characteristics(U64(data[0x0A:0x12]))
+	bi.CharacteristicsExt1 = CharacteristicsExt1(data[0x12])
+	bi.CharacteristicsExt2 = CharacteristicsExt2(data[0x12])
 	return bi
 }
 
@@ -325,8 +349,28 @@ func (c Characteristics) String() string {
 	return s
 }
 
+func (c CharacteristicsExt1) String() string {
+	var s string
+	for i := uint32(0); i < 7; i++ {
+		if c&(1<<i) != 0 {
+			s += "\n\t\t" + sCharateristicsExt1[i]
+		}
+	}
+	return s
+}
+
+func (c CharacteristicsExt2) String() string {
+	var s string
+	for i := uint32(0); i < 5; i++ {
+		if c&(1<<i) != 0 {
+			s += "\n\t\t" + sCharateristicsExt2[i]
+		}
+	}
+	return s
+}
+
 func (bi BIOSInformation) String() string {
-	return fmt.Sprintf("BIOS Information\n\tVendor: %s\n\tVersion: %s\n\tAddress: %4X0\n\tCharacteristics: %s", bi.Vendor, bi.BIOSVersion, bi.StartingAddressSegment, bi.Characteristics)
+	return fmt.Sprintf("BIOS Information\n\tVendor: %s\n\tVersion: %s\n\tAddress: %4X0\n\tCharacteristics: %s\n\tExt1:%s\n\tExt2: %s", bi.Vendor, bi.BIOSVersion, bi.StartingAddressSegment, bi.Characteristics, bi.CharacteristicsExt1, bi.CharacteristicsExt2)
 }
 
 func (h DMIHeader) GetSystemInformation() SystemInformation {
