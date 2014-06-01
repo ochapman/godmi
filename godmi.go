@@ -39,6 +39,8 @@ type DMIHeader struct {
 type SMBIOS_Structure struct {
 }
 
+type Characteristics uint64
+
 type BIOSInformation struct {
 	Type                                   byte
 	Length                                 byte
@@ -48,7 +50,7 @@ type BIOSInformation struct {
 	StartingAddressSegment                 uint16
 	ReleaseDate                            string
 	RomSize                                byte
-	Characteristics                        uint64
+	Characteristics                        Characteristics
 	CharacteristicsExt                     []byte
 	SystemBIOSMajorRelease                 byte
 	SystemBIOSMinorRelease                 byte
@@ -125,6 +127,38 @@ const (
 	//Bit47:63 Reserved for system vendor
 )
 
+var fBIOSCharacteristics = [...]string {
+	"BIOS characteristics not supported", /* 3 */
+	"ISA is supported",
+	"MCA is supported",
+	"EISA is supported",
+	"PCI is supported",
+	"PC Card (PCMCIA) is supported",
+	"PNP is supported",
+	"APM is supported",
+	"BIOS is upgradeable",
+	"BIOS shadowing is allowed",
+	"VLB is supported",
+	"ESCD support is available",
+	"Boot from CD is supported",
+	"Selectable boot is supported",
+	"BIOS ROM is socketed",
+	"Boot from PC Card (PCMCIA) is supported",
+	"EDD is supported",
+	"Japanese floppy for NEC 9800 1.2 MB is supported (int 13h)",
+	"Japanese floppy for Toshiba 1.2 MB is supported (int 13h)",
+	"5.25\"/360 kB floppy services are supported (int 13h)",
+	"5.25\"/1.2 MB floppy services are supported (int 13h)",
+	"3.5\"/720 kB floppy services are supported (int 13h)",
+	"3.5\"/2.88 MB floppy services are supported (int 13h)",
+	"Print screen service is supported (int 5h)",
+	"8042 keyboard services are supported (int 9h)",
+	"Serial services are supported (int 14h)",
+	"Printer services are supported (int 17h)",
+	"CGA/mono video services are supported (int 10h)",
+	"NEC PC-98", /* 31 */
+}
+
 // BIOS Characteristics Extension Bytes
 // Byte 1
 const (
@@ -178,7 +212,13 @@ const (
 func U16(data []byte) uint16 {
 	var u16 uint16
 	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
-	return u16 
+	return u16
+}
+
+func U64(data []byte) uint64 {
+	var u64 uint64
+	binary.Read(bytes.NewBuffer(data[0:8]), binary.LittleEndian, &u64)
+	return u64
 }
 
 func NewDMIHeader(data []byte) DMIHeader {
@@ -270,11 +310,23 @@ func (h DMIHeader) GetBIOSInformation() BIOSInformation {
 	bi.BIOSVersion = h.FieldString(int(data[0x05]))
 	bi.StartingAddressSegment = U16(data[0x06:0x08])
 	bi.ReleaseDate = h.FieldString(int(data[0x08]))
+	bi.Characteristics = Characteristics(U64(data[0x0A:0x12]))
 	return bi
 }
 
+func (c Characteristics) String() string {
+	var s string
+	for i := uint32(4); i < 32; i++ {
+		//fmt.Printf("char\n%064b\n%064b\n", char, 1<<i)
+		if c&(1<<i) != 0 {
+			s += "\n\t\t" + fBIOSCharacteristics[i-3]
+		}
+	}
+	return s
+}
+
 func (bi BIOSInformation) String() string {
-	return fmt.Sprintf("BIOS Information\n\tVendor: %s\n\tVersion: %s\n\tAddress: %4X0", bi.Vendor, bi.BIOSVersion, bi.StartingAddressSegment)
+	return fmt.Sprintf("BIOS Information\n\tVendor: %s\n\tVersion: %s\n\tAddress: %4X0\n\tCharacteristics: %s", bi.Vendor, bi.BIOSVersion, bi.StartingAddressSegment, bi.Characteristics)
 }
 
 func (h DMIHeader) GetSystemInformation() SystemInformation {
