@@ -239,16 +239,12 @@ func (e SMBIOS_EPS) StructureTable() {
 	if err != nil {
 		return
 	}
-	/*for i := 0; i < e.NumberOfSM; i++ {
-		hd := NewDMIHeader(tmem)
-	}
-	*/
+	//for i := 0, hd := NewDMIHeader(tmem); i < e.NumberOfSM ; i++, hd = hd.Next() {
 	hd := NewDMIHeader(tmem)
-	hd.Decode()
-	hdnext := hd.Next()
-	hdnext.Decode()
-	hdnext2 := hdnext.Next()
-	hdnext2.Decode()
+	for i := 0; i < 3; i++ {
+		hd.Decode()
+		hd = hd.Next()
+	}
 }
 
 func getMem(base uint32, length uint32) ([]byte, error) {
