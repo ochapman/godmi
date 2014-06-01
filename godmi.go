@@ -1,0 +1,193 @@
+/*
+*
+*/
+package main
+
+import (
+	"bytes"
+	"encoding/binary"
+	"fmt"
+	"os"
+	"strconv"
+	"syscall"
+)
+
+type SMBIOS_EPS struct {
+	Anchor	[]byte //4
+	Checksum byte
+	Length byte
+	MajorVersion byte
+	MinorVersion byte
+	MaxSize uint16
+	Revision byte
+	FormattedArea []byte // 5
+	InterAnchor []byte // 5
+	InterChecksum byte
+	TableLength uint16
+	TableAddress uint32
+	NumberOfSM uint16
+	BCDRevision byte
+}
+
+type DMIHeader struct {
+	Type byte
+	Length byte
+	Handle uint16
+	data []byte
+}
+
+type SMBIOS_Structure struct {
+
+}
+
+type BIOSInformation struct {
+	Type byte
+	Length byte
+	Handle uint16
+	Vendor byte
+	BIOSVersion byte
+	StartingAddressSegment uint16
+	ReleaseDate byte
+	RomSize byte
+	Characteristics uint64
+	CharacteristicsExt []byte
+	SystemBIOSMajorRelease byte
+	SystemBIOSMinorRelease byte
+	EmbeddedControllerFirmwareMajorRelease byte
+	EmbeddedControllerFirmawreMinorRelease byte
+}
+
+func NewDMIHeader(data []byte) DMIHeader {
+	var h uint16
+	binary.Read(bytes.NewBuffer(data[2:4]), binary.LittleEndian, &h)
+	hd := DMIHeader{Type: data[0], Length: data[1], Handle: h, data: data}
+	return hd
+}
+
+func NewSMBIOS_EPS() SMBIOS_EPS {
+	var eps SMBIOS_EPS
+	var u16 uint16
+	var u32 uint32
+
+	mem, err := getMem(0xF0000, 0x10000)
+	if err != nil {
+		return SMBIOS_EPS{}
+	}
+	data := anchor(mem)
+	eps.Anchor = data[:0x04]
+	eps.Checksum = data[0x04]
+	eps.Length = data[0x05]
+	eps.MajorVersion = data[0x06]
+	eps.MinorVersion = data[0x07]
+	binary.Read(bytes.NewBuffer(data[0x08:0x0A]), binary.LittleEndian, &u16)
+	eps.MaxSize = u16
+	eps.FormattedArea = data[0x0B:0x0F]
+	eps.InterAnchor = data[0x10:0x15]
+	eps.InterChecksum = data[0x15]
+	binary.Read(bytes.NewBuffer(data[0x16:0x18]), binary.LittleEndian, &u16)
+	eps.TableLength = u16
+	binary.Read(bytes.NewBuffer(data[0x18:0x1C]), binary.LittleEndian, &u32)
+	eps.TableAddress = u32
+	binary.Read(bytes.NewBuffer(data[0x1C:0x1E]), binary.LittleEndian, &u16)
+	eps.NumberOfSM = u16
+	eps.BCDRevision = data[0x1E]
+	return eps
+}
+
+func (e SMBIOS_EPS) StructrueTableMem() ([]byte, error) {
+	return getMem(e.TableAddress, uint32(e.TableLength))
+}
+
+/*
+func (h DMIHeader) NextHandle(eps SMBIOS_EPS) DMIHeader {
+	next := h.data + h.Length
+	if next - 
+	return 
+}
+*/
+
+func (h DMIHeader) Decode() {
+	//data := h.data
+	switch (h.Type) {
+	case 0:
+		fmt.Println(h.Type)
+	default:
+		fmt.Println("Unknow")
+	}
+}
+
+func (e SMBIOS_EPS) StructureTable() {
+	tmem, err := e.StructrueTableMem()
+	if err != nil {
+		return
+	}
+	/*for i := 0; i < e.NumberOfSM; i++ {
+		hd := NewDMIHeader(tmem)
+	}
+	*/
+	hd := NewDMIHeader(tmem)
+	hd.Decode()
+}
+
+func getMem(base uint32, length uint32) ([]byte, error) {
+	file, err := os.Open("/dev/mem")
+	if err != nil {
+		return []byte{}, err
+	}
+	fd := file.Fd()
+	mmoffset := base % uint32(os.Getpagesize())
+	mm, err := syscall.Mmap(int(fd), int64(base-mmoffset), int(mmoffset+length), syscall.PROT_READ, syscall.MAP_SHARED)
+	if err != nil {
+		return []byte{}, err
+	}
+	mem := make([]byte, len(mm))
+	copy(mem, mm)
+	err = syscall.Munmap(mm)
+	if err != nil {
+		return []byte{}, err
+	}
+	return mem, nil
+}
+
+func readMem() ([]byte, error) {
+	base := 0xF0000
+	file, err := os.Open("/dev/mem")
+	if err != nil {
+		return []byte{}, err
+	}
+	fd := file.Fd()
+	mmoffset := base % os.Getpagesize()
+	mm, err := syscall.Mmap(int(fd), int64(base-mmoffset), mmoffset+0x10000, syscall.PROT_READ, syscall.MAP_SHARED)
+	if err != nil {
+		return []byte{}, err
+	}
+	mem := make([]byte, len(mm))
+	copy(mem, mm)
+	err = syscall.Munmap(mm)
+	if err != nil {
+		return []byte{}, err
+	}
+	return mem, nil
+}
+
+func anchor(mem []byte) []byte {
+	anchor := []byte{'_', 'S', 'M', '_'}
+	i := bytes.Index(mem, anchor)
+	return mem[i:]
+}
+
+func version(mem []byte) string {
+	ver := strconv.Itoa(int(mem[0x06])) + "." + strconv.Itoa(int(mem[0x07]))
+	return ver
+}
+
+func main() {
+	mem, err := readMem()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+	}
+	m := anchor(mem)
+	fmt.Println(version(m))
+	//fmt.Printf("%2X", m)
+}
+
