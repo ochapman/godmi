@@ -57,6 +57,37 @@ type BIOSInformation struct {
 	EmbeddedControllerFirmawreMinorRelease byte
 }
 
+type SystemInformation struct {
+	Type byte
+	Length byte
+	Handle uint16
+	Manufacturer string
+	ProductName string
+	Version string
+	SerialNumber string
+	UUID string
+	WakeUpType byte
+	SKUNumber string
+	Family string
+}
+
+type BaseboardInformation struct {
+	Type byte
+	Length byte
+	Handle uint16
+	Manufacturer string
+	Product string
+	Version string
+	SerailNumber string
+	AssetTag string
+	FeatureFlags byte
+	LocationInChassis string
+	ChassisHandle uint16
+	BoardType byte
+	NumberOfContainedObjectHandles bytee
+	ContainedObjectHandles []byte
+}
+
 func NewDMIHeader(data []byte) DMIHeader {
 	var h uint16
 	binary.Read(bytes.NewBuffer(data[2:4]), binary.LittleEndian, &h)
@@ -98,21 +129,26 @@ func (e SMBIOS_EPS) StructrueTableMem() ([]byte, error) {
 	return getMem(e.TableAddress, uint32(e.TableLength))
 }
 
-/*
-func (h DMIHeader) NextHandle(eps SMBIOS_EPS) DMIHeader {
-	next := h.data + h.Length
-	if next - 
-	return 
+func (h DMIHeader) Next() DMIHeader {
+	de := []byte{0, 0}
+	next := h.data[h.Length:]
+	index := bytes.Index(next, de)
+	fmt.Println("index = ", index, next)
+	hd := NewDMIHeader(next[index+2:])
+	return hd
 }
-*/
 
 func (h DMIHeader) Decode() {
 	switch (h.Type) {
 	case 0:
 		bi := h.GetBIOSInformation()
 		fmt.Println(bi)
+	case 1:
+		si := h.GetSystemInformation()
+		fmt.Println(si)
+	case 2:
 	default:
-		fmt.Println("Unknow")
+		fmt.Println("Unknown")
 	}
 }
 
@@ -142,6 +178,21 @@ func (h DMIHeader) GetBIOSInformation() BIOSInformation {
 	return bi
 }
 
+func (h DMIHeader) GetSystemInformation() SystemInformation {
+	var si SystemInformation
+	data := h.data
+	if h.Type != 1 {
+		panic("Type is not 1")
+	}
+	si.Manufacturer = h.FieldString(int(data[0x04]))
+	si.ProductName = h.FieldString(int(data[0x05]))
+	si.Version = h.FieldString(int(data[0x06]))
+	si.SerialNumber = h.FieldString(int(data[0x07]))
+	//si.UUID
+	si.Family = h.FieldString(int(data[0x1A]))
+	return si
+}
+
 func (e SMBIOS_EPS) StructureTable() {
 	tmem, err := e.StructrueTableMem()
 	if err != nil {
@@ -153,6 +204,10 @@ func (e SMBIOS_EPS) StructureTable() {
 	*/
 	hd := NewDMIHeader(tmem)
 	hd.Decode()
+	hdnext := hd.Next()
+	hdnext.Decode()
+	hdnext2 := hdnext.Next()
+	hdnext2.Decode()
 }
 
 func getMem(base uint32, length uint32) ([]byte, error) {
