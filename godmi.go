@@ -373,6 +373,25 @@ func (bi BIOSInformation) String() string {
 	return fmt.Sprintf("BIOS Information\n\tVendor: %s\n\tVersion: %s\n\tAddress: %4X0\n\tCharacteristics: %s\n\tExt1:%s\n\tExt2: %s", bi.Vendor, bi.BIOSVersion, bi.StartingAddressSegment, bi.Characteristics, bi.CharacteristicsExt1, bi.CharacteristicsExt2)
 }
 
+func uuid(data []byte, ver string) string {
+	if bytes.Index(data, []byte{0x00}) != -1 {
+		return "Not present"
+	}
+
+	if bytes.Index(data, []byte{0xFF}) != -1 {
+		return "Not settable"
+	}
+
+	if ver > "2.6" {
+		return fmt.Sprintf("%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+		data[3], data[2], data[1], data[0], data[5], data[4], data[7], data[6],
+		data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15]);
+	} 
+	return fmt.Sprintf("%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+	data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7],
+	data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15]);
+}
+
 func (h DMIHeader) GetSystemInformation() SystemInformation {
 	var si SystemInformation
 	data := h.data
@@ -383,7 +402,7 @@ func (h DMIHeader) GetSystemInformation() SystemInformation {
 	si.ProductName = h.FieldString(int(data[0x05]))
 	si.Version = h.FieldString(int(data[0x06]))
 	si.SerialNumber = h.FieldString(int(data[0x07]))
-	//si.UUID
+	si.UUID = uuid(data[0x08:0x18], si.Version)
 	si.Family = h.FieldString(int(data[0x1A]))
 	return si
 }
