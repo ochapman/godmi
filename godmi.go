@@ -130,7 +130,7 @@ const (
 	//Bit47:63 Reserved for system vendor
 )
 
-var fBIOSCharacteristics = [...]string {
+var sBIOSCharacteristics = [...]string {
 	"BIOS characteristics not supported", /* 3 */
 	"ISA is supported",
 	"MCA is supported",
@@ -343,7 +343,7 @@ func (c Characteristics) String() string {
 	for i := uint32(4); i < 32; i++ {
 		//fmt.Printf("char\n%064b\n%064b\n", char, 1<<i)
 		if c&(1<<i) != 0 {
-			s += "\n\t\t" + fBIOSCharacteristics[i-3]
+			s += "\n\t\t" + sBIOSCharacteristics[i-3]
 		}
 	}
 	return s
