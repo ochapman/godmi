@@ -83,9 +83,35 @@ type BaseboardInformation struct {
 	LocationInChassis              string
 	ChassisHandle                  uint16
 	BoardType                      byte
-	NumberOfContainedObjectHandles bytee
+	NumberOfContainedObjectHandles byte
 	ContainedObjectHandles         []byte
 }
+
+//BaseboardFeatureFlags
+const (
+	FeatureFlagsHostingBoard = iota
+	FeatureFlagsAtLeastOneDaughter = 1 << 1
+	FeatureFlagsRemovable = 1 << 2
+	FeatureFlagsRepleaceable = 1 << 3
+	FeatureFlagsHotSwappable = 1 << 4
+	//FeatureFlagsReserved = 000b
+)
+
+const (
+	BoardTypeUnknown = iota + 1
+	BoardTypeOther
+	BoardTypeServerBlade
+	BoardTypeConnectivitySwitch
+	BoardTypeSystemManagementModule
+	BoardTypeProcessorModule
+	BoardTypeIOModule
+	BoardTypeMemoryModule
+	BoardTypeDaughterboard
+	BoardTypeMotherboard
+	BoardTypeProcessorMemoryModule
+	BoardTypeProcessorIOModule
+	BoardTypeInterconnectboard
+)
 
 func NewDMIHeader(data []byte) DMIHeader {
 	var h uint16
@@ -132,7 +158,6 @@ func (h DMIHeader) Next() DMIHeader {
 	de := []byte{0, 0}
 	next := h.data[h.Length:]
 	index := bytes.Index(next, de)
-	fmt.Println("index = ", index, next)
 	hd := NewDMIHeader(next[index+2:])
 	return hd
 }
@@ -146,6 +171,8 @@ func (h DMIHeader) Decode() {
 		si := h.GetSystemInformation()
 		fmt.Println(si)
 	case 2:
+		bi := h.GetBaseboardInformation()
+		fmt.Println(bi)
 	default:
 		fmt.Println("Unknown")
 	}
@@ -190,6 +217,21 @@ func (h DMIHeader) GetSystemInformation() SystemInformation {
 	//si.UUID
 	si.Family = h.FieldString(int(data[0x1A]))
 	return si
+}
+
+func (h DMIHeader) GetBaseboardInformation() BaseboardInformation {
+	var bi BaseboardInformation
+	data := h.data
+	if h.Type != 2 {
+		panic("Type is not 2")
+	}
+	bi.Manufacturer = h.FieldString(int(data[0x04]))
+	bi.Product = h.FieldString(int(data[0x05]))
+	bi.Version = h.FieldString(int(data[0x06]))
+	bi.SerailNumber = h.FieldString(int(data[0x07]))
+	bi.AssetTag = h.FieldString(int(data[0x08]))
+	bi.LocationInChassis = h.FieldString(int(data[0x0A]))
+	return bi
 }
 
 func (e SMBIOS_EPS) StructureTable() {
