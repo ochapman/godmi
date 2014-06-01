@@ -263,6 +263,7 @@ func getMem(base uint32, length uint32) ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
+	defer file.Close()
 	fd := file.Fd()
 	mmoffset := base % uint32(os.Getpagesize())
 	mm, err := syscall.Mmap(int(fd), int64(base-mmoffset), int(mmoffset+length), syscall.PROT_READ, syscall.MAP_SHARED)
