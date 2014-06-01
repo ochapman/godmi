@@ -61,6 +61,35 @@ type BIOSInformation struct {
 	EmbeddedControllerFirmawreMinorRelease byte
 }
 
+type WakeUpType byte
+
+const (
+	Reserved WakeUpType = iota
+	Other
+	Unknown
+	APM_Timer
+	Modem_Ring
+	LAN_Remote
+	Power_Switch
+	PCI_PME
+	AC_Power_Restored
+)
+
+func (w WakeUpType) String() string {
+	types := [...]string {
+		"Reserved", /* 0x00 */
+		"Other",
+		"Unknown",
+		"APM Timer",
+		"Modem Ring",
+		"LAN Remote",
+		"Power Switch",
+		"PCI PME#",
+		"AC Power Restored", /* 0x08 */
+	}
+	return types[w]
+}
+
 type SystemInformation struct {
 	Type         byte
 	Length       byte
@@ -70,10 +99,11 @@ type SystemInformation struct {
 	Version      string
 	SerialNumber string
 	UUID         string
-	WakeUpType   byte
+	WakeUpType   WakeUpType
 	SKUNumber    string
 	Family       string
 }
+
 
 type BaseboardInformation struct {
 	Type                           byte
@@ -403,6 +433,8 @@ func (h DMIHeader) GetSystemInformation() SystemInformation {
 	si.Version = h.FieldString(int(data[0x06]))
 	si.SerialNumber = h.FieldString(int(data[0x07]))
 	si.UUID = uuid(data[0x08:0x18], si.Version)
+	si.WakeUpType = WakeUpType(data[0x18])
+	si.SKUNumber = h.FieldString(int(data[0x19]))
 	si.Family = h.FieldString(int(data[0x1A]))
 	return si
 }
