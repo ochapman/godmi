@@ -87,6 +87,68 @@ type BaseboardInformation struct {
 	ContainedObjectHandles         []byte
 }
 
+// BIOS Characteristics
+const (
+	BIOSCharacteristicsReserved0 = 1 << iota
+	BIOSCharacteristicsReserved1
+	BIOSCharacteristicsUnknown
+	BIOSCharacteristicsNotSupported
+	BIOSCharacteristicsISASupported
+	BIOSCharacteristicsMCASupported
+	BIOSCharacteristicsEISASupported
+	BIOSCharacteristicsPCISupported
+	BIOSCharacteristicsPCMCIASupported
+	BIOSCharacteristicsPlugPlaySupported
+	BIOSCharacteristicsAPMSupported
+	BIOSCharacteristicsUpgradeable
+	BIOSCharacteristicsShadowingIsAllowed
+	BIOSCharacteristicsVLVESASupported
+	BIOSCharacteristicsESCDSupported
+	BIOSCharacteristicsBootFromCDSupported
+	BIOSCharacteristicsSelectableBootSupported
+	BIOSCharacteristicsBIOSROMIsSockectd
+	BIOSCharacteristicsBootFromPCMCIASupported
+	BIOSCharacteristicsEDDSupported
+	BIOSCharacteristicsJPFloppyNECSupported
+	BIOSCharacteristicsJPFloppyToshibaSupported
+	BIOSCharacteristics525_360KBFloppySupported
+	BIOSCharacteristics525_1_2MBFloppySupported
+	BIOSCharacteristics35_720KBFloppySupported
+	BIOSCharacteristics35_2_88MBFloppySupported
+	BIOSCharacteristicsPrintScreenSupported
+	BIOSCharacteristics8042KeyboardSupported
+	BIOSCharacteristicsSerialSupported
+	BIOSCharacteristicsPrinterSupported
+	BIOSCharacteristicsCGAMonoSupported
+	BIOSCharacteristicsNECPC98
+	//Bit32:47 Reserved for BIOS vendor
+	//Bit47:63 Reserved for system vendor
+)
+
+// BIOS Characteristics Extension Bytes
+// Byte 1
+const (
+	BIOSCharacteristicsExt1ACPISupported = 1 << iota
+	BIOSCharacteristicsExt1USBLegacySupported
+	BIOSCharacteristicsExt1AGPSupported
+	BIOSCharacteristicsExt1I2OBootSupported
+	BIOSCharacteristicsExt1LS120SupperDiskBootSupported
+	BIOSCharacteristicsExt1ATAPIZIPDriveBootSupported
+	BIOSCharacteristicsExt11394BootSupported
+	BIOSCharacteristicsExt1SmartBatterySupported
+)
+
+// Byte 2
+const (
+	BIOSCharacteristicsExt2BIOSBootSpecSupported = 1 << iota
+	BIOSCharacteristicsExt2FuncKeyInitiatedNetworkBootSupported
+	BIOSCharacteristicsExt2EnableTargetedContentDistribution
+	BIOSCharacteristicsExt2UEFISpecSupported
+	BIOSCharacteristicsExt2VirtualMachine
+	// Bits 5:7 Reserved for future assignment
+)
+
+
 //BaseboardFeatureFlags
 const (
 	FeatureFlagsHostingBoard = iota
