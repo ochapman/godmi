@@ -113,6 +113,12 @@ const (
 	BoardTypeInterconnectboard
 )
 
+func U16(data []byte) uint16 {
+	var u16 uint16
+	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
+	return u16 
+}
+
 func NewDMIHeader(data []byte) DMIHeader {
 	var h uint16
 	binary.Read(bytes.NewBuffer(data[2:4]), binary.LittleEndian, &h)
@@ -200,8 +206,13 @@ func (h DMIHeader) GetBIOSInformation() BIOSInformation {
 	}
 	bi.Vendor = h.FieldString(int(data[0x04]))
 	bi.BIOSVersion = h.FieldString(int(data[0x05]))
+	bi.StartingAddressSegment = U16(data[0x06:0x08])
 	bi.ReleaseDate = h.FieldString(int(data[0x08]))
 	return bi
+}
+
+func (bi BIOSInformation) String() string {
+	return fmt.Sprintf("BIOS Information\n\tVendor: %s\n\tVersion: %s\n\tAddress: %4X0", bi.Vendor, bi.BIOSVersion, bi.StartingAddressSegment)
 }
 
 func (h DMIHeader) GetSystemInformation() SystemInformation {
