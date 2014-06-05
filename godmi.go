@@ -104,6 +104,64 @@ type SystemInformation struct {
 	Family       string
 }
 
+type FeatureFlags byte
+
+func (f FeatureFlags) String() string {
+	features := [...]string {
+		"Board is a hosting board", /* 0 */
+		"Board requires at least one daughter board",
+		"Board is removable",
+		"Board is replaceable",
+		"Board is hot swappable", /* 4 */
+	}
+	var s string
+	for i := uint32(0); i < 5; i++ {
+		if f & 1<<i != 0 {
+			s += features[i] + "\n"
+		}
+	}
+	return s
+}
+
+type BoardType byte
+
+const (
+	BoardTypeUnknown BoardType = 1 + iota
+	BoardTypeOther
+	BoardTypeServerBlade
+	BoardTypeConnectivitySwitch
+	BoardTypeSystemManagementModule
+	BoardTypeProcessorModule
+	BoardTypeIOModule
+	BoardTypeMemModule
+	BoardTypeDaughterBoard
+	BoardTypeMotherboard
+	BoardTypeProcessorMemmoryModule
+	BoardTypeProcessorIOModule
+	BoardTypeInterconnectBoard
+)
+
+func (b BoardType) String() string {
+	types := [...]string {
+		"Unknown", /* 0x01 */
+		"Other",
+		"Server Blade",
+		"Connectivity Switch",
+		"System Management Module",
+		"Processor Module",
+		"I/O Module",
+		"Memory Module",
+		"Daughter Board",
+		"Motherboard",
+		"Processor+Memory Module",
+		"Processor+I/O Module",
+		"Interconnect Board", /* 0x0D */
+	}
+	if b > BoardTypeUnknown && b < BoardTypeInterconnectBoard {
+		return types[b-1]
+	}
+	return "Out Of Spec"
+}
 
 type BaseboardInformation struct {
 	Type                           byte
@@ -114,10 +172,10 @@ type BaseboardInformation struct {
 	Version                        string
 	SerailNumber                   string
 	AssetTag                       string
-	FeatureFlags                   byte
+	FeatureFlags                   FeatureFlags
 	LocationInChassis              string
 	ChassisHandle                  uint16
-	BoardType                      byte
+	BoardType                      BoardType
 	NumberOfContainedObjectHandles byte
 	ContainedObjectHandles         []byte
 }
@@ -243,22 +301,6 @@ const (
 	FeatureFlagsRepleaceable = 1 << 3
 	FeatureFlagsHotSwappable = 1 << 4
 	//FeatureFlagsReserved = 000b
-)
-
-const (
-	BoardTypeUnknown = iota + 1
-	BoardTypeOther
-	BoardTypeServerBlade
-	BoardTypeConnectivitySwitch
-	BoardTypeSystemManagementModule
-	BoardTypeProcessorModule
-	BoardTypeIOModule
-	BoardTypeMemoryModule
-	BoardTypeDaughterboard
-	BoardTypeMotherboard
-	BoardTypeProcessorMemoryModule
-	BoardTypeProcessorIOModule
-	BoardTypeInterconnectboard
 )
 
 func U16(data []byte) uint16 {
@@ -450,7 +492,9 @@ func (h DMIHeader) GetBaseboardInformation() BaseboardInformation {
 	bi.Version = h.FieldString(int(data[0x06]))
 	bi.SerailNumber = h.FieldString(int(data[0x07]))
 	bi.AssetTag = h.FieldString(int(data[0x08]))
+	bi.FeatureFlags = FeatureFlags(data[0x09])
 	bi.LocationInChassis = h.FieldString(int(data[0x0A]))
+	bi.BoardType = BoardType(data[0x0D])
 	return bi
 }
 
