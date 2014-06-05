@@ -312,6 +312,179 @@ const (
 	//FeatureFlagsReserved = 000b
 )
 
+type ChassisType byte
+
+const (
+	ChssisTypeOther ChassisType = 1 + iota
+	ChssisTypeUnknown
+	ChssisTypeDesktop
+	ChssisTypeLowProfileDesktop
+	ChssisTypePizzaBox
+	ChssisTypeMiniTower
+	ChssisTypeTower
+	ChssisTypePortable
+	ChssisTypeLaptop
+	ChssisTypeNotebook
+	ChssisTypeHandHeld
+	ChssisTypeDockingStation
+	ChssisTypeAllinOne
+	ChssisTypeSubNotebook
+	ChssisTypeSpaceSaving
+	ChssisTypeLunchBox
+	ChssisTypeMainServerChassis
+	ChssisTypeExpansionChassis
+	ChssisTypeSubChassis
+	ChssisTypeBusExpansionChassis
+	ChssisTypePeripheralChassis
+	ChssisTypeRAIDChassis
+	ChssisTypeRackMountChassis
+	ChssisTypeSealedcasePC
+	ChssisTypeMultiSystem
+	ChssisTypeCompactPCI
+	ChssisTypeAdvancedTCA
+	ChssisTypeBlade
+	ChssisTypeBladeEnclosure
+)
+
+func (ct ChassisType) String() string {
+	types := [...]string {
+		"Other",
+		"Unknown",
+		"Desktop",
+		"LowProfileDesktop",
+		"PizzaBox",
+		"MiniTower",
+		"Tower",
+		"Portable",
+		"Laptop",
+		"Notebook",
+		"HandHeld",
+		"DockingStation",
+		"AllinOne",
+		"SubNotebook",
+		"SpaceSaving",
+		"LunchBox",
+		"MainServerChassis",
+		"ExpansionChassis",
+		"SubChassis",
+		"BusExpansionChassis",
+		"PeripheralChassis",
+		"RAIDChassis",
+		"RackMountChassis",
+		"SealedcasePC",
+		"MultiSystem",
+		"CompactPCI",
+		"AdvancedTCA",
+		"Blade",
+		"BladeEnclosure",
+	}
+	return types[ct-1]
+}
+
+type ChassisState byte
+
+const (
+	ChassisStateOther ChassisState = 1 + iota
+	ChassisStateUnknown
+	ChassisStateSafe
+	ChassisStateWarning
+	ChassisStateCritical
+	ChassisStateNonRecoverable
+)
+
+func (cc ChassisState) String() string {
+	states := [...]string {
+		"Other",
+		"Unknown",
+		"Safe",
+		"Warning",
+		"Critical",
+		"NonRecoverable",
+	}
+	return states[cc-1]
+}
+
+type SecurityStatus byte
+
+const (
+	SecurityStatusOther SecurityStatus = 1 + iota
+	SecurityStatusUnknown
+	SecurityStatusNone
+	SecurityStatusExternalInterfaceLockedOut
+	SecurityStatusExternalInterfaceEnabled
+)
+
+func (ss SecurityStatus) String() string {
+	status := [...]string {
+		"Other",
+		"Unknown",
+		"None",
+		"ExternalInterfaceLockedOut",
+		"ExternalInterfaceEnabled",
+	}
+	return status[ss-1]
+}
+
+type ContainedElementType byte
+
+type ContainedElements struct {
+	Type ContainedElementType
+	Minimum byte
+	Maximum byte
+}
+
+type Height byte
+
+// type 3
+type ChassisInformation struct {
+	Type byte
+	Length byte
+	Handle byte
+	Manufacturer string
+	ChassisType ChassisType
+	Version string
+	AssetTag string
+	SerialNumber string
+	BootUpState ChassisState
+	PowerSupplyState ChassisState
+	ThermalState ChassisState
+	SecurityStatus SecurityStatus
+	OEMdefined uint16
+	Height Height
+	NumberOfPowerCords byte
+	ContainedElementCount byte
+	ContainedElementRecordLength byte
+	ContainedElements ContainedElements
+	SKUNumber string
+}
+
+func (h DMIHeader) ChassisInformation() ChassisInformation {
+	var ci ChassisInformation
+	data := h.data
+	ci.Manufacturer = h.FieldString(int(data[0x04]))
+	ci.ChassisType = ChassisType(data[0x05])
+	ci.Version = h.FieldString(int(data[0x06]))
+	ci.SerialNumber = h.FieldString(int(data[0x07]))
+	ci.AssetTag = h.FieldString(int(data[0x08]))
+	ci.BootUpState = ChassisState(data[0x09])
+	ci.PowerSupplyState = ChassisState(data[0xA])
+	ci.ThermalState = ChassisState(data[0x0B])
+	ci.SecurityStatus = SecurityStatus(data[0x0C])
+	ci.OEMdefined = U16(data[0x0D:0x0D+4])
+	ci.Height = Height(data[0x11])
+	ci.NumberOfPowerCords = data[0x12]
+	ci.ContainedElementCount = data[0x13]
+	ci.ContainedElementRecordLength = data[0x14]
+	// TODO: 7.4.4
+	//ci.ContainedElements = 
+	ci.SKUNumber = h.FieldString(int(data[0x15]))
+	return ci
+}
+
+func (ci ChassisInformation) String() string {
+	return fmt.Sprintf("Chassis Information:\n\tManufacturer: %s\n\tType: %s\n\tVersion: %s\n\tSerial Number: %s\n\tAsset Tag: %s\n\tBoot-up State: %s\n\tPower Supply State: %s\n\tThermal State: %s\n\tSecurity Status: %s\n\t", ci.Manufacturer, ci.ChassisType, ci.Version, ci.SerialNumber, ci.AssetTag, ci.BootUpState, ci.PowerSupplyState, ci.ThermalState, ci.SecurityStatus)
+}
+
 func U16(data []byte) uint16 {
 	var u16 uint16
 	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
@@ -384,6 +557,9 @@ func (h DMIHeader) Decode() {
 	case 2:
 		bi := h.GetBaseboardInformation()
 		fmt.Println(bi)
+	case 3:
+		ci := h.ChassisInformation()
+		fmt.Println(ci)
 	default:
 		fmt.Println("Unknown")
 	}
@@ -517,7 +693,7 @@ func (e SMBIOS_EPS) StructureTable() {
 	}
 	//for i := 0, hd := NewDMIHeader(tmem); i < e.NumberOfSM ; i++, hd = hd.Next() {
 	hd := NewDMIHeader(tmem)
-	for i := 0; i < 3; i++ {
+	for i := 0; i < 4; i++ {
 		hd.Decode()
 		hd = hd.Next()
 	}
