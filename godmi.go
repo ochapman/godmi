@@ -116,8 +116,9 @@ func (f FeatureFlags) String() string {
 	}
 	var s string
 	for i := uint32(0); i < 5; i++ {
-		if f & 1<<i != 0 {
-			s += features[i] + "\n"
+		//fmt.Printf("F%08b\nI%08b\n", f, 1<<i)
+		if f&(1<<i) != 0 {
+			s += "\n\t\t" + features[i]
 		}
 	}
 	return s
@@ -178,6 +179,10 @@ type BaseboardInformation struct {
 	BoardType                      BoardType
 	NumberOfContainedObjectHandles byte
 	ContainedObjectHandles         []byte
+}
+
+func (bi BaseboardInformation) String() string {
+	return fmt.Sprintf("BaseboardInformation:\n\tManufacturer: %s\n\tProduct: %s\n\tVersion: %s\n\tSerial Number: %s\n\tAsset Tag: %s\n\tFeature Flags: %s\n\tLocation In Chassis: %s\n\tBoard Type: %s\n\t", bi.Manufacturer, bi.Product, bi.Version, bi.SerailNumber, bi.AssetTag, bi.FeatureFlags, bi.LocationInChassis, bi.BoardType)
 }
 
 // BIOS Characteristics
@@ -383,6 +388,9 @@ func (h DMIHeader) Decode() {
 func (h DMIHeader) FieldString(offset int) string {
 	d := h.data
 	index := int(h.Length)
+	if offset == 0 {
+		return "Not Specified"
+	}
 	for i := offset; i > 1 && d[index] != 0; i-- {
 		ib := bytes.IndexByte(d[index:], 0)
 		if ib != -1 {
