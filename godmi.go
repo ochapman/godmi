@@ -1351,7 +1351,7 @@ func NewSMBIOS_EPS() (SMBIOS_EPS, error) {
 	return eps, nil
 }
 
-func (e SMBIOS_EPS) StructrueTableMem() ([]byte, error) {
+func (e SMBIOS_EPS) StructureTableMem() ([]byte, error) {
 	return getMem(e.TableAddress, uint32(e.TableLength))
 }
 
@@ -1507,7 +1507,7 @@ func (h DMIHeader) GetBaseboardInformation() BaseboardInformation {
 }
 
 func (e SMBIOS_EPS) StructureTable() {
-	tmem, err := e.StructrueTableMem()
+	tmem, err := e.StructureTableMem()
 	if err != nil {
 		return
 	}
