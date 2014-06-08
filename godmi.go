@@ -1321,14 +1321,14 @@ func NewDMIHeader(data []byte) DMIHeader {
 	return hd
 }
 
-func NewSMBIOS_EPS() SMBIOS_EPS {
+func NewSMBIOS_EPS() (SMBIOS_EPS, error) {
 	var eps SMBIOS_EPS
 	var u16 uint16
 	var u32 uint32
 
 	mem, err := getMem(0xF0000, 0x10000)
 	if err != nil {
-		return SMBIOS_EPS{}
+		return eps, err
 	}
 	data := anchor(mem)
 	eps.Anchor = data[:0x04]
@@ -1348,7 +1348,7 @@ func NewSMBIOS_EPS() SMBIOS_EPS {
 	binary.Read(bytes.NewBuffer(data[0x1C:0x1E]), binary.LittleEndian, &u16)
 	eps.NumberOfSM = u16
 	eps.BCDRevision = data[0x1E]
-	return eps
+	return eps, nil
 }
 
 func (e SMBIOS_EPS) StructrueTableMem() ([]byte, error) {
@@ -1573,7 +1573,11 @@ func version(mem []byte) string {
 }
 
 func main() {
-	eps := NewSMBIOS_EPS()
+	eps, err := NewSMBIOS_EPS()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(-1)
+	}
 	eps.StructureTable()
 	//fmt.Printf("%2X", m)
 }
