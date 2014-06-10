@@ -15,11 +15,10 @@ import (
 type Type byte
 type Handle uint16
 type InfoCommon struct {
-	Type Type
+	Type   Type
 	Length byte
 	Handle Handle
 }
-
 
 type SMBIOS_EPS struct {
 	Anchor        []byte //4
@@ -1312,6 +1311,7 @@ func (h DMIHeader) ProcessorInformation() ProcessorInformation {
 }
 
 type OperationalMode byte
+
 const (
 	OperationalModeWriteThrough OperationalMode = iota
 	OperationalModeWriteBack
@@ -1320,7 +1320,7 @@ const (
 )
 
 func (o OperationalMode) String() string {
-	modes := [...]string {
+	modes := [...]string{
 		"Write Through",
 		"Write Back",
 		"Varies With Memory Address",
@@ -1339,7 +1339,7 @@ const (
 )
 
 func (c CacheLocation) String() string {
-	locations := [...]string {
+	locations := [...]string{
 		"Internal",
 		"External",
 		"Reserved",
@@ -1357,7 +1357,7 @@ const (
 )
 
 func (c CacheLevel) String() string {
-	levels := [...]string {
+	levels := [...]string{
 		"Level1",
 		"Level2",
 		"Level3",
@@ -1366,20 +1366,20 @@ func (c CacheLevel) String() string {
 }
 
 type CacheConfiguration struct {
-	Mode OperationalMode
-	Enabled bool
+	Mode     OperationalMode
+	Enabled  bool
 	Location CacheLocation
 	Socketed bool
-	Level CacheLevel
+	Level    CacheLevel
 }
 
 func NewCacheConfiguration(u uint16) CacheConfiguration {
 	var c CacheConfiguration
-	c.Level = CacheLevel(byte(u&0x7))
+	c.Level = CacheLevel(byte(u & 0x7))
 	c.Socketed = (u&0x10 == 1)
-	c.Location = CacheLocation((u>>5)&0x3)
+	c.Location = CacheLocation((u >> 5) & 0x3)
 	c.Enabled = (u&(0x1<<7) == 1)
-	c.Mode = OperationalMode((u>>8)&0x7)
+	c.Mode = OperationalMode((u >> 8) & 0x7)
 	return c
 }
 
@@ -1395,7 +1395,7 @@ const (
 )
 
 func (c CacheGranularity) String() string {
-	grans := [...]string {
+	grans := [...]string{
 		"1K",
 		"64K",
 	}
@@ -1404,13 +1404,13 @@ func (c CacheGranularity) String() string {
 
 type CacheSize struct {
 	Granularity CacheGranularity
-	Size uint16
+	Size        uint16
 }
 
 func NewCacheSize(u uint16) CacheSize {
 	var c CacheSize
-	c.Granularity = CacheGranularity(u>>15)
-	c.Size = u &^ (uint16(1)<<15)
+	c.Granularity = CacheGranularity(u >> 15)
+	c.Size = u &^ (uint16(1) << 15)
 	return c
 }
 
@@ -1432,7 +1432,7 @@ const (
 )
 
 func (st SRAMType) String() string {
-	types := [...]string {
+	types := [...]string{
 		"Other",
 		"Unknown",
 		"Non-Burst",
@@ -1459,7 +1459,7 @@ const (
 )
 
 func (ec ErrorCorrectionType) String() string {
-	types := [...]string {
+	types := [...]string{
 		"Other",
 		"Unknown",
 		"None",
@@ -1481,7 +1481,7 @@ const (
 )
 
 func (s SystemCacheType) String() string {
-	types := [...]string {
+	types := [...]string{
 		"Other",
 		"Unknown",
 		"Instruction",
@@ -1511,7 +1511,7 @@ const (
 )
 
 func (a CacheAssociativity) String() string {
-	caches := [...]string {
+	caches := [...]string{
 		"Other",
 		"Unknown",
 		"Direct Mapped",
@@ -1532,16 +1532,16 @@ func (a CacheAssociativity) String() string {
 
 type CacheInformation struct {
 	InfoCommon
-	SocketDesignation string
-	Configuration  CacheConfiguration
-	MaximumCacheSize CacheSize
-	InstalledSize  CacheSize
-	SupportedSRAMType SRAMType
-	CurrentSRAMType SRAMType
-	CacheSpeed CacheSpeed
+	SocketDesignation   string
+	Configuration       CacheConfiguration
+	MaximumCacheSize    CacheSize
+	InstalledSize       CacheSize
+	SupportedSRAMType   SRAMType
+	CurrentSRAMType     SRAMType
+	CacheSpeed          CacheSpeed
 	ErrorCorrectionType ErrorCorrectionType
-	SystemCacheType SystemCacheType
-	Associativity CacheAssociativity
+	SystemCacheType     SystemCacheType
+	Associativity       CacheAssociativity
 }
 
 func (h DMIHeader) CacheInformation() CacheInformation {
