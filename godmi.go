@@ -1943,7 +1943,6 @@ const (
 	SystemSlotCharacteristicsPCCardslotsupportsCardBus
 	SystemSlotCharacteristicsPCCardslotsupportsZoomVideo
 	SystemSlotCharacteristicsPCCardslotsupportsModemRingResume
-
 )
 
 func (s SystemSlotCharacteristics1) String() string {
@@ -1985,16 +1984,16 @@ type SystemSlotNumber byte
 
 type SystemSlot struct {
 	InfoCommon
-	Designation string
-	Type SystemSlotType
-	DataBusWidth SystemSlotDataBusWidth
-	CurrentUsage SystemSlotUsage
-	Length SystemSlotLength
-	ID SystemSlotID
-	Characteristics1 SystemSlotCharacteristics1
-	Characteristics2 SystemSlotCharacteristics2
-	SegmentGroupNumber SystemSlotSegmengGroupNumber
-	BusNumber SystemSlotNumber
+	Designation          string
+	Type                 SystemSlotType
+	DataBusWidth         SystemSlotDataBusWidth
+	CurrentUsage         SystemSlotUsage
+	Length               SystemSlotLength
+	ID                   SystemSlotID
+	Characteristics1     SystemSlotCharacteristics1
+	Characteristics2     SystemSlotCharacteristics2
+	SegmentGroupNumber   SystemSlotSegmengGroupNumber
+	BusNumber            SystemSlotNumber
 	DeviceFunctionNumber SystemSlotNumber
 }
 
