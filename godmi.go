@@ -1758,6 +1758,267 @@ func (h DMIHeader) PortInformation() PortInformation {
 	return pi
 }
 
+type SystemSlotType byte
+
+const (
+	SystemSlotTypeOther SystemSlotType = 1 + iota
+	SystemSlotTypeUnknown
+	SystemSlotTypeISA
+	SystemSlotTypeMCA
+	SystemSlotTypeEISA
+	SystemSlotTypePCI
+	SystemSlotTypePCCardPCMCIA
+	SystemSlotTypeVL_VESA
+	SystemSlotTypeProprietary
+	SystemSlotTypeProcessorCardSlot
+	SystemSlotTypeProprietaryMemoryCardSlot
+	SystemSlotTypeIORiserCardSlot
+	SystemSlotTypeNuBus
+	SystemSlotTypePCI_66MHzCapable
+	SystemSlotTypeAGP
+	SystemSlotTypeAGP2X
+	SystemSlotTypeAGP4X
+	SystemSlotTypePCI_X
+	SystemSlotTypeAGP8X
+	SystemSlotTypePC_98C20
+	SystemSlotTypePC_98C24
+	SystemSlotTypePC_98E
+	SystemSlotTypePC_98LocalBus
+	SystemSlotTypePC_98Card
+	SystemSlotTypePCIExpress
+	SystemSlotTypePCIExpressx1
+	SystemSlotTypePCIExpressx2
+	SystemSlotTypePCIExpressx4
+	SystemSlotTypePCIExpressx8
+	SystemSlotTypePCIExpressx16
+	SystemSlotTypePCIExpressGen2
+	SystemSlotTypePCIExpressGen2x1
+	SystemSlotTypePCIExpressGen2x2
+	SystemSlotTypePCIExpressGen2x4
+	SystemSlotTypePCIExpressGen2x8
+	SystemSlotTypePCIExpressGen2x16
+	SystemSlotTypePCIExpressGen3
+	SystemSlotTypePCIExpressGen3x1
+	SystemSlotTypePCIExpressGen3x2
+	SystemSlotTypePCIExpressGen3x4
+	SystemSlotTypePCIExpressGen3x8
+	SystemSlotTypePCIExpressGen3x16
+)
+
+func (s SystemSlotType) String() string {
+	types := [...]string{
+		"Other",
+		"Unknown",
+		"ISA",
+		"MCA",
+		"EISA",
+		"PCI",
+		"PC Card (PCMCIA)",
+		"VL-VESA",
+		"Proprietary",
+		"Processor Card Slot",
+		"Proprietary Memory Card Slot",
+		"I/O Riser Card Slot",
+		"NuBus",
+		"PCI – 66MHz Capable",
+		"AGP",
+		"AGP 2X",
+		"AGP 4X",
+		"PCI-X",
+		"AGP 8X",
+		"PC-98/C20",
+		"PC-98/C24",
+		"PC-98/E",
+		"PC-98/Local Bus",
+		"PC-98/Card",
+		"PCI Express",
+		"PCI Express x1",
+		"PCI Express x2",
+		"PCI Express x4",
+		"PCI Express x8",
+		"PCI Express x16",
+		"PCI Express Gen 2",
+		"PCI Express Gen 2 x1",
+		"PCI Express Gen 2 x2",
+		"PCI Express Gen 2 x4",
+		"PCI Express Gen 2 x8",
+		"PCI Express Gen 2 x16",
+		"PCI Express Gen 3",
+		"PCI Express Gen 3 x1",
+		"PCI Express Gen 3 x2",
+		"PCI Express Gen 3 x4",
+		"PCI Express Gen 3 x8",
+		"PCI Express Gen 3 x16",
+	}
+	return types[s-1]
+}
+
+type SystemSlotDataBusWidth byte
+
+const (
+	SystemSlotDataBusWidthOther SystemSlotDataBusWidth = 1 + iota
+	SystemSlotDataBusWidthUnknown
+	SystemSlotDataBusWidth8bit
+	SystemSlotDataBusWidth16bit
+	SystemSlotDataBusWidth32bit
+	SystemSlotDataBusWidth64bit
+	SystemSlotDataBusWidth128bit
+	SystemSlotDataBusWidth1xorx1
+	SystemSlotDataBusWidth2xorx2
+	SystemSlotDataBusWidth4xorx4
+	SystemSlotDataBusWidth8xorx8
+	SystemSlotDataBusWidth12xorx12
+	SystemSlotDataBusWidth16xorx16
+	SystemSlotDataBusWidth32xorx32
+)
+
+func (s SystemSlotDataBusWidth) String() string {
+	widths := [...]string{
+		"Other",
+		"Unknown",
+		"8 bit",
+		"16 bit",
+		"32 bit",
+		"64 bit",
+		"128 bit",
+		"1x or x1",
+		"2x or x2",
+		"4x or x4",
+		"8x or x8",
+		"12x or x12",
+		"16x or x16",
+		"32x or x32",
+	}
+	return widths[s-1]
+}
+
+type SystemSlotUsage byte
+
+const (
+	SystemSlotUsageOther SystemSlotUsage = 1 + iota
+	SystemSlotUsageUnknown
+	SystemSlotUsageAvailable
+	SystemSlotUsageInuse
+)
+
+func (s SystemSlotUsage) String() string {
+	usages := [...]string{
+		"Other",
+		"Unknown",
+		"Available",
+		"In use",
+	}
+	return usages[s-1]
+}
+
+type SystemSlotLength byte
+
+const (
+	SystemSlotLengthOther SystemSlotLength = 1 + iota
+	SystemSlotLengthUnknown
+	SystemSlotLengthShortLength
+	SystemSlotLengthLongLength
+)
+
+func (s SystemSlotLength) String() string {
+	lengths := [...]string{
+		"Other",
+		"Unknown",
+		"Short Length",
+		"Long Length",
+	}
+	return lengths[s-1]
+}
+
+type SystemSlotID uint16
+
+type SystemSlotCharacteristics1 byte
+
+const (
+	SystemSlotCharacteristicsunknown SystemSlotCharacteristics1 = 1 << iota
+	SystemSlotCharacteristicsProvides5_0volts
+	SystemSlotCharacteristicsProvides3_3volts
+	SystemSlotCharacteristicsSlotsopeningissharedwithanotherslot
+	SystemSlotCharacteristicsPCCardslotsupportsPCCard_16
+	SystemSlotCharacteristicsPCCardslotsupportsCardBus
+	SystemSlotCharacteristicsPCCardslotsupportsZoomVideo
+	SystemSlotCharacteristicsPCCardslotsupportsModemRingResume
+
+)
+
+func (s SystemSlotCharacteristics1) String() string {
+	chars := [...]string{
+		"Characteristics unknown.",
+		"Provides 5.0 volts.",
+		"Provides 3.3 volts.",
+		"Slot’s opening is shared with another slot (for example, PCI/EISA shared slot).",
+		"PC Card slot supports PC Card-16.",
+		"PC Card slot supports CardBus.",
+		"PC Card slot supports Zoom Video.",
+		"PC Card slot supports Modem Ring Resume.",
+	}
+	return chars[s>>1]
+}
+
+type SystemSlotCharacteristics2 byte
+
+const (
+	SystemSlotCharacteristics2PCIslotsupportsPowerManagementEventsignal SystemSlotCharacteristics2 = 1 << iota
+	SystemSlotCharacteristics2Slotsupportshot_plugdevices
+	SystemSlotCharacteristics2PCIslotsupportsSMBussignal
+	SystemSlotCharacteristics2Reserved
+)
+
+func (s SystemSlotCharacteristics2) String() string {
+	chars := [...]string{
+		"PCI slot supports Power Management Event (PME#) signal.",
+		"Slot supports hot-plug devices.",
+		"PCI slot supports SMBus signal.",
+		"Reserved",
+	}
+	return chars[s>>1]
+}
+
+type SystemSlotSegmengGroupNumber uint16
+
+type SystemSlotNumber byte
+
+type SystemSlot struct {
+	InfoCommon
+	Designation string
+	Type SystemSlotType
+	DataBusWidth SystemSlotDataBusWidth
+	CurrentUsage SystemSlotUsage
+	Length SystemSlotLength
+	ID SystemSlotID
+	Characteristics1 SystemSlotCharacteristics1
+	Characteristics2 SystemSlotCharacteristics2
+	SegmentGroupNumber SystemSlotSegmengGroupNumber
+	BusNumber SystemSlotNumber
+	DeviceFunctionNumber SystemSlotNumber
+}
+
+func (h DMIHeader) SystemSlot() SystemSlot {
+	var ss SystemSlot
+	data := h.data
+	ss.Designation = h.FieldString(int(data[0x04]))
+	ss.Type = SystemSlotType(data[0x05])
+	ss.DataBusWidth = SystemSlotDataBusWidth(data[0x06])
+	ss.CurrentUsage = SystemSlotUsage(data[0x07])
+	ss.Length = SystemSlotLength(data[0x08])
+	ss.ID = SystemSlotID(U16(data[0x09:0x0A]))
+	ss.Characteristics1 = SystemSlotCharacteristics1(data[0x0B])
+	ss.Characteristics2 = SystemSlotCharacteristics2(data[0x0C])
+	ss.SegmentGroupNumber = SystemSlotSegmengGroupNumber(U16(data[0x0D:0x0F]))
+	ss.BusNumber = SystemSlotNumber(data[0x0F])
+	ss.DeviceFunctionNumber = SystemSlotNumber(data[0x10])
+	return ss
+}
+
+func (s SystemSlot) String() string {
+	return fmt.Sprintf("System Slot: %s\n\t\tSlot Designation: %s\n\t\tSlot Type: %s\n\t\tSlot Data Bus Width: %s\n\t\tCurrent Usage: %s\n\t\tSlot Length: %s\n\t\tSlot ID: %s\n\t\tSlot Characteristics1: %s\n\t\tSlot Characteristics2: %s\n\t\tSegment Group Number: %s\n\t\tBus Number: %s\n\t\tDevice/Function Number: %s\n", s.Designation, s.Type, s.DataBusWidth, s.CurrentUsage, s.Length, s.ID, s.Characteristics1, s.Characteristics2, s.SegmentGroupNumber, s.BusNumber, s.DeviceFunctionNumber)
+}
+
 func U16(data []byte) uint16 {
 	var u16 uint16
 	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
@@ -1842,6 +2103,9 @@ func (h DMIHeader) Decode() {
 	case 8:
 		pi := h.PortInformation()
 		fmt.Println(pi)
+	case 9:
+		ss := h.SystemSlot()
+		fmt.Println(ss)
 	default:
 		fmt.Println("Unknown")
 	}
