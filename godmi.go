@@ -2018,6 +2018,26 @@ func (s SystemSlot) String() string {
 	return fmt.Sprintf("System Slot: %s\n\t\tSlot Designation: %s\n\t\tSlot Type: %s\n\t\tSlot Data Bus Width: %s\n\t\tCurrent Usage: %s\n\t\tSlot Length: %s\n\t\tSlot ID: %s\n\t\tSlot Characteristics1: %s\n\t\tSlot Characteristics2: %s\n\t\tSegment Group Number: %s\n\t\tBus Number: %s\n\t\tDevice/Function Number: %s\n", s.Designation, s.Type, s.DataBusWidth, s.CurrentUsage, s.Length, s.ID, s.Characteristics1, s.Characteristics2, s.SegmentGroupNumber, s.BusNumber, s.DeviceFunctionNumber)
 }
 
+type SystemConfigurationOptions struct {
+	InfoCommon
+	Count   byte
+	strings string
+}
+
+func (h DMIHeader) SystemConfigurationOptions() SystemConfigurationOptions {
+	var sc SystemConfigurationOptions
+	data := h.data
+	sc.Count = data[0x04]
+	for i := byte(1); i <= sc.Count; i++ {
+		sc.strings += fmt.Sprintf("string %d: %s\n\t\t", i, h.FieldString(int(data[0x04+i])))
+	}
+	return sc
+}
+
+func (s SystemConfigurationOptions) String() string {
+	return fmt.Sprintf("System Configuration Option\n\t\t%s", s.strings)
+}
+
 func U16(data []byte) uint16 {
 	var u16 uint16
 	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
@@ -2105,6 +2125,9 @@ func (h DMIHeader) Decode() {
 	case 9:
 		ss := h.SystemSlot()
 		fmt.Println(ss)
+	case 12:
+		sc := h.SystemConfigurationOptions()
+		fmt.Println(sc)
 	default:
 		fmt.Println("Unknown")
 	}
