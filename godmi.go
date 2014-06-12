@@ -2126,6 +2126,9 @@ func (h DMIHeader) Decode() {
 	case 9:
 		ss := h.SystemSlot()
 		fmt.Println(ss)
+	case 11:
+		os := h.OEMStrings()
+		fmt.Println(os)
 	default:
 		fmt.Println("Unknown")
 	}
