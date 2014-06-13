@@ -2258,7 +2258,7 @@ func (o OEMStrings) String() string {
 }
 
 type GroupAssociationsItem struct {
-	Type byte
+	Type    byte
 	Handdle uint16
 }
 
@@ -2266,14 +2266,14 @@ type GroupAssociationsItem struct {
 type GroupAssociations struct {
 	InfoCommon
 	GroupName string
-	Item []GroupAssociationItem
+	Item      []GroupAssociationItem
 }
 
 func (h DMIHeader) GroupAssociations() GroupAssociations {
 	var ga GroupAssociations
 	data := h.data
 	ga.GroupName = h.FieldString(int(data[0x04]))
-	//cnt := 
+	//cnt :=
 	return ga
 }
 
