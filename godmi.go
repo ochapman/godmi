@@ -2147,6 +2147,75 @@ func (b BIOSLanguageInformation) String() string {
 	return fmt.Sprintf("BIOS Language Information:\n\t\tInstallable Languages %s\n\t\tFlags: %s\n\t\tCurrent Language: %s\n", b.InstallableLanguage, b.Flags, b.CurrentLanguage)
 }
 
+type OnBoardDeviceTypeOfDevice byte
+
+const (
+	OnBoardDeviceOther OnBoardDeviceTypeOfDevice = 1 + iota
+	OnBoardDeviceUnknown
+	OnBoardDeviceVideo
+	OnBoardDeviceSCSIController
+	OnBoardDeviceEthernet
+	OnBoardDeviceTokenRing
+	OnBoardDeviceSound
+	OnBoardDevicePATAController
+	OnBoardDeviceSATAController
+	OnBoardDeviceSASController
+)
+
+func (t OnBoardDeviceTypeOfDevice) String() string {
+	types := [...]string{
+		"Other",
+		"Unknown",
+		"Video",
+		"SCSI Controller",
+		"Ethernet",
+		"Token Ring",
+		"Sound",
+		"PATA Controller",
+		"SATA Controller",
+		"SAS Controller",
+	}
+	return types[t-1]
+}
+
+type OnBoardDeviceType struct {
+	status       bool
+	typeOfDevice OnBoardDeviceTypeOfDevice
+}
+
+type OnBoardDeviceInformation struct {
+	InfoCommon
+	Type        []OnBoardDeviceType
+	Description []string
+}
+
+func (h DMIHeader) OnBoardDeviceInformation() OnBoardDeviceInformation {
+	var d OnBoardDeviceInformation
+	data := h.data
+	n := (data[0x01] - 4) / 2
+	for i := byte(1); i <= n; i++ {
+		var t OnBoardDeviceType
+		index := 4 + 2*(i-1)
+		sindex := 5 + 2*(i-1)
+		t.status = data[index]&0x80 != 0
+		t.typeOfDevice = OnBoardDeviceTypeOfDevice(data[index] & 0x7F)
+		d.Type = append(d.Type, t)
+		desc := h.FieldString(int(data[sindex]))
+		d.Description = append(d.Description, desc)
+	}
+	return d
+}
+
+func (d OnBoardDeviceInformation) String() string {
+	var info string
+	title := "On Board Devices Information"
+	for i, v := range d.Type {
+		s := fmt.Sprintf("Device %d: Enabled: %v: Description: %s", i, v.status, v.typeOfDevice, d.Description[i])
+		info += "\n\t\t" + s
+	}
+	return title + "\n\t\t" + info
+}
+
 func U16(data []byte) uint16 {
 	var u16 uint16
 	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
@@ -2238,7 +2307,10 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeSystemSlots:
 		ss := h.SystemSlot()
 		fmt.Println(ss)
-	case 14:
+	case SMBIOSStructureTypeOnboardDevice:
+		di := h.OnBoardDeviceInformation()
+		fmt.Println(di)
+	case SMBIOSStructureTypeBIOSLanguage:
 		bl := h.BIOSLanguageInformation()
 		fmt.Println(bl)
 	default:
