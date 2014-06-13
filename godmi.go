@@ -2113,7 +2113,6 @@ func (s SystemSlot) String() string {
 	return fmt.Sprintf("System Slot: %s\n\t\tSlot Designation: %s\n\t\tSlot Type: %s\n\t\tSlot Data Bus Width: %s\n\t\tCurrent Usage: %s\n\t\tSlot Length: %s\n\t\tSlot ID: %s\n\t\tSlot Characteristics1: %s\n\t\tSlot Characteristics2: %s\n\t\tSegment Group Number: %s\n\t\tBus Number: %s\n\t\tDevice/Function Number: %s\n", s.Designation, s.Type, s.DataBusWidth, s.CurrentUsage, s.Length, s.ID, s.Characteristics1, s.Characteristics2, s.SegmentGroupNumber, s.BusNumber, s.DeviceFunctionNumber)
 }
 
-<<<<<<< HEAD
 type BIOSLanguageInformationFlag byte
 
 const (
@@ -2267,7 +2266,7 @@ type GroupAssociationsItem struct {
 type GroupAssociations struct {
 	InfoCommon
 	GroupName string
-	Item      []GroupAssociationItem
+	Item      []GroupAssociationsItem
 }
 
 func (h DMIHeader) GroupAssociations() GroupAssociations {
