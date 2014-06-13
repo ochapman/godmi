@@ -2018,6 +2018,40 @@ func (s SystemSlot) String() string {
 	return fmt.Sprintf("System Slot: %s\n\t\tSlot Designation: %s\n\t\tSlot Type: %s\n\t\tSlot Data Bus Width: %s\n\t\tCurrent Usage: %s\n\t\tSlot Length: %s\n\t\tSlot ID: %s\n\t\tSlot Characteristics1: %s\n\t\tSlot Characteristics2: %s\n\t\tSegment Group Number: %s\n\t\tBus Number: %s\n\t\tDevice/Function Number: %s\n", s.Designation, s.Type, s.DataBusWidth, s.CurrentUsage, s.Length, s.ID, s.Characteristics1, s.Characteristics2, s.SegmentGroupNumber, s.BusNumber, s.DeviceFunctionNumber)
 }
 
+type BIOSLanguageInformationFlag byte
+
+const (
+	BIOSLanguageInformationFlagLongFormat BIOSLanguageInformationFlag = iota
+	BIOSLanguageInformationFlagAbbreviatedFormat
+)
+
+func NewBIOSLanguageInformationFlag(f byte) BIOSLanguageInformationFlag {
+	return BIOSLanguageInformationFlag(f & 0xFE)
+}
+
+type BIOSLanguageInformation struct {
+	InfoCommon
+	InstallableLanguage []string
+	Flags               BIOSLanguageInformationFlag
+	CurrentLanguage     string
+}
+
+func (h DMIHeader) BIOSLanguageInformation() BIOSLanguageInformation {
+	var bl BIOSLanguageInformation
+	data := h.data
+	cnt := data[0x04]
+	for i := byte(1); i <= cnt; i++ {
+		bl.InstallableLanguage = append(bl.InstallableLanguage, h.FieldString(int(data[i])))
+	}
+	bl.Flags = NewBIOSLanguageInformationFlag(data[0x05])
+	bl.CurrentLanguage = bl.InstallableLanguage[data[0x15]]
+	return bl
+}
+
+func (b BIOSLanguageInformation) String() string {
+	return fmt.Sprintf("BIOS Language Information:\n\t\tInstallable Languages %s\n\t\tFlags: %s\n\t\tCurrent Language: %s\n", b.InstallableLanguage, b.Flags, b.CurrentLanguage)
+}
+
 func U16(data []byte) uint16 {
 	var u16 uint16
 	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
@@ -2105,6 +2139,9 @@ func (h DMIHeader) Decode() {
 	case 9:
 		ss := h.SystemSlot()
 		fmt.Println(ss)
+	case 14:
+		bl := h.BIOSLanguageInformation()
+		fmt.Println(bl)
 	default:
 		fmt.Println("Unknown")
 	}
