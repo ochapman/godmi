@@ -2216,6 +2216,26 @@ func (d OnBoardDeviceInformation) String() string {
 	return title + "\n\t\t" + info
 }
 
+type SystemConfigurationOptions struct {
+	InfoCommon
+	Count   byte
+	strings string
+}
+
+func (h DMIHeader) SystemConfigurationOptions() SystemConfigurationOptions {
+	var sc SystemConfigurationOptions
+	data := h.data
+	sc.Count = data[0x04]
+	for i := byte(1); i <= sc.Count; i++ {
+		sc.strings += fmt.Sprintf("string %d: %s\n\t\t", i, h.FieldString(int(data[0x04+i])))
+	}
+	return sc
+}
+
+func (s SystemConfigurationOptions) String() string {
+	return fmt.Sprintf("System Configuration Option\n\t\t%s", s.strings)
+}
+
 func U16(data []byte) uint16 {
 	var u16 uint16
 	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
@@ -2313,6 +2333,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeBIOSLanguage:
 		bl := h.BIOSLanguageInformation()
 		fmt.Println(bl)
+	case SMBIOSStructureTypeSystemConfigurationOptions:
+		sc := h.SystemConfigurationOptions()
+		fmt.Println(sc)
 	default:
 		fmt.Println("Unknown")
 	}
