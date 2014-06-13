@@ -136,7 +136,7 @@ type SMBIOS_EPS struct {
 
 type DMIHeader struct {
 	InfoCommon
-	data   []byte
+	data []byte
 }
 
 type SMBIOS_Structure struct {
@@ -2127,8 +2127,8 @@ func U64(data []byte) uint64 {
 
 func NewDMIHeader(data []byte) DMIHeader {
 	hd := DMIHeader{
-		InfoCommon:InfoCommon{
-			Type: SMBIOSStructureType(data[0x00]),
+		InfoCommon: InfoCommon{
+			Type:   SMBIOSStructureType(data[0x00]),
 			Length: data[1],
 			Handle: SMBIOSStructureHandle(U16(data[0x02:0x04])),
 		},
