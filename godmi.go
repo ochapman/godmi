@@ -12,12 +12,109 @@ import (
 	"syscall"
 )
 
-type Type byte
-type Handle uint16
+type SMBIOSStructureType byte
+
+const (
+	SMBIOSStructureTypeBIOS SMBIOSStructureType = iota
+	SMBIOSStructureTypeSystem
+	SMBIOSStructureTypeBaseBoard
+	SMBIOSStructureTypeChassis
+	SMBIOSStructureTypeProcessor
+	SMBIOSStructureTypeMemoryController
+	SMBIOSStructureTypeMemoryModule
+	SMBIOSStructureTypeCache
+	SMBIOSStructureTypePortConnector
+	SMBIOSStructureTypeSystemSlots
+	SMBIOSStructureTypeOnBoardDevices
+	SMBIOSStructureTypeOEMStrings
+	SMBIOSStructureTypeSystemConfigurationOptions
+	SMBIOSStructureTypeBIOSLanguage
+	SMBIOSStructureTypeGroupAssociations
+	SMBIOSStructureTypeSystemEventLog
+	SMBIOSStructureTypePhysicalMemoryArray
+	SMBIOSStructureTypeMemoryDevice
+	SMBIOSStructureType32_bitMemoryError
+	SMBIOSStructureTypeMemoryArrayMappedAddress
+	SMBIOSStructureTypeMemoryDeviceMappedAddress
+	SMBIOSStructureTypeBuilt_inPointingDevice
+	SMBIOSStructureTypePortableBattery
+	SMBIOSStructureTypeSystemReset
+	SMBIOSStructureTypeHardwareSecurity
+	SMBIOSStructureTypeSystemPowerControls
+	SMBIOSStructureTypeVoltageProbe
+	SMBIOSStructureTypeCoolingDevice
+	SMBIOSStructureTypeTemperatureProbe
+	SMBIOSStructureTypeElectricalCurrentProbe
+	SMBIOSStructureTypeOut_of_bandRemoteAccess
+	SMBIOSStructureTypeBootIntegrityServices
+	SMBIOSStructureTypeSystemBoot
+	SMBIOSStructureType64_bitMemoryError
+	SMBIOSStructureTypeManagementDevice
+	SMBIOSStructureTypeManagementDeviceComponent
+	SMBIOSStructureTypeManagementDeviceThresholdData
+	SMBIOSStructureTypeMemoryChannel
+	SMBIOSStructureTypeIPMIDevice
+	SMBIOSStructureTypePowerSupply
+	SMBIOSStructureTypeAdditionalInformation
+	SMBIOSStructureTypeOnboardDevice
+	SMBIOSStructureTypeManagementControllerHostInterface /*42*/
+)
+
+func (b SMBIOSStructureType) String() string {
+	types := [...]string{
+		"BIOS", /* 0 */
+		"System",
+		"Base Board",
+		"Chassis",
+		"Processor",
+		"Memory Controller",
+		"Memory Module",
+		"Cache",
+		"Port Connector",
+		"System Slots",
+		"On Board Devices",
+		"OEM Strings",
+		"System Configuration Options",
+		"BIOS Language",
+		"Group Associations",
+		"System Event Log",
+		"Physical Memory Array",
+		"Memory Device",
+		"32-bit Memory Error",
+		"Memory Array Mapped Address",
+		"Memory Device Mapped Address",
+		"Built-in Pointing Device",
+		"Portable Battery",
+		"System Reset",
+		"Hardware Security",
+		"System Power Controls",
+		"Voltage Probe",
+		"Cooling Device",
+		"Temperature Probe",
+		"Electrical Current Probe",
+		"Out-of-band Remote Access",
+		"Boot Integrity Services",
+		"System Boot",
+		"64-bit Memory Error",
+		"Management Device",
+		"Management Device Component",
+		"Management Device Threshold Data",
+		"Memory Channel",
+		"IPMI Device",
+		"Power Supply",
+		"Additional Information",
+		"Onboard Device",
+		"Management Controller Host Interface", /* 42 */
+	}
+	return types[b]
+}
+
+type SMBIOSStructureHandle uint16
+
 type InfoCommon struct {
-	Type   Type
+	Type   SMBIOSStructureType
 	Length byte
-	Handle Handle
+	Handle SMBIOSStructureHandle
 }
 
 type SMBIOS_EPS struct {
@@ -38,9 +135,7 @@ type SMBIOS_EPS struct {
 }
 
 type DMIHeader struct {
-	Type   byte
-	Length byte
-	Handle uint16
+	InfoCommon
 	data   []byte
 }
 
@@ -2031,9 +2126,13 @@ func U64(data []byte) uint64 {
 }
 
 func NewDMIHeader(data []byte) DMIHeader {
-	var h uint16
-	binary.Read(bytes.NewBuffer(data[2:4]), binary.LittleEndian, &h)
-	hd := DMIHeader{Type: data[0], Length: data[1], Handle: h, data: data}
+	hd := DMIHeader{
+		InfoCommon:InfoCommon{
+			Type: SMBIOSStructureType(data[0x00]),
+			Length: data[1],
+			Handle: SMBIOSStructureHandle(U16(data[0x02:0x04])),
+		},
+		data: data}
 	return hd
 }
 
@@ -2081,28 +2180,28 @@ func (h DMIHeader) Next() DMIHeader {
 
 func (h DMIHeader) Decode() {
 	switch h.Type {
-	case 0:
+	case SMBIOSStructureTypeBIOS:
 		bi := h.GetBIOSInformation()
 		fmt.Println(bi)
-	case 1:
+	case SMBIOSStructureTypeSystem:
 		si := h.GetSystemInformation()
 		fmt.Println(si)
-	case 2:
+	case SMBIOSStructureTypeBaseBoard:
 		bi := h.GetBaseboardInformation()
 		fmt.Println(bi)
-	case 3:
+	case SMBIOSStructureTypeChassis:
 		ci := h.ChassisInformation()
 		fmt.Println(ci)
-	case 4:
+	case SMBIOSStructureTypeProcessor:
 		pi := h.ProcessorInformation()
 		fmt.Println(pi)
-	case 7:
+	case SMBIOSStructureTypeCache:
 		ci := h.CacheInformation()
 		fmt.Println(ci)
-	case 8:
+	case SMBIOSStructureTypePortConnector:
 		pi := h.PortInformation()
 		fmt.Println(pi)
-	case 9:
+	case SMBIOSStructureTypeSystemSlots:
 		ss := h.SystemSlot()
 		fmt.Println(ss)
 	default:
