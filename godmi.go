@@ -2113,6 +2113,26 @@ func (s SystemSlot) String() string {
 	return fmt.Sprintf("System Slot: %s\n\t\tSlot Designation: %s\n\t\tSlot Type: %s\n\t\tSlot Data Bus Width: %s\n\t\tCurrent Usage: %s\n\t\tSlot Length: %s\n\t\tSlot ID: %s\n\t\tSlot Characteristics1: %s\n\t\tSlot Characteristics2: %s\n\t\tSegment Group Number: %s\n\t\tBus Number: %s\n\t\tDevice/Function Number: %s\n", s.Designation, s.Type, s.DataBusWidth, s.CurrentUsage, s.Length, s.ID, s.Characteristics1, s.Characteristics2, s.SegmentGroupNumber, s.BusNumber, s.DeviceFunctionNumber)
 }
 
+type GroupAssociationsItem struct {
+	Type byte
+	Handdle uint16
+}
+
+// Type 14
+type GroupAssociations struct {
+	InfoCommon
+	GroupName string
+	Item []GroupAssociationItem
+}
+
+func (h DMIHeader) GroupAssociations() GroupAssociations {
+	var ga GroupAssociations
+	data := h.data
+	ga.GroupName = h.FieldString(int(data[0x04]))
+	cnt := 
+
+}
+
 func U16(data []byte) uint16 {
 	var u16 uint16
 	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
