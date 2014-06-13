@@ -2222,6 +2222,13 @@ type SystemConfigurationOptions struct {
 	strings string
 }
 
+//Type 11
+type OEMStrings struct {
+	InfoCommon
+	Count   byte
+	strings string
+}
+
 func (h DMIHeader) SystemConfigurationOptions() SystemConfigurationOptions {
 	var sc SystemConfigurationOptions
 	data := h.data
@@ -2234,6 +2241,20 @@ func (h DMIHeader) SystemConfigurationOptions() SystemConfigurationOptions {
 
 func (s SystemConfigurationOptions) String() string {
 	return fmt.Sprintf("System Configuration Option\n\t\t%s", s.strings)
+}
+
+func (h DMIHeader) OEMStrings() OEMStrings {
+	var o OEMStrings
+	data := h.data
+	o.Count = data[0x04]
+	for i := byte(0); i < o.Count; i++ {
+		o.strings += fmt.Sprintf("strings: %d %s\n\t\t", i, h.FieldString(int(data[i])))
+	}
+	return o
+}
+
+func (o OEMStrings) String() string {
+	return fmt.Sprintf("OEM strings: %s", o.strings)
 }
 
 func U16(data []byte) uint16 {
@@ -2336,6 +2357,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeSystemConfigurationOptions:
 		sc := h.SystemConfigurationOptions()
 		fmt.Println(sc)
+	case SMBIOSStructureTypeOEMStrings:
+		os := h.OEMStrings()
+		fmt.Println(os)
 	default:
 		fmt.Println("Unknown")
 	}
