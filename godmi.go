@@ -2257,6 +2257,26 @@ func (o OEMStrings) String() string {
 	return fmt.Sprintf("OEM strings: %s", o.strings)
 }
 
+type GroupAssociationsItem struct {
+	Type byte
+	Handdle uint16
+}
+
+// Type 14
+type GroupAssociations struct {
+	InfoCommon
+	GroupName string
+	Item []GroupAssociationItem
+}
+
+func (h DMIHeader) GroupAssociations() GroupAssociations {
+	var ga GroupAssociations
+	data := h.data
+	ga.GroupName = h.FieldString(int(data[0x04]))
+	//cnt := 
+	return ga
+}
+
 func U16(data []byte) uint16 {
 	var u16 uint16
 	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
