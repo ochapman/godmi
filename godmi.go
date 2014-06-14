@@ -2420,6 +2420,248 @@ func (p PhysicalMemoryArray) String() string {
 		p.ExtendedMaximumCapacity)
 }
 
+type MemoryDeviceFormFactor byte
+
+const (
+	MemoryDeviceFormFactorOther MemoryDeviceFormFactor = 1 + iota
+	MemoryDeviceFormFactorUnknown
+	MemoryDeviceFormFactorSIMM
+	MemoryDeviceFormFactorSIP
+	MemoryDeviceFormFactorChip
+	MemoryDeviceFormFactorDIP
+	MemoryDeviceFormFactorZIP
+	MemoryDeviceFormFactorProprietaryCard
+	MemoryDeviceFormFactorDIMM
+	MemoryDeviceFormFactorTSOP
+	MemoryDeviceFormFactorRowofchips
+	MemoryDeviceFormFactorRIMM
+	MemoryDeviceFormFactorSODIMM
+	MemoryDeviceFormFactorSRIMM
+	MemoryDeviceFormFactorFB_DIMM
+)
+
+func (m MemoryDeviceFormFactor) String() string {
+	factors := [...]string{
+		"Other",
+		"Unknown",
+		"SIMM",
+		"SIP",
+		"Chip",
+		"DIP",
+		"ZIP",
+		"Proprietary Card",
+		"DIMM",
+		"TSOP",
+		"Row of chips",
+		"RIMM",
+		"SODIMM",
+		"SRIMM",
+		"FB-DIMM",
+	}
+	return factors[m-1]
+}
+
+type MemoryDeviceType byte
+
+const (
+	MemoryDeviceTypeOther MemoryDeviceType = 1 + iota
+	MemoryDeviceTypeUnknown
+	MemoryDeviceTypeDRAM
+	MemoryDeviceTypeEDRAM
+	MemoryDeviceTypeVRAM
+	MemoryDeviceTypeSRAM
+	MemoryDeviceTypeRAM
+	MemoryDeviceTypeROM
+	MemoryDeviceTypeFLASH
+	MemoryDeviceTypeEEPROM
+	MemoryDeviceTypeFEPROM
+	MemoryDeviceTypeEPROM
+	MemoryDeviceTypeCDRAM
+	MemoryDeviceType3DRAM
+	MemoryDeviceTypeSDRAM
+	MemoryDeviceTypeSGRAM
+	MemoryDeviceTypeRDRAM
+	MemoryDeviceTypeDDR
+	MemoryDeviceTypeDDR2
+	MemoryDeviceTypeDDR2FB_DIMM
+	MemoryDeviceTypeReserved
+	MemoryDeviceTypeDDR3
+	MemoryDeviceTypeFBD2
+)
+
+func (m MemoryDeviceType) String() string {
+	types := [...]string{
+		"Other",
+		"Unknown",
+		"DRAM",
+		"EDRAM",
+		"VRAM",
+		"SRAM",
+		"RAM",
+		"ROM",
+		"FLASH",
+		"EEPROM",
+		"FEPROM",
+		"EPROM",
+		"CDRAM",
+		"3DRAM",
+		"SDRAM",
+		"SGRAM",
+		"RDRAM",
+		"DDR",
+		"DDR2",
+		"DDR2 FB-DIMM",
+		"Reserved",
+		"DDR3",
+		"FBD2",
+	}
+	return types[m-1]
+}
+
+type MemoryDeviceTypeDetail byte
+
+const (
+	MemoryDeviceTypeDetailReserved MemoryDeviceTypeDetail = 1 + iota
+	MemoryDeviceTypeDetailOther
+	MemoryDeviceTypeDetailUnknown
+	MemoryDeviceTypeDetailFast_paged
+	MemoryDeviceTypeDetailStaticcolumn
+	MemoryDeviceTypeDetailPseudo_static
+	MemoryDeviceTypeDetailRAMBUS
+	MemoryDeviceTypeDetailSynchronous
+	MemoryDeviceTypeDetailCMOS
+	MemoryDeviceTypeDetailEDO
+	MemoryDeviceTypeDetailWindowDRAM
+	MemoryDeviceTypeDetailCacheDRAM
+	MemoryDeviceTypeDetailNon_volatile
+	MemoryDeviceTypeDetailRegisteredBuffered
+	MemoryDeviceTypeDetailUnbufferedUnregistered
+	MemoryDeviceTypeDetailLRDIMM
+)
+
+func (m MemoryDeviceTypeDetail) String() string {
+	details := [...]string{
+		"Reserved",
+		"Other",
+		"Unknown",
+		"Fast-paged",
+		"Static column",
+		"Pseudo-static",
+		"RAMBUS",
+		"Synchronous",
+		"CMOS",
+		"EDO",
+		"Window DRAM",
+		"Cache DRAM",
+		"Non-volatile",
+		"Registered (Buffered)",
+		"Unbuffered (Unregistered)",
+		"LRDIMM",
+	}
+	return details[m-1]
+}
+
+type MemoryDevice struct {
+	InfoCommon
+	PhysicalMemoryArrayHandle  uint16
+	ErrorInformationHandle     uint16
+	TotalWidth                 uint16
+	DataWidth                  uint16
+	Size                       uint16
+	FormFactor                 MemoryDeviceFormFactor
+	DeviceSet                  byte
+	DeviceLocator              string
+	BankLocator                string
+	Type                       MemoryDeviceType
+	TypeDetail                 MemoryDeviceTypeDetail
+	Speed                      uint16
+	Manufacturer               string
+	SerialNumber               string
+	AssetTag                   string
+	PartNumber                 string
+	Attributes                 byte
+	ExtendedSize               uint32
+	ConfiguredMemoryClockSpeed uint16
+	MinimumVoltage             uint16
+	MaximumVoltage             uint16
+	ConfiguredVoltage          uint16
+}
+
+func (h DMIHeader) MemoryDevice() MemoryDevice {
+	var md MemoryDevice
+	data := h.data
+	md.PhysicalMemoryArrayHandle = U16(data[0x04:0x06])
+	md.ErrorInformationHandle = U16(data[0x06:0x08])
+	md.TotalWidth = U16(data[0x08:0x0A])
+	md.DataWidth = U16(data[0x0A:0x0C])
+	md.Size = U16(data[0x0C:0x0e])
+	md.FormFactor = MemoryDeviceFormFactor(data[0x0E])
+	md.DeviceSet = data[0x0F]
+	md.DeviceLocator = h.FieldString(int(data[0x10]))
+	md.BankLocator = h.FieldString(int(data[0x11]))
+	md.Type = MemoryDeviceType(data[0x12])
+	md.TypeDetail = MemoryDeviceTypeDetail(U16(data[0x13:0x15]))
+	md.Speed = U16(data[0x15:0x17])
+	md.Manufacturer = h.FieldString(int(data[0x17]))
+	md.SerialNumber = h.FieldString(int(data[0x18]))
+	md.PartNumber = h.FieldString(int(data[0x1A]))
+	md.Attributes = data[0x1B]
+	md.ExtendedSize = U32(data[0x1C:0x20])
+	md.ConfiguredVoltage = U16(data[0x20:0x22])
+	md.MinimumVoltage = U16(data[0x22:0x24])
+	md.MaximumVoltage = U16(data[0x24:0x26])
+	md.ConfiguredVoltage = U16(data[0x26:0x28])
+	return md
+}
+
+func (m MemoryDevice) String() string {
+	return fmt.Sprintf("Memory Device:\n\t\t"+
+		"Physical Memory Array Handle: %d\n\t\t"+
+		"Memory Error Information Handle: %d\n\t\t"+
+		"Total Width: %d\n\t\t"+
+		"Data Width: %d\n\t\t"+
+		"Size: %d\n\t\t"+
+		"Form Factor: %s\n\t\t"+
+		"Device Set: %d\n\t\t"+
+		"Device Locator: %s\n\t\t"+
+		"Bank Locator: %s\n\t\t"+
+		"Memory Type: %s\n\t\t"+
+		"Type Detail: %s\n\t\t"+
+		"Speed: %d\n\t\t"+
+		"Manufacturer: %s\n\t\t"+
+		"Serial Number: %s\n\t\t"+
+		"Asset Tag: %s\n\t\t"+
+		"Part Number: %s\n\t\t"+
+		"Attributes: %s\n\t\t"+
+		"Extended Size: %s\n\t\t"+
+		"Configured Memory Clock Speed: %d\n\t\t"+
+		"Minimum voltage: %d\n\t\t"+
+		"Maximum voltage: %d\n\t\t"+
+		"Configured voltage: %d\n\t\t",
+		m.PhysicalMemoryArrayHandle,
+		m.ErrorInformationHandle,
+		m.TotalWidth,
+		m.DataWidth,
+		m.Size,
+		m.FormFactor,
+		m.DeviceSet,
+		m.DeviceLocator,
+		m.BankLocator,
+		m.Type,
+		m.Speed,
+		m.Manufacturer,
+		m.SerialNumber,
+		m.AssetTag,
+		m.PartNumber,
+		m.Attributes,
+		m.ExtendedSize,
+		m.ConfiguredMemoryClockSpeed,
+		m.MinimumVoltage,
+		m.MaximumVoltage,
+		m.ConfiguredVoltage,
+	)
+}
+
 func U16(data []byte) uint16 {
 	var u16 uint16
 	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
@@ -2535,6 +2777,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypePhysicalMemoryArray:
 		pm := h.PhysicalMemoryArray()
 		fmt.Println(pm)
+	case SMBIOSStructureTypeMemoryDevice:
+		md := h.MemoryDevice()
+		fmt.Println(md)
 	default:
 		fmt.Println("Unknown")
 	}
