@@ -2289,10 +2289,147 @@ func (g GroupAssociations) String() string {
 	return fmt.Sprintf("Group Associations:\n\t\tGroup Name: %s\n\t\tItem: %#v\n", g.GroupName, g.Item)
 }
 
+type PhysicalMemoryArrayLocation byte
+
+const (
+	PhysicalMemoryArrayLocationOther PhysicalMemoryArrayLocation = 1 + iota
+	PhysicalMemoryArrayLocationUnknown
+	PhysicalMemoryArrayLocationSystemboardormotherboard
+	PhysicalMemoryArrayLocationISAadd_oncard
+	PhysicalMemoryArrayLocationEISAadd_oncard
+	PhysicalMemoryArrayLocationPCIadd_oncard
+	PhysicalMemoryArrayLocationMCAadd_oncard
+	PhysicalMemoryArrayLocationPCMCIAadd_oncard
+	PhysicalMemoryArrayLocationProprietaryadd_oncard
+	PhysicalMemoryArrayLocationNuBus
+	PhysicalMemoryArrayLocationPC_98C20add_oncard
+	PhysicalMemoryArrayLocationPC_98C24add_oncard
+	PhysicalMemoryArrayLocationPC_98Eadd_oncard
+	PhysicalMemoryArrayLocationPC_98Localbusadd_oncard
+)
+
+func (p PhysicalMemoryArrayLocation) String() string {
+	locations := [...]string{
+		"Other",
+		"Unknown",
+		"System board or motherboard",
+		"ISA add-on card",
+		"EISA add-on card",
+		"PCI add-on card",
+		"MCA add-on card",
+		"PCMCIA add-on card",
+		"Proprietary add-on card",
+		"NuBus",
+		"PC-98/C20 add-on card",
+		"PC-98/C24 add-on card",
+		"PC-98/E add-on card",
+		"PC-98/Local bus add-on card",
+	}
+	return locations[p-1]
+}
+
+type PhysicalMemoryArrayUse byte
+
+const (
+	PhysicalMemoryArrayUseOther PhysicalMemoryArrayUse = 1 + iota
+	PhysicalMemoryArrayUseUnknown
+	PhysicalMemoryArrayUseSystemmemory
+	PhysicalMemoryArrayUseVideomemory
+	PhysicalMemoryArrayUseFlashmemory
+	PhysicalMemoryArrayUseNon_volatileRAM
+	PhysicalMemoryArrayUseCachememory
+)
+
+func (p PhysicalMemoryArrayUse) String() string {
+	uses := [...]string{
+		"Other",
+		"Unknown",
+		"System memory",
+		"Video memory",
+		"Flash memory",
+		"Non-volatile RAM",
+		"Cache memory",
+	}
+	return uses[p-1]
+}
+
+type PhysicalMemoryArrayErrorCorrection byte
+
+const (
+	PhysicalMemoryArrayErrorCorrectionOther PhysicalMemoryArrayErrorCorrection = 1 + iota
+	PhysicalMemoryArrayErrorCorrectionUnknown
+	PhysicalMemoryArrayErrorCorrectionNone
+	PhysicalMemoryArrayErrorCorrectionParity
+	PhysicalMemoryArrayErrorCorrectionSingle_bitECC
+	PhysicalMemoryArrayErrorCorrectionMulti_bitECC
+	PhysicalMemoryArrayErrorCorrectionCRC
+)
+
+func (p PhysicalMemoryArrayErrorCorrection) String() string {
+	types := [...]string{
+		"Other",
+		"Unknown",
+		"None",
+		"Parity",
+		"Single-bit ECC",
+		"Multi-bit ECC",
+		"CRC",
+	}
+	return types[p-1]
+}
+
+type PhysicalMemoryArray struct {
+	InfoCommon
+	Location                PhysicalMemoryArrayLocation
+	Use                     PhysicalMemoryArrayUse
+	ErrorCorrection         PhysicalMemoryArrayErrorCorrection
+	MaximumCapacity         uint32
+	ErrorInformationHandle  uint16
+	NumberOfMemoryDevices   uint16
+	ExtendedMaximumCapacity uint64
+}
+
+func (h DMIHeader) PhysicalMemoryArray() PhysicalMemoryArray {
+	var pma PhysicalMemoryArray
+	data := h.data
+	pma.Location = PhysicalMemoryArrayLocation(data[0x04])
+	pma.Use = PhysicalMemoryArrayUse(data[0x05])
+	pma.ErrorCorrection = PhysicalMemoryArrayErrorCorrection(data[0x06])
+	pma.MaximumCapacity = U32(data[0x07:0x0B])
+	pma.ErrorInformationHandle = U16(data[0x0B:0x0D])
+	pma.NumberOfMemoryDevices = U16(data[0x0D:0x0F])
+	pma.ExtendedMaximumCapacity = U64(data[0x0F:])
+	return pma
+}
+
+func (p PhysicalMemoryArray) String() string {
+	return fmt.Sprintf("Physcial Memory Array:\n\t\t"+
+		"Location: %s\n\t\t"+
+		"Use: %s\n\t\t"+
+		"Memory Error Correction: %s\n\t\t"+
+		"Maximum Capacity: %d\n\t\t"+
+		"Memory Error Information Handle: %d\n\t\t"+
+		"Number of Memory Devices: %d\n\t\t"+
+		"Extended Maximum Capacity: %d\n",
+		p.Location,
+		p.Use,
+		p.ErrorCorrection,
+		p.MaximumCapacity,
+		p.ErrorInformationHandle,
+		p.NumberOfMemoryDevices,
+		p.ExtendedMaximumCapacity)
+}
+
 func U16(data []byte) uint16 {
 	var u16 uint16
 	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
 	return u16
+}
+
+func U32(data []byte) uint32 {
+	var u32 uint32
+	binary.Read(bytes.NewBuffer(data[0:4]), binary.LittleEndian, &u32)
+	return u32
 }
 
 func U64(data []byte) uint64 {
@@ -2395,6 +2532,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeGroupAssociations:
 		ga := h.GroupAssociations()
 		fmt.Println(ga)
+	case SMBIOSStructureTypePhysicalMemoryArray:
+		pm := h.PhysicalMemoryArray()
+		fmt.Println(pm)
 	default:
 		fmt.Println("Unknown")
 	}
