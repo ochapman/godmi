@@ -2258,8 +2258,8 @@ func (o OEMStrings) String() string {
 }
 
 type GroupAssociationsItem struct {
-	Type    byte
-	Handdle uint16
+	Type   SMBIOSStructureType
+	Handle SMBIOSStructureHandle
 }
 
 // Type 14
@@ -2273,8 +2273,20 @@ func (h DMIHeader) GroupAssociations() GroupAssociations {
 	var ga GroupAssociations
 	data := h.data
 	ga.GroupName = h.FieldString(int(data[0x04]))
-	//cnt :=
+	cnt := (h.Length - 5) / 3
+	items := data[5:]
+	var i byte
+	for i = 0; i < cnt; i++ {
+		var gai GroupAssociationsItem
+		gai.Type = SMBIOSStructureType(items[i*3])
+		gai.Handle = SMBIOSStructureHandle(U16(items[i*3+1:]))
+		ga.Item = append(ga.Item, gai)
+	}
 	return ga
+}
+
+func (g GroupAssociations) String() string {
+	return fmt.Sprintf("Group Associations:\n\t\tGroup Name: %s\n\t\tItem: %#v\n", g.GroupName, g.Item)
 }
 
 func U16(data []byte) uint16 {
@@ -2380,6 +2392,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeOEMStrings:
 		os := h.OEMStrings()
 		fmt.Println(os)
+	case SMBIOSStructureTypeGroupAssociations:
+		ga := h.GroupAssociations()
+		fmt.Println(ga)
 	default:
 		fmt.Println("Unknown")
 	}
