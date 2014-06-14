@@ -2662,6 +2662,128 @@ func (m MemoryDevice) String() string {
 	)
 }
 
+type _32BitMemoryErrorInformationType byte
+
+const (
+	_32BitMemoryErrorInformationTypeOther _32BitMemoryErrorInformationType = 1 + iota
+	_32BitMemoryErrorInformationTypeUnknown
+	_32BitMemoryErrorInformationTypeOK
+	_32BitMemoryErrorInformationTypeBadread
+	_32BitMemoryErrorInformationTypeParityerror
+	_32BitMemoryErrorInformationTypeSingle_biterror
+	_32BitMemoryErrorInformationTypeDouble_biterror
+	_32BitMemoryErrorInformationTypeMulti_biterror
+	_32BitMemoryErrorInformationTypeNibbleerror
+	_32BitMemoryErrorInformationTypeChecksumerror
+	_32BitMemoryErrorInformationTypeCRCerror
+	_32BitMemoryErrorInformationTypeCorrectedsingle_biterror
+	_32BitMemoryErrorInformationTypeCorrectederror
+	_32BitMemoryErrorInformationTypeUncorrectableerror
+)
+
+func (m _32BitMemoryErrorInformationType) String() string {
+	types := [...]string{
+		"Other",
+		"Unknown",
+		"OK",
+		"Bad read",
+		"Parity error",
+		"Single-bit error",
+		"Double-bit error",
+		"Multi-bit error",
+		"Nibble error",
+		"Checksum error",
+		"CRC error",
+		"Corrected single-bit error",
+		"Corrected error",
+		"Uncorrectable error",
+	}
+	return types[m-1]
+}
+
+type _32BitMemoryErrorInformationGranularity byte
+
+const (
+	_32BitMemoryErrorInformationGranularityOther _32BitMemoryErrorInformationGranularity = 1 + iota
+	_32BitMemoryErrorInformationGranularityUnknown
+	_32BitMemoryErrorInformationGranularityDevicelevel
+	_32BitMemoryErrorInformationGranularityMemorypartitionlevel
+)
+
+func (m _32BitMemoryErrorInformationGranularity) String() string {
+	grans := [...]string{
+		"Other",
+		"Unknown",
+		"Device level",
+		"Memory partition level",
+	}
+	return grans[m-1]
+}
+
+type _32BitMemoryErrorInformationOperation byte
+
+const (
+	_32BitMemoryErrorInformationOperationOther _32BitMemoryErrorInformationOperation = 1 + iota
+	_32BitMemoryErrorInformationOperationUnknown
+	_32BitMemoryErrorInformationOperationRead
+	_32BitMemoryErrorInformationOperationWrite
+	_32BitMemoryErrorInformationOperationPartialwrite
+)
+
+func (m _32BitMemoryErrorInformationOperation) String() string {
+	operations := [...]string{
+		"Other",
+		"Unknown",
+		"Read",
+		"Write",
+		"Partial write",
+	}
+	return operations[m-1]
+}
+
+type _32BitMemoryErrorInformation struct {
+	InfoCommon
+	Type _32BitMemoryErrorInformationType
+	Granularity _32BitMemoryErrorInformationGranularity
+	Operation _32BitMemoryErrorInformationOperation
+	VendorSyndrome uint32
+	ArrayErrorAddress uint32
+	ErrorAddress uint32
+	Resolution uint32
+}
+
+func (h DMIHeader) _32BitMemoryErrorInformation() _32BitMemoryErrorInformation {
+	var mei _32BitMemoryErrorInformation
+	data := h.data
+	mei.Type = _32BitMemoryErrorInformationType(data[0x04])
+	mei.Granularity = _32BitMemoryErrorInformationGranularity(data[0x05])
+	mei.Operation = _32BitMemoryErrorInformationOperation(data[0x06])
+	mei.VendorSyndrome = U32(data[0x07:0x0B])
+	mei.ArrayErrorAddress = U32(data[0x0B:0x0F])
+	mei.ErrorAddress = U32(data[0x0F:0x13])
+	mei.Resolution = U32(data[0x13:0x22])
+	return mei
+}
+
+func (m _32BitMemoryErrorInformation) String() string {
+	return fmt.Sprintf("32 Bit Memory Error Information:\n\t\t"+
+		"Error Type: %s\n\t\t"+
+		"Error Granularity: %s\n\t\t"+
+		"Error Operation: %s\n\t\t"+
+		"Vendor Syndrome: %d\n\t\t"+
+		"Memory Array Error Address: %d\n\t\t"+
+		"Device Error Address: %d\n\t\t"+
+		"Error Resoluton: %d\n\t\t",
+		m.Type,
+		m.Granularity,
+		m.Operation,
+		m.VendorSyndrome,
+		m.ArrayErrorAddress,
+		m.ErrorAddress,
+		m.Resolution,
+	)
+}
+
 func U16(data []byte) uint16 {
 	var u16 uint16
 	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
@@ -2780,6 +2902,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeMemoryDevice:
 		md := h.MemoryDevice()
 		fmt.Println(md)
+	case SMBIOSStructureType32_bitMemoryError:
+		me := h._32BitMemoryErrorInformation()
+		fmt.Println(me)
 	default:
 		fmt.Println("Unknown")
 	}
