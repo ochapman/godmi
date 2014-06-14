@@ -2743,13 +2743,13 @@ func (m _32BitMemoryErrorInformationOperation) String() string {
 
 type _32BitMemoryErrorInformation struct {
 	InfoCommon
-	Type _32BitMemoryErrorInformationType
-	Granularity _32BitMemoryErrorInformationGranularity
-	Operation _32BitMemoryErrorInformationOperation
-	VendorSyndrome uint32
+	Type              _32BitMemoryErrorInformationType
+	Granularity       _32BitMemoryErrorInformationGranularity
+	Operation         _32BitMemoryErrorInformationOperation
+	VendorSyndrome    uint32
 	ArrayErrorAddress uint32
-	ErrorAddress uint32
-	Resolution uint32
+	ErrorAddress      uint32
+	Resolution        uint32
 }
 
 func (h DMIHeader) _32BitMemoryErrorInformation() _32BitMemoryErrorInformation {
