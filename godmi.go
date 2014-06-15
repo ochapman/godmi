@@ -2873,6 +2873,108 @@ func (b BuiltinPointingDevice) String() string {
 	)
 }
 
+type PortableBatteryDeviceChemistry byte
+
+const (
+	PortableBatteryDeviceChemistryOther PortableBatteryDeviceChemistry = 1 + iota
+	PortableBatteryDeviceChemistryUnknown
+	PortableBatteryDeviceChemistryLeadAcid
+	PortableBatteryDeviceChemistryNickelCadmium
+	PortableBatteryDeviceChemistryNickelmetalhydride
+	PortableBatteryDeviceChemistryLithium_ion
+	PortableBatteryDeviceChemistryZincair
+	PortableBatteryDeviceChemistryLithiumPolymer
+)
+
+func (p PortableBatteryDeviceChemistry) String() string {
+	chems := [...]string{
+		"Other",
+		"Unknown",
+		"Lead Acid",
+		"Nickel Cadmium",
+		"Nickel metal hydride",
+		"Lithium-ion",
+		"Zinc air",
+		"Lithium Polymer",
+	}
+	return chems[p-1]
+}
+
+type PortableBattery struct {
+	InfoCommon
+	Location                  string
+	Manufacturer              string
+	ManufacturerDate          string
+	SerialNumber              string
+	DeviceName                string
+	DeviceChemistry           PortableBatteryDeviceChemistry
+	DesignCapacity            uint16
+	DesignVoltage             uint16
+	SBDSVersionNumber         string
+	MaximumErrorInBatteryData byte
+	SBDSSerialNumber          uint16
+	SBDSManufactureDate       uint16
+	SBDSDeviceChemistry       string
+	DesignCapacityMultiplier  byte
+	OEMSepecific              uint32
+}
+
+func (h DMIHeader) PortableBattery() PortableBattery {
+	var p PortableBattery
+	data := h.data
+	p.Location = h.FieldString(int(data[0x04]))
+	p.Manufacturer = h.FieldString(int(data[0x05]))
+	p.ManufacturerDate = h.FieldString(int(data[0x06]))
+	p.SerialNumber = h.FieldString(int(data[0x07]))
+	p.DeviceName = h.FieldString(int(data[0x08]))
+	p.DeviceChemistry = PortableBatteryDeviceChemistry(data[0x09])
+	p.DesignCapacity = U16(data[0x0A:0x0C])
+	p.DesignVoltage = U16(data[0x0C:0x0E])
+	p.SBDSVersionNumber = h.FieldString(int(data[0x0E]))
+	p.MaximumErrorInBatteryData = data[0x0F]
+	p.SBDSSerialNumber = U16(data[0x10:0x12])
+	p.SBDSManufactureDate = U16(data[0x12:0x14])
+	p.SBDSDeviceChemistry = h.FieldString(int(data[0x14]))
+	p.DesignCapacityMultiplier = data[0x15]
+	p.OEMSepecific = U32(data[0x16:0x1A])
+	return p
+}
+
+func (p PortableBattery) String() string {
+	return fmt.Sprintf("Portable Battery\n\t\t"+
+		"Location: %s\n\t\t"+
+		"Manufacturer: %s\n\t\t"+
+		"Manufacturer Date: %s\n\t\t"+
+		"Serial Number: %s\n\t\t"+
+		"Device Name: %s\n\t\t"+
+		"Device Chemistry: %s\n\t\t"+
+		"Design Capacity: %d\n\t\t"+
+		"Design Voltage: %d\n\t\t"+
+		"SBDS Version Number: %s\n\t\t"+
+		"Maximum Error in Battery Data: %d\n\t\t"+
+		"SBDS Serial Numberd: %d\n\t\t"+
+		"SBDS Manufacturer Date: %d\n\t\t"+
+		"SBDS Device Chemistry: %s\n\t\t"+
+		"Design Capacity Multiplier: %d\n\t\t"+
+		"OEM-specific: %d\n",
+		p.Location,
+		p.Manufacturer,
+		p.ManufacturerDate,
+		p.SerialNumber,
+		p.DeviceName,
+		p.DeviceChemistry,
+		p.DesignCapacity,
+		p.DesignVoltage,
+		p.SBDSVersionNumber,
+		p.MaximumErrorInBatteryData,
+		p.SBDSSerialNumber,
+		p.SBDSManufactureDate,
+		p.SBDSDeviceChemistry,
+		p.DesignCapacityMultiplier,
+		p.OEMSepecific,
+	)
+}
+
 func U16(data []byte) uint16 {
 	var u16 uint16
 	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
@@ -2997,6 +3099,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeBuilt_inPointingDevice:
 		bp := h.BuiltinPointingDevice()
 		fmt.Println(bp)
+	case SMBIOSStructureTypePortableBattery:
+		pb := h.PortableBattery()
+		fmt.Println(pb)
 	default:
 		fmt.Println("Unknown")
 	}
