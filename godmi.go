@@ -2784,6 +2784,95 @@ func (m _32BitMemoryErrorInformation) String() string {
 	)
 }
 
+type BuiltinPointingDeviceType byte
+
+const (
+	BuiltinPointingDeviceTypeOther BuiltinPointingDeviceType = 1 + iota
+	BuiltinPointingDeviceTypeUnknown
+	BuiltinPointingDeviceTypeMouse
+	BuiltinPointingDeviceTypeTrackBall
+	BuiltinPointingDeviceTypeTrackPoint
+	BuiltinPointingDeviceTypeGlidePoint
+	BuiltinPointingDeviceTypeTouchPad
+	BuiltinPointingDeviceTypeTouchScreen
+	BuiltinPointingDeviceTypeOpticalSensor
+)
+
+func (b BuiltinPointingDeviceType) String() string {
+	types := [...]string{
+		"Other",
+		"Unknown",
+		"Mouse",
+		"Track Ball",
+		"Track Point",
+		"Glide Point",
+		"Touch Pad",
+		"Touch Screen",
+		"Optical Sensor",
+	}
+	return types[b-1]
+}
+
+type BuiltinPointingDeviceInterface byte
+
+const (
+	BuiltinPointingDeviceInterfaceOther BuiltinPointingDeviceInterface = 1 + iota
+	BuiltinPointingDeviceInterfaceUnknown
+	BuiltinPointingDeviceInterfaceSerial
+	BuiltinPointingDeviceInterfacePS2
+	BuiltinPointingDeviceInterfaceInfrared
+	BuiltinPointingDeviceInterfaceHP_HIL
+	BuiltinPointingDeviceInterfaceBusmouse
+	BuiltinPointingDeviceInterfaceADB
+	BuiltinPointingDeviceInterfaceBusmouseDB_9
+	BuiltinPointingDeviceInterfaceBusmousemicro_DIN
+	BuiltinPointingDeviceInterfaceUSB
+)
+
+func (b BuiltinPointingDeviceInterface) String() string {
+	interfaces := [...]string{
+		"Other",
+		"Unknown",
+		"Serial",
+		"PS/2",
+		"Infrared",
+		"HP-HIL",
+		"Bus mouse",
+		"ADB (Apple Desktop Bus)",
+		"Bus mouse DB-9",
+		"Bus mouse micro-DIN",
+		"USB",
+	}
+	return interfaces[b-1]
+}
+
+type BuiltinPointingDevice struct {
+	InfoCommon
+	Type            BuiltinPointingDeviceType
+	Interface       BuiltinPointingDeviceInterface
+	NumberOfButtons byte
+}
+
+func (h DMIHeader) BuiltinPointingDevice() BuiltinPointingDevice {
+	var b BuiltinPointingDevice
+	data := h.data
+	b.Type = BuiltinPointingDeviceType(data[0x04])
+	b.Interface = BuiltinPointingDeviceInterface(data[0x05])
+	b.NumberOfButtons = data[0x06]
+	return b
+}
+
+func (b BuiltinPointingDevice) String() string {
+	return fmt.Sprintf("Built-in Pointing Device:\n\t\t"+
+		"Type: %s\n\t\t"+
+		"Interface: %s\n\t\t"+
+		"Number of Buttons: %d\n",
+		b.Type,
+		b.Interface,
+		b.NumberOfButtons,
+	)
+}
+
 func U16(data []byte) uint16 {
 	var u16 uint16
 	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
@@ -2905,6 +2994,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureType32_bitMemoryError:
 		me := h._32BitMemoryErrorInformation()
 		fmt.Println(me)
+	case SMBIOSStructureTypeBuilt_inPointingDevice:
+		bp := h.BuiltinPointingDevice()
+		fmt.Println(bp)
 	default:
 		fmt.Println("Unknown")
 	}
