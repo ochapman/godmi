@@ -2975,6 +2975,87 @@ func (p PortableBattery) String() string {
 	)
 }
 
+type SystemResetBootOption byte
+
+const (
+	SystemResetBootOptionReserved SystemResetBootOption = iota
+	SystemResetBootOptionOperatingSystem
+	SystemResetBootOptionSystemUtilities
+	SystemResetBootOptionDoNotReboot
+)
+
+func (s SystemResetBootOption) String() string {
+	options := [...]string{
+		"Reserved",
+		"Operating System",
+		"System Utilities",
+		"Do Not Reboot",
+	}
+	return options[s]
+}
+
+type SystemResetCapabilities struct {
+	Status            bool
+	BootOptionOnLimit SystemResetBootOption
+	BootOption        SystemResetBootOption
+	WatchdogTimer     bool
+}
+
+func NewSystemResetCapablities(data byte) SystemResetCapabilities {
+	var s SystemResetCapabilities
+	s.Status = (data&0x01 != 0)
+	s.BootOption = SystemResetBootOption(data & 0x06)
+	s.BootOptionOnLimit = SystemResetBootOption(data & 0x18)
+	s.WatchdogTimer = data&0x20 != 0
+	return s
+}
+
+func (s SystemResetCapabilities) String() string {
+	return fmt.Sprintf("Capablities:\n\t\t"+
+		"Status: %t\n\t\t"+
+		"Boot Option: %s\n\t\t"+
+		"Boot Option On Limit: %s\n\t\t"+
+		"Watchdog Timer: %t\n",
+		s.Status,
+		s.BootOption,
+		s.BootOptionOnLimit,
+		s.WatchdogTimer)
+}
+
+type SystemReset struct {
+	InfoCommon
+	Capabilities  byte
+	ResetCount    uint16
+	ResetLimit    uint16
+	TimerInterval uint16
+	Timeout       uint16
+}
+
+func (s SystemReset) String() string {
+	return fmt.Sprintf("System Reset:\n\t\t"+
+		"Capabilities: %s\n\t\t"+
+		"Reset Count: %d\n\t\t"+
+		"Reset Limit: %d\n\t\t"+
+		"Timer Interval: %d\n\t\t"+
+		"Timeout: %d\n",
+		s.Capabilities,
+		s.ResetCount,
+		s.ResetLimit,
+		s.TimerInterval,
+		s.Timeout)
+}
+
+func (h DMIHeader) SystemReset() SystemReset {
+	var s SystemReset
+	data := h.data
+	s.Capabilities = data[0x04]
+	s.ResetCount = U16(data[0x05:0x07])
+	s.ResetLimit = U16(data[0x07:0x09])
+	s.TimerInterval = U16(data[0x09:0x0B])
+	s.Timeout = U16(data[0x0B:0x0D])
+	return s
+}
+
 func U16(data []byte) uint16 {
 	var u16 uint16
 	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
@@ -3102,6 +3183,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypePortableBattery:
 		pb := h.PortableBattery()
 		fmt.Println(pb)
+	case SMBIOSStructureTypeSystemReset:
+		sr := h.SystemReset()
+		fmt.Println(sr)
 	default:
 		fmt.Println("Unknown")
 	}
