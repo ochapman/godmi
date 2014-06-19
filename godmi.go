@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"syscall"
@@ -3120,6 +3121,66 @@ func (h HardwareSecurity) String() string {
 		h.Setting)
 }
 
+type SystemPowerControlsMonth byte
+type SystemPowerControlsDayOfMonth byte
+type SystemPowerControlsHour byte
+type SystemPowerControlsMinute byte
+type SystemPowerControlsSecond byte
+
+type SystemPowerControls struct {
+	InfoCommon
+	NextScheduledPowerOnMonth      SystemPowerControlsMonth
+	NextScheduledPowerOnDayOfMonth SystemPowerControlsDayOfMonth
+	NextScheduledPowerOnHour       SystemPowerControlsHour
+	NextScheduledPowerMinute       SystemPowerControlsMinute
+	NextScheduledPowerSecond       SystemPowerControlsSecond
+}
+
+func (h DMIHeader) SystemPowerControls() *SystemPowerControls {
+	data := h.data
+	return &SystemPowerControls{
+		NextScheduledPowerOnMonth:      SystemPowerControlsMonth(bcd(data[0x04:0x05])),
+		NextScheduledPowerOnDayOfMonth: SystemPowerControlsDayOfMonth(bcd(data[0x05:0x06])),
+		NextScheduledPowerOnHour:       SystemPowerControlsHour(bcd(data[0x06:0x07])),
+		NextScheduledPowerMinute:       SystemPowerControlsMinute(bcd(data[0x07:0x08])),
+		NextScheduledPowerSecond:       SystemPowerControlsSecond(bcd(data[0x08:0x09])),
+	}
+}
+
+func (s SystemPowerControls) String() string {
+	return fmt.Sprintf("System Power Controls:\n\t\t"+
+		"Next Scheduled Power-on Month: %d"+
+		"Next Scheduled Power-on Day-of-month: %d"+
+		"Next Scheduled Power-on Hour: %d"+
+		"Next Scheduled Power-on Minute: %d"+
+		"Next Scheduled Power-on Second: %d",
+		s.NextScheduledPowerOnMonth,
+		s.NextScheduledPowerOnDayOfMonth,
+		s.NextScheduledPowerOnHour,
+		s.NextScheduledPowerMinute,
+		s.NextScheduledPowerSecond)
+}
+
+func bcd(data []byte) int64 {
+	var b int64
+	l := len(data)
+	if l > 8 {
+		panic("bcd: Out of range")
+	}
+	// Number of 4-bits
+	nb := int64(l * 2)
+	for i := int64(0); i < nb; i++ {
+		var shift uint64
+		if i%2 == 0 {
+			shift = 0
+		} else {
+			shift = 4
+		}
+		b += int64((data[i/2]>>shift)&0x0F) * int64(math.Pow10(int(i)))
+	}
+	return b
+}
+
 func U16(data []byte) uint16 {
 	var u16 uint16
 	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
@@ -3253,6 +3314,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeHardwareSecurity:
 		hs := h.HardwareSecurity()
 		fmt.Println(hs)
+	case SMBIOSStructureTypeSystemPowerControls:
+		sp := h.SystemPowerControls()
+		fmt.Println(sp)
 	default:
 		fmt.Println("Unknown")
 	}
