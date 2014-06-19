@@ -3284,6 +3284,121 @@ func (h DMIHeader) VoltageProbe() *VoltageProbe {
 	}
 }
 
+type CoolingDeviceStatus byte
+
+const (
+	CoolingDeviceStatusOther CoolingDeviceStatus = 0x20 + iota
+	CoolingDeviceStatusUnknown
+	CoolingDeviceStatusOK
+	CoolingDeviceStatusNon_critical
+	CoolingDeviceStatusCritical
+	CoolingDeviceStatusNon_recoverable
+)
+
+func (c CoolingDeviceStatus) String() {
+	status := [...]string{
+		"Other",
+		"Unknown",
+		"OK",
+		"Non-critical",
+		"Critical",
+		"Non-recoverable",
+	}
+	return status[c-1]
+}
+
+type CoolingDeviceType byte
+
+const (
+	CoolingDeviceTypeOther CoolingDeviceType = 1 + iota
+	CoolingDeviceTypeUnknown
+	CoolingDeviceTypeFan
+	CoolingDeviceTypeCentrifugalBlower
+	CoolingDeviceTypeChipFan
+	CoolingDeviceTypeCabinetFan
+	CoolingDeviceTypePowerSupplyFan
+	CoolingDeviceTypeHeatPipe
+	CoolingDeviceTypeIntegratedRefrigeration
+	CoolingDeviceTypeActiveCooling
+	CoolingDeviceTypePassiveCooling
+)
+
+func (c CoolingDeviceType) String() string {
+	types := [...]string{
+		"Other",
+		"Unknown",
+		"Fan",
+		"Centrifugal Blower",
+		"Chip Fan",
+		"Cabinet Fan",
+		"Power Supply Fan",
+		"Heat Pipe",
+		"Integrated Refrigeration",
+		"Active Cooling",
+		"Passive Cooling",
+	}
+	return types[c-1]
+}
+
+type CoolingDeviceTypeAndStatus struct {
+	Status CoolingDeviceStatus
+	Type   CoolingDeviceType
+}
+
+func NewCoolingDeviceTypeAndStatus(data byte) CoolingDeviceTypeAndStatus {
+	return CoolingDeviceTypeAndStatus{
+		Status: CoolingDeviceStatus(data & 0xE0),
+		Type:   CoolingDeviceType(data & 0x1F),
+	}
+}
+
+type CoolingDevice struct {
+	InfoCommon
+	TemperatureProbeHandle uint16
+	DeviceTypeAndStatus    CoolingDeviceTypeAndStatus
+	CoolingUintGroup       byte
+	OEMdefined             uint32
+	NominalSpeed           uint16
+	Description            string
+}
+
+func (c CoolingDevice) String() string {
+	s := fmt.Sprintf("Cooling Device:\n\t\t"+
+		"Temperature Probe Handle: %d\n\t\t"+
+		"Device Type And Status: %s\n\t\t"+
+		"Cooling Uint Group: %d\n\t\t"+
+		"OE Mdefined: %d\n\t\t",
+		c.TemperatureProbeHandle,
+		c.DeviceTypeAndStatus,
+		c.CoolingUintGroup,
+		c.OEMdefined,
+	)
+	if c.Length > 0x0C {
+		s += fmt.Sprintf("Nominal Speed: %d\n\t\t", c.NominalSpeed)
+	}
+	if c.Length > 0x0F {
+		s += fmt.Sprintf("Description: %s\n", c.Description)
+	}
+	return s
+}
+
+func (h DMIHeader) CoolingDevice() *CoolingDevice {
+	data := h.data
+	cd := &CoolingDevice{
+		TemperatureProbeHandle: U16(data[0x04:0x06]),
+		DeviceTypeAndStatus:    NewCoolingDeviceTypeAndStatus(data[0x06]),
+		CoolingUintGroup:       data[0x07],
+		OEMdefined:             U32(data[0x08:0x0C]),
+	}
+	if h.Length > 0x0C {
+		cd.NominalSpeed = U16(data[0x0C:0x0E])
+	}
+	if h.Length > 0x0F {
+		cd.Description = h.FieldString(int(data[0x0E]))
+	}
+	return cd
+}
+
 func bcd(data []byte) int64 {
 	var b int64
 	l := len(data)
@@ -3443,6 +3558,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeVoltageProbe:
 		vp := h.VoltageProbe()
 		fmt.Println(vp)
+	case SMBIOSStructureTypeCoolingDevice:
+		cd := h.CoolingDevice()
+		fmt.Println(cd)
 	default:
 		fmt.Println("Unknown")
 	}
