@@ -3161,6 +3161,129 @@ func (s SystemPowerControls) String() string {
 		s.NextScheduledPowerSecond)
 }
 
+type VoltageProbeStatus byte
+
+const (
+	VoltageProbeStatusOther VoltageProbeStatus = 0x20 + iota
+	VoltageProbeStatusUnknown
+	VoltageProbeStatusOK
+	VoltageProbeStatusNon_critical
+	VoltageProbeStatusCritical
+	VoltageProbeStatusNon_recoverable
+)
+
+func (v VoltageProbeStatus) String() string {
+	status := [...]string{
+		"Other",
+		"Unknown",
+		"OK",
+		"Non-critical",
+		"Critical",
+		"Non-recoverable",
+	}
+	return status[v-6]
+}
+
+type VoltageProbeLocation byte
+
+const (
+	VoltageProbeLocationOther VoltageProbeLocation = 1 + iota
+	VoltageProbeLocationUnknown
+	VoltageProbeLocationOK
+	VoltageProbeLocationNon_critical
+	VoltageProbeLocationCritical
+	VoltageProbeLocationNon_recoverable
+	VoltageProbeLocationMotherboard
+	VoltageProbeLocationMemoryModule
+	VoltageProbeLocationProcessorModule
+	VoltageProbeLocationPowerUnit
+	VoltageProbeLocationAdd_inCard
+)
+
+func (v VoltageProbeLocation) String() string {
+	locations := [...]string{
+		"Other",
+		"Unknown",
+		"OK",
+		"Non-critical",
+		"Critical",
+		"Non-recoverable",
+		"Motherboard",
+		"Memory Module",
+		"Processor Module",
+		"Power Unit",
+		"Add-in Card",
+	}
+	return locations[v-1]
+}
+
+type VoltageProbeLocationAndStatus struct {
+	Status   VoltageProbeStatus
+	Location VoltageProbeLocation
+}
+
+func NewVoltageProbeLocationAndStatus(data byte) VoltageProbeLocationAndStatus {
+	return VoltageProbeLocationAndStatus{
+		Status:   VoltageProbeStatus(data & 0x1F),
+		Location: VoltageProbeLocation(data & 0xE0),
+	}
+}
+
+func (v VoltageProbeLocationAndStatus) String() string {
+	return fmt.Sprintf("\n\t\t\t\tStatus: %s\n\t\t\t\tLocation: %s",
+		v.Status, v.Location)
+}
+
+type VoltageProbe struct {
+	InfoCommon
+	Description       string
+	LocationAndStatus VoltageProbeLocationAndStatus
+	MaximumValue      uint16
+	MinimumValude     uint16
+	Resolution        uint16
+	Tolerance         uint16
+	Accuracy          uint16
+	OEMdefined        uint16
+	NominalValue      uint16
+}
+
+func (v VoltageProbe) String() string {
+	return fmt.Sprintf("Voltage Probe:\n\t\t"+
+		"Description: %s\n\t\t"+
+		"Location And Status: %s\n\t\t"+
+		"Maximum Value: %d\n\t\t"+
+		"Minimum Valude: %d\n\t\t"+
+		"Resolution: %d\n\t\t"+
+		"Tolerance: %d\n\t\t"+
+		"Accuracy: %d\n\t\t"+
+		"OE Mdefined: %d\n\t\t"+
+		"Nominal Value: %d\n",
+		v.Description,
+		v.LocationAndStatus,
+		v.MaximumValue,
+		v.MinimumValude,
+		v.Resolution,
+		v.Tolerance,
+		v.Accuracy,
+		v.OEMdefined,
+		v.NominalValue)
+}
+
+func (h DMIHeader) VoltageProbe() *VoltageProbe {
+	data := h.data
+	return &VoltageProbe{
+		Description:       h.FieldString(int(data[0x04])),
+		LocationAndStatus: NewVoltageProbeLocationAndStatus(data[0x05]),
+		MaximumValue:      U16(data[0x06:0x08]),
+		MinimumValude:     U16(data[0x08:0x0A]),
+		Resolution:        U16(data[0x0A:0x0C]),
+		Tolerance:         U16(data[0x0C:0x0E]),
+		Accuracy:          U16(data[0x0E:0x10]),
+		OEMdefined:        U16(data[0x10:0x12]),
+		NominalValue:      U16(data[0x12:0x14]),
+	}
+}
+
 func bcd(data []byte) int64 {
 	var b int64
 	l := len(data)
@@ -3317,6 +3440,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeSystemPowerControls:
 		sp := h.SystemPowerControls()
 		fmt.Println(sp)
+	case SMBIOSStructureTypeVoltageProbe:
+		vp := h.VoltageProbe()
+		fmt.Println(vp)
 	default:
 		fmt.Println("Unknown")
 	}
