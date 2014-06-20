@@ -3468,6 +3468,11 @@ type TemperatureProbeLocationAndStatus struct {
 	Location TemperatureProbeLocation
 }
 
+func (t TemperatureProbeLocationAndStatus) String() string {
+	return fmt.Sprintf("\n\t\t\t\tStatus: %s\n\t\t\t\tLocation: %s",
+		t.Status, t.Location)
+}
+
 func NewTemperatureProbeLocationAndStatus(data byte) TemperatureProbeLocationAndStatus {
 	return TemperatureProbeLocationAndStatus{
 		Status:   TemperatureProbeStatus(data & 0xE0),
