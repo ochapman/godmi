@@ -3304,7 +3304,7 @@ func (c CoolingDeviceStatus) String() string {
 		"Critical",
 		"Non-recoverable",
 	}
-	return status[c-1]
+	return status[c-0x20]
 }
 
 type CoolingDeviceType byte
