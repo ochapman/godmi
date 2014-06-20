@@ -3525,6 +3525,130 @@ func (h DMIHeader) TemperatureProbe() *TemperatureProbe {
 	}
 }
 
+type ElectricalCurrentProbeStatus byte
+
+const (
+	ElectricalCurrentProbeStatusOther ElectricalCurrentProbeStatus = 0x20 + iota
+	ElectricalCurrentProbeStatusUnknown
+	ElectricalCurrentProbeStatusOK
+	ElectricalCurrentProbeStatusNon_critical
+	ElectricalCurrentProbeStatusCritical
+	ElectricalCurrentProbeStatusNon_recoverable
+)
+
+func (e ElectricalCurrentProbeStatus) String() string {
+	status := [...]string{
+		"Other",
+		"Unknown",
+		"OK",
+		"Non-critical",
+		"Critical",
+		"Non-recoverable",
+	}
+	return status[e-0x20]
+}
+
+type ElectricalCurrentProbeLocation byte
+
+const (
+	ElectricalCurrentProbeLocationOther ElectricalCurrentProbeLocation = 1 + iota
+	ElectricalCurrentProbeLocationUnknown
+	ElectricalCurrentProbeLocationProcessor
+	ElectricalCurrentProbeLocationDisk
+	ElectricalCurrentProbeLocationPeripheralBay
+	ElectricalCurrentProbeLocationSystemManagementModule
+	ElectricalCurrentProbeLocationMotherboard
+	ElectricalCurrentProbeLocationMemoryModule
+	ElectricalCurrentProbeLocationProcessorModule
+	ElectricalCurrentProbeLocationPowerUnit
+	ElectricalCurrentProbeLocationAdd_inCard
+)
+
+func (e ElectricalCurrentProbeLocation) String() string {
+	locations := [...]string{
+		"Other",
+		"Unknown",
+		"Processor",
+		"Disk",
+		"Peripheral Bay",
+		"System Management Module",
+		"Motherboard",
+		"Memory Module",
+		"Processor Module",
+		"Power Unit",
+		"Add-in Card",
+	}
+	return locations[e-1]
+}
+
+type ElectricalCurrentProbeLocationAndStatus struct {
+	Status   ElectricalCurrentProbeStatus
+	Location ElectricalCurrentProbeLocation
+}
+
+func (e ElectricalCurrentProbeLocationAndStatus) String() string {
+	return fmt.Sprintf("\n\t\t\t\tStatus: %s\n\t\t\t\tLocation: %s",
+		e.Status, e.Location)
+
+}
+
+func NewElectricalCurrentProbeLocationAndStatus(data byte) ElectricalCurrentProbeLocationAndStatus {
+	return ElectricalCurrentProbeLocationAndStatus{
+		Status:   ElectricalCurrentProbeStatus(data & 0xE0),
+		Location: ElectricalCurrentProbeLocation(data & 0x1F),
+	}
+}
+
+type ElectricalCurrentProbe struct {
+	InfoCommon
+	Description       string
+	LocationAndStatus ElectricalCurrentProbeLocationAndStatus
+	MaximumValue      uint16
+	MinimumValue      uint16
+	Resolution        uint16
+	Tolerance         uint16
+	Accuracy          uint16
+	OEMdefined        uint32
+	NomimalValue      uint16
+}
+
+func (e ElectricalCurrentProbe) String() string {
+	return fmt.Sprintf("Electrical Current Probe:\n\t\t"+
+		"Description: %s\n\t\t"+
+		"Location And Status: %s\n\t\t"+
+		"Maximum Value: %d\n\t\t"+
+		"Minimum Value: %d\n\t\t"+
+		"Resolution: %d\n\t\t"+
+		"Tolerance: %d\n\t\t"+
+		"Accuracy: %d\n\t\t"+
+		"OE Mdefined: %d\n\t\t"+
+		"Nomimal Value: %d\n",
+		e.Description,
+		e.LocationAndStatus,
+		e.MaximumValue,
+		e.MinimumValue,
+		e.Resolution,
+		e.Tolerance,
+		e.Accuracy,
+		e.OEMdefined,
+		e.NomimalValue)
+}
+
+func (h DMIHeader) ElectricalCurrentProbe() *ElectricalCurrentProbe {
+	data := h.data
+	return &ElectricalCurrentProbe{
+		Description:       h.FieldString(int(data[0x04])),
+		LocationAndStatus: NewElectricalCurrentProbeLocationAndStatus(data[0x05]),
+		MaximumValue:      U16(data[0x06:0x08]),
+		MinimumValue:      U16(data[0x08:0x0A]),
+		Resolution:        U16(data[0x0A:0x0C]),
+		Tolerance:         U16(data[0x0C:0x0E]),
+		Accuracy:          U16(data[0x0E:0x10]),
+		OEMdefined:        U32(data[0x10:0x14]),
+		NomimalValue:      U16(data[0x14:0x16]),
+	}
+}
+
 func bcd(data []byte) int64 {
 	var b int64
 	l := len(data)
@@ -3690,6 +3814,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeTemperatureProbe:
 		tp := h.TemperatureProbe()
 		fmt.Println(tp)
+	case SMBIOSStructureTypeElectricalCurrentProbe:
+		ec := h.ElectricalCurrentProbe()
+		fmt.Println(ec)
 	default:
 		fmt.Println("Unknown")
 	}
