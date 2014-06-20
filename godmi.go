@@ -3295,7 +3295,7 @@ const (
 	CoolingDeviceStatusNon_recoverable
 )
 
-func (c CoolingDeviceStatus) String() {
+func (c CoolingDeviceStatus) String() string {
 	status := [...]string{
 		"Other",
 		"Unknown",
@@ -3397,6 +3397,132 @@ func (h DMIHeader) CoolingDevice() *CoolingDevice {
 		cd.Description = h.FieldString(int(data[0x0E]))
 	}
 	return cd
+}
+
+type TemperatureProbeStatus byte
+
+const (
+	TemperatureProbeStatusOther TemperatureProbeStatus = 0x20 + iota
+	TemperatureProbeStatusUnknown
+	TemperatureProbeStatusOK
+	TemperatureProbeStatusNon_critical
+	TemperatureProbeStatusCritical
+	TemperatureProbeStatusNon_recoverable
+)
+
+func (t TemperatureProbeStatus) String() string {
+	status := [...]string{
+		"Other",
+		"Unknown",
+		"OK",
+		"Non-critical",
+		"Critical",
+		"Non-recoverable",
+	}
+	return status[t-0x20]
+}
+
+type TemperatureProbeLocation byte
+
+const (
+	TemperatureProbeLocationOther TemperatureProbeStatus = 1 + iota
+	TemperatureProbeLocationUnknown
+	TemperatureProbeLocationProcessor
+	TemperatureProbeLocationDisk
+	TemperatureProbeLocationPeripheralBay
+	TemperatureProbeLocationSystemManagementModule
+	TemperatureProbeLocationMotherboard
+	TemperatureProbeLocationMemoryModule
+	TemperatureProbeLocationProcessorModule
+	TemperatureProbeLocationPowerUnit
+	TemperatureProbeLocationAdd_inCard
+	TemperatureProbeLocationFrontPanelBoard
+	TemperatureProbeLocationBackPanelBoard
+	TemperatureProbeLocationPowerSystemBoard
+	TemperatureProbeLocationDriveBackPlane
+)
+
+func (t TemperatureProbeLocation) String() string {
+	locations := [...]string{
+		"Other",
+		"Unknown",
+		"Processor",
+		"Disk",
+		"Peripheral Bay",
+		"System Management Module",
+		"Motherboard",
+		"Memory Module",
+		"Processor Module",
+		"Power Unit",
+		"Add-in Card",
+		"Front Panel Board",
+		"Back Panel Board",
+		"Power System Board",
+		"Drive Back Plane",
+	}
+	return locations[t-1]
+}
+
+type TemperatureProbeLocationAndStatus struct {
+	Status   TemperatureProbeStatus
+	Location TemperatureProbeLocation
+}
+
+func NewTemperatureProbeLocationAndStatus(data byte) TemperatureProbeLocationAndStatus {
+	return TemperatureProbeLocationAndStatus{
+		Status:   TemperatureProbeStatus(data & 0xE0),
+		Location: TemperatureProbeLocation(data & 0x1F),
+	}
+}
+
+type TemperatureProbe struct {
+	InfoCommon
+	Description       string
+	LocationAndStatus TemperatureProbeLocationAndStatus
+	MaximumValue      uint16
+	MinimumValue      uint16
+	Resolution        uint16
+	Tolerance         uint16
+	Accuracy          uint16
+	OEMdefined        uint32
+	NominalValue      uint16
+}
+
+func (t TemperatureProbe) String() string {
+	return fmt.Sprintf("Temperature Probe:\n\t\t"+
+		"Description: %s\n\t\t"+
+		"Location And Status: %s\n\t\t"+
+		"Maximum Value: %d\n\t\t"+
+		"Minimum Value: %d\n\t\t"+
+		"Resolution: %d\n\t\t"+
+		"Tolerance: %d\n\t\t"+
+		"Accuracy: %d\n\t\t"+
+		"OE Mdefined: %d\n\t\t"+
+		"Nominal Value: %d\n",
+		t.Description,
+		t.LocationAndStatus,
+		t.MaximumValue,
+		t.MinimumValue,
+		t.Resolution,
+		t.Tolerance,
+		t.Accuracy,
+		t.OEMdefined,
+		t.NominalValue)
+}
+
+func (h DMIHeader) TemperatureProbe() *TemperatureProbe {
+	data := h.data
+	return &TemperatureProbe{
+		Description:       h.FieldString(int(data[0x04])),
+		LocationAndStatus: NewTemperatureProbeLocationAndStatus(data[0x05]),
+		MaximumValue:      U16(data[0x06:0x08]),
+		MinimumValue:      U16(data[0x08:0x0A]),
+		Resolution:        U16(data[0x0A:0x0C]),
+		Tolerance:         U16(data[0x0C:0x0E]),
+		Accuracy:          U16(data[0x0E:0x10]),
+		OEMdefined:        U32(data[0x10:0x14]),
+		NominalValue:      U16(data[0x14:0x16]),
+	}
 }
 
 func bcd(data []byte) int64 {
@@ -3561,6 +3687,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeCoolingDevice:
 		cd := h.CoolingDevice()
 		fmt.Println(cd)
+	case SMBIOSStructureTypeTemperatureProbe:
+		tp := h.TemperatureProbe()
+		fmt.Println(tp)
 	default:
 		fmt.Println("Unknown")
 	}
