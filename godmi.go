@@ -3654,6 +3654,45 @@ func (h DMIHeader) ElectricalCurrentProbe() *ElectricalCurrentProbe {
 	}
 }
 
+type OutOfBandRemoteAccessConnections struct {
+	OutBoundEnabled bool
+	InBoundEnabled  bool
+}
+
+func NewOutOfBandRemoteAccessConnections(data byte) OutOfBandRemoteAccessConnections {
+	return OutOfBandRemoteAccessConnections{
+		OutBoundEnabled: (data&0x02 != 0),
+		InBoundEnabled:  (data&0x01 != 0),
+	}
+}
+
+func (o OutOfBandRemoteAccessConnections) String() string {
+	return fmt.Sprintf("\n\t\t\t\tOutbound Enabled: %t\n\t\t\t\tInbound Enabled: %t",
+		o.OutBoundEnabled, o.InBoundEnabled)
+}
+
+type OutOfBandRemoteAccess struct {
+	InfoCommon
+	ManufacturerName string
+	Connections      OutOfBandRemoteAccessConnections
+}
+
+func (o OutOfBandRemoteAccess) String() string {
+	return fmt.Sprintf("Out Of Band Remote Access:\n\t\t"+
+		"Manufacturer Name: %s\n\t\t"+
+		"Connections: %s\n",
+		o.ManufacturerName,
+		o.Connections)
+}
+
+func (h DMIHeader) OutOfBandRemoteAccess() *OutOfBandRemoteAccess {
+	data := h.data
+	return &OutOfBandRemoteAccess{
+		ManufacturerName: h.FieldString(int(data[0x04])),
+		Connections:      NewOutOfBandRemoteAccessConnections(data[0x05]),
+	}
+}
+
 func bcd(data []byte) int64 {
 	var b int64
 	l := len(data)
@@ -3822,6 +3861,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeElectricalCurrentProbe:
 		ec := h.ElectricalCurrentProbe()
 		fmt.Println(ec)
+	case SMBIOSStructureTypeOut_of_bandRemoteAccess:
+		oo := h.OutOfBandRemoteAccess()
+		fmt.Println(oo)
 	default:
 		fmt.Println("Unknown")
 	}
