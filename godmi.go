@@ -3865,6 +3865,36 @@ func (h DMIHeader) ManagementDevice() *ManagementDevice {
 	}
 }
 
+type ManagementDeviceComponent struct {
+	InfoCommon
+	Description            string
+	ManagementDeviceHandle uint16
+	ComponentHandle        uint16
+	ThresholdHandle        uint16
+}
+
+func (m ManagementDeviceComponent) String() string {
+	return fmt.Sprintf("Management Device Component:\n\t\t"+
+		"Description: %s\n\t\t"+
+		"Management Device Handle: %d\n\t\t"+
+		"Component Handle: %d\n\t\t"+
+		"Threshold Handle: %d\n",
+		m.Description,
+		m.ManagementDeviceHandle,
+		m.ComponentHandle,
+		m.ThresholdHandle)
+}
+
+func (h DMIHeader) ManagementDeviceComponent() *ManagementDeviceComponent {
+	data := h.data
+	return &ManagementDeviceComponent{
+		Description:            h.FieldString(int(data[0x04])),
+		ManagementDeviceHandle: U16(data[0x05:0x07]),
+		ComponentHandle:        U16(data[0x07:0x09]),
+		ThresholdHandle:        U16(data[0x09:0x0B]),
+	}
+}
+
 func bcd(data []byte) int64 {
 	var b int64
 	l := len(data)
@@ -4045,7 +4075,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeManagementDevice:
 		md := h.ManagementDevice()
 		fmt.Println(md)
-
+	case SMBIOSStructureTypeManagementDeviceComponent:
+		md := h.ManagementDeviceComponent()
+		fmt.Println(md)
 	default:
 		fmt.Println("Unknown")
 	}
