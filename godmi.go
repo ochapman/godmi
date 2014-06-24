@@ -3693,6 +3693,47 @@ func (h DMIHeader) OutOfBandRemoteAccess() *OutOfBandRemoteAccess {
 	}
 }
 
+type SystemBootInformationStatus byte
+
+func (s SystemBootInformationStatus) String() string {
+	status := [...]string{
+		"No errors detected", /* 0 */
+		"No bootable media",
+		"Operating system failed to load",
+		"Firmware-detected hardware failure",
+		"Operating system-detected hardware failure",
+		"User-requested boot",
+		"System security violation",
+		"Previously-requested image",
+		"System watchdog timer expired",
+	}
+	if s <= 8 {
+		return status[s]
+	} else if s >= 128 && s <= 191 {
+		return "OEM-specific"
+	} else if s > 192 && s <= 255 {
+		return "Product-specific"
+	}
+}
+
+type SystemBootInformation struct {
+	InfoCommon
+	BootStatus SystemBootInformationStatus
+}
+
+func (s SystemBootInformation) String() string {
+	return fmt.Sprintf("System Boot Information:\n\t\t"+
+		"Boot Status: %s\n",
+		s.BootStatus)
+}
+
+func (h DMIHeader) SystemBootInformation() *SystemBootInformation {
+	data := h.data
+	return &SystemBootInformation{
+		BootStatus: SystemBootInformationStatus(data[0x0A]),
+	}
+}
+
 func bcd(data []byte) int64 {
 	var b int64
 	l := len(data)
@@ -3864,6 +3905,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeOut_of_bandRemoteAccess:
 		oo := h.OutOfBandRemoteAccess()
 		fmt.Println(oo)
+	case SMBIOSStructureTypeSystemBoot:
+		sb := h.SystemBootInformation()
+		fmt.Println(sb)
 	default:
 		fmt.Println("Unknown")
 	}
