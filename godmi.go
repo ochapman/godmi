@@ -3895,6 +3895,44 @@ func (h DMIHeader) ManagementDeviceComponent() *ManagementDeviceComponent {
 	}
 }
 
+type ManagementDeviceThresholdData struct {
+	InfoCommon
+	LowerThresholdNonCritical    uint16
+	UpperThresholdNonCritical    uint16
+	LowerThresholdCritical       uint16
+	UpperThresholdCritical       uint16
+	LowerThresholdNonRecoverable uint16
+	UpperThresholdNonRecoverable uint16
+}
+
+func (m ManagementDeviceThresholdData) String() string {
+	return fmt.Sprintf("Management Device Threshold Data:\n\t\t"+
+		"Lower Threshold Non Critical: %d\n\t\t"+
+		"Upper Threshold Non Critical: %d\n\t\t"+
+		"Lower Threshold Critical: %d\n\t\t"+
+		"Upper Threshold Critical: %d\n\t\t"+
+		"Lower Threshold Non Recoverable: %d\n\t\t"+
+		"Upper Threshold Non Recoverable: %d\n",
+		m.LowerThresholdNonCritical,
+		m.UpperThresholdNonCritical,
+		m.LowerThresholdCritical,
+		m.UpperThresholdCritical,
+		m.LowerThresholdNonRecoverable,
+		m.UpperThresholdNonRecoverable)
+}
+
+func (h DMIHeader) ManagementDeviceThresholdData() *ManagementDeviceThresholdData {
+	data := h.data
+	return &ManagementDeviceThresholdData{
+		LowerThresholdNonCritical:    U16(data[0x04:0x06]),
+		UpperThresholdNonCritical:    U16(data[0x06:0x08]),
+		LowerThresholdCritical:       U16(data[0x08:0x0A]),
+		UpperThresholdCritical:       U16(data[0x0A:0x0C]),
+		LowerThresholdNonRecoverable: U16(data[0x0C:0x0E]),
+		UpperThresholdNonRecoverable: U16(data[0x0E:0x10]),
+	}
+}
+
 func bcd(data []byte) int64 {
 	var b int64
 	l := len(data)
