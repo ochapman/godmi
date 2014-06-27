@@ -3933,6 +3933,84 @@ func (h DMIHeader) ManagementDeviceThresholdData() *ManagementDeviceThresholdDat
 	}
 }
 
+type MemoryChannelType byte
+
+const (
+	MemoryChannelTypeOther MemoryChannelType = 1 + iota
+	MemoryChannelTypeUnknown
+	MemoryChannelTypeRamBus
+	MemoryChannelTypeSyncLink
+)
+
+func (m MemoryChannelType) String() string {
+	types := [...]string{
+		"Other",
+		"Unknown",
+		"RamBus",
+		"SyncLink",
+	}
+	return types[m-1]
+}
+
+type MemoryDeviceLoadHandle struct {
+	Load   byte
+	Handle uint16
+}
+
+type MemoryDeviceLoadHandles []MemoryDeviceLoadHandle
+
+func newMemoryDeviceLoadHandles(data []byte, count byte, length byte) MemoryDeviceLoadHandles {
+	md := make([]MemoryDeviceLoadHandle, 0)
+	if length < 0x07+count {
+		return md
+	}
+	for i := byte(1); i <= count; i++ {
+		var mem MemoryDeviceLoadHandle
+		offset := 3 * (i - 1)
+		mem.Load = data[0x07+offset]
+		mem.Handle = U16(data[0x08+offset : 0x0A+offset])
+		md = append(md, mem)
+	}
+	return md
+}
+
+func (m MemoryDeviceLoadHandles) String() string {
+	var s string
+	for _, md := range m {
+		s += fmt.Sprintf("\n\t\tDevice: %d\tHandle %d", md.Load, md.Handle)
+	}
+	return s
+}
+
+type MemoryChannel struct {
+	InfoCommon
+	ChannelType        MemoryChannelType
+	MaximumChannelLoad byte
+	MemoryDeviceCount  byte
+	LoadHandle         MemoryDeviceLoadHandles
+}
+
+func (m MemoryChannel) String() string {
+	return fmt.Sprintf("Memory Channel:\n\t\t"+
+		"Channel Type: %s\n\t\t"+
+		"Maximum Channel Load: %d\n\t\t"+
+		"%s",
+		m.ChannelType,
+		m.MaximumChannelLoad,
+		m.LoadHandle)
+}
+
+func (h DMIHeader) MemoryChannel() *MemoryChannel {
+	data := h.data
+	mc := &MemoryChannel{
+		ChannelType:        MemoryChannelType(data[0x04]),
+		MaximumChannelLoad: data[0x05],
+		MemoryDeviceCount:  data[0x06],
+	}
+	mc.LoadHandle = newMemoryDeviceLoadHandles(data, data[0x06], h.Length)
+	return mc
+}
+
 func bcd(data []byte) int64 {
 	var b int64
 	l := len(data)
@@ -4116,6 +4194,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeManagementDeviceComponent:
 		md := h.ManagementDeviceComponent()
 		fmt.Println(md)
+	case SMBIOSStructureTypeMemoryChannel:
+		mc := h.MemoryChannel()
+		fmt.Println(mc)
 	default:
 		fmt.Println("Unknown")
 	}
