@@ -57,7 +57,7 @@ const (
 	SMBIOSStructureTypeIPMIDevice
 	SMBIOSStructureTypePowerSupply
 	SMBIOSStructureTypeAdditionalInformation
-	SMBIOSStructureTypeOnboardDevice
+	SMBIOSStructureTypeOnBoardDevicesExtendedInformation
 	SMBIOSStructureTypeManagementControllerHostInterface /*42*/
 )
 
@@ -4426,6 +4426,82 @@ func (h DMIHeader) AdditionalInformation() *AdditionalInformation {
 	return ai
 }
 
+type OnBoardDevicesExtendedInformationType byte
+
+const (
+	OnBoardDevicesExtendedInformationTypeOther OnBoardDevicesExtendedInformationType = 1 + iota
+	OnBoardDevicesExtendedInformationTypeUnknown
+	OnBoardDevicesExtendedInformationTypeVideo
+	OnBoardDevicesExtendedInformationTypeSCSIController
+	OnBoardDevicesExtendedInformationTypeEthernet
+	OnBoardDevicesExtendedInformationTypeTokenRing
+	OnBoardDevicesExtendedInformationTypeSound
+	OnBoardDevicesExtendedInformationTypePATAController
+	OnBoardDevicesExtendedInformationTypeSATAController
+	OnBoardDevicesExtendedInformationTypeSASController
+)
+
+func (o OnBoardDevicesExtendedInformationType) String() string {
+	types := [...]string{
+		"Other",
+		"Unknown",
+		"Video",
+		"SCSI Controller",
+		"Ethernet",
+		"Token Ring",
+		"Sound",
+		"PATA Controller",
+		"SATA Controller",
+		"SAS Controller",
+	}
+	return types[o-1]
+}
+
+type OnBoardDevicesExtendedInformation struct {
+	InfoCommon
+	ReferenceDesignation string
+	DeviceType           OnBoardDevicesExtendedInformationType
+	DeviceTypeInstance   byte
+	SegmentGroupNumber   uint16
+	BusNumber            byte
+	DeviceFunctionNumber byte
+}
+
+func (o OnBoardDevicesExtendedInformation) SlotSegment() string {
+	if o.SegmentGroupNumber == 0xFFFF || o.BusNumber == 0xFF || o.DeviceFunctionNumber == 0xFF {
+		return "Not of types PCI/AGP/PCI-X/PCI-Express"
+	}
+	return fmt.Sprintf("Bus Address: %04x:%02x:%02x.%x",
+		o.SegmentGroupNumber,
+		o.BusNumber,
+		o.DeviceFunctionNumber>>3,
+		o.DeviceFunctionNumber&0x7)
+}
+
+func (o OnBoardDevicesExtendedInformation) String() string {
+	return fmt.Sprintf("On Board Devices Extended Information:\n\t\t"+
+		"Reference Designation: %s\n\t\t"+
+		"Device Type: %s\n\t\t"+
+		"Device Type Instance: %d\n\t\t"+
+		"%s\n",
+		o.ReferenceDesignation,
+		o.DeviceType,
+		o.DeviceTypeInstance,
+		o.SlotSegment())
+}
+
+func (h DMIHeader) OnBoardDevicesExtendedInformation() *OnBoardDevicesExtendedInformation {
+	data := h.data
+	return &OnBoardDevicesExtendedInformation{
+		ReferenceDesignation: h.FieldString(int(data[0x04])),
+		DeviceType:           OnBoardDevicesExtendedInformationType(data[0x05]),
+		DeviceTypeInstance:   data[0x06],
+		SegmentGroupNumber:   U16(data[0x07:0x09]),
+		BusNumber:            data[0x09],
+		DeviceFunctionNumber: data[0x0A],
+	}
+}
+
 func bcd(data []byte) int64 {
 	var b int64
 	l := len(data)
@@ -4543,7 +4619,7 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeSystemSlots:
 		ss := h.SystemSlot()
 		fmt.Println(ss)
-	case SMBIOSStructureTypeOnboardDevice:
+	case SMBIOSStructureTypeOnBoardDevices:
 		di := h.OnBoardDeviceInformation()
 		fmt.Println(di)
 	case SMBIOSStructureTypeBIOSLanguage:
@@ -4621,6 +4697,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeAdditionalInformation:
 		ai := h.AdditionalInformation()
 		fmt.Println(ai)
+	case SMBIOSStructureTypeOnBoardDevicesExtendedInformation:
+		ob := h.OnBoardDevicesExtendedInformation()
+		fmt.Println(ob)
 	default:
 		fmt.Println("Unknown")
 	}
