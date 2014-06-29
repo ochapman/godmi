@@ -58,7 +58,9 @@ const (
 	SMBIOSStructureTypePowerSupply
 	SMBIOSStructureTypeAdditionalInformation
 	SMBIOSStructureTypeOnBoardDevicesExtendedInformation
-	SMBIOSStructureTypeManagementControllerHostInterface /*42*/
+	SMBIOSStructureTypeManagementControllerHostInterface                     /*42*/
+	SMBIOSStructureTypeInactive                          SMBIOSStructureType = 126
+	SMBIOSStructureTypeEndOfTable                        SMBIOSStructureType = 127
 )
 
 func (b SMBIOSStructureType) String() string {
@@ -4568,6 +4570,18 @@ func (h DMIHeader) ManagementControllerHostInterface() *ManagementControllerHost
 	return mc
 }
 
+type Inactive struct {
+	InfoCommon
+}
+
+func (i Inactive) String() string {
+	return "Inactive"
+}
+
+func (h DMIHeader) Inactive() *Inactive {
+	return &Inactive{}
+}
+
 func bcd(data []byte) int64 {
 	var b int64
 	l := len(data)
@@ -4769,6 +4783,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeManagementControllerHostInterface:
 		mc := h.ManagementControllerHostInterface()
 		fmt.Println(mc)
+	case SMBIOSStructureTypeInactive:
+		in := h.Inactive()
+		fmt.Println(in)
 	default:
 		fmt.Println("Unknown")
 	}
