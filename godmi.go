@@ -4367,6 +4367,65 @@ func (h DMIHeader) SystemPowerSupply() *SystemPowerSupply {
 	}
 }
 
+type AdditionalInformationEntries struct {
+	Length           byte
+	ReferencedHandle uint16
+	ReferencedOffset byte
+	String           string
+	Value            []byte
+}
+
+type AdditionalInformationEntriess []AdditionalInformationEntries
+
+func (a AdditionalInformationEntriess) String() string {
+	var str string
+	for _, s := range a {
+		str += fmt.Sprintf("\n\t\t\t\tReferenced Handle: %d"+
+			"\n\t\t\t\tReferenced Offset: %d"+
+			"\n\t\t\t\tString: %s"+
+			"\n\t\t\t\tValue: %v",
+			s.ReferencedHandle,
+			s.ReferencedOffset,
+			s.String,
+			s.Value)
+	}
+	return str
+}
+
+type AdditionalInformation struct {
+	InfoCommon
+	NumberOfEntries byte
+	Entries         []AdditionalInformationEntries
+}
+
+func (a AdditionalInformation) String() string {
+	return fmt.Sprintf("Additional Information:\n\t\t"+
+		"Number Of Entries: %d\n\t\t"+
+		"Entries: %s\n",
+		a.NumberOfEntries,
+		AdditionalInformationEntriess(a.Entries))
+}
+
+func (h DMIHeader) AdditionalInformation() *AdditionalInformation {
+	data := h.data
+	ai := new(AdditionalInformation)
+	ai.NumberOfEntries = data[0x04]
+	en := make([]AdditionalInformationEntries, 0)
+	d := data[0x05:]
+	for i := byte(0); i < ai.NumberOfEntries; i++ {
+		var e AdditionalInformationEntries
+		e.Length = d[0x0]
+		e.ReferencedHandle = U16(d[0x01:0x03])
+		e.ReferencedOffset = d[0x03]
+		e.String = h.FieldString(int(d[0x04]))
+		e.Value = data[0x05:e.Length]
+		en = append(en, e)
+		d = data[0x05+e.Length:]
+	}
+	ai.Entries = en
+	return ai
+}
+
 func bcd(data []byte) int64 {
 	var b int64
 	l := len(data)
@@ -4559,6 +4618,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypePowerSupply:
 		sp := h.SystemPowerSupply()
 		fmt.Println(sp)
+	case SMBIOSStructureTypeAdditionalInformation:
+		ai := h.AdditionalInformation()
+		fmt.Println(ai)
 	default:
 		fmt.Println("Unknown")
 	}
