@@ -4184,6 +4184,189 @@ func (h DMIHeader) IPMIDeviceInformation() *IPMIDeviceInformation {
 	}
 }
 
+type SystemPowerSupplyType byte
+
+const (
+	SystemPowerSupplyTypeOther SystemPowerSupplyType = 1 + iota
+	SystemPowerSupplyTypeUnknown
+	SystemPowerSupplyTypeLinear
+	SystemPowerSupplyTypeSwitching
+	SystemPowerSupplyTypeBattery
+	SystemPowerSupplyTypeUPS
+	SystemPowerSupplyTypeConverter
+	SystemPowerSupplyTypeRegulator
+	SystemPowerSupplyTypeReserved
+)
+
+func (s SystemPowerSupplyType) String() string {
+	types := [...]string{
+		"Other",
+		"Unknown",
+		"Linear",
+		"Switching",
+		"Battery",
+		"UPS",
+		"Converter",
+		"Regulator",
+		"Reserved",
+	}
+	if s <= 7 {
+		return types[s]
+	}
+	return types[8]
+}
+
+type SystemPowerSupplyStatus byte
+
+const (
+	SystemPowerSupplyStatusOther SystemPowerSupplyStatus = 1 + iota
+	SystemPowerSupplyStatusUnknown
+	SystemPowerSupplyStatusOK
+	SystemPowerSupplyStatusNonCritical
+	SystemPowerSupplyStatusCritical
+)
+
+func (s SystemPowerSupplyStatus) String() string {
+	status := [...]string{
+		"Other",
+		"Unknown",
+		"OK",
+		"Non-critical",
+		"Critical",
+	}
+	return status[s-1]
+}
+
+type SystemPowerSupplyInputVoltageSwitching byte
+
+const (
+	SystemPowerSupplyInputVoltageSwitchingOther SystemPowerSupplyInputVoltageSwitching = 1 + iota
+	SystemPowerSupplyInputVoltageSwitchingUnknown
+	SystemPowerSupplyInputVoltageSwitchingManual
+	SystemPowerSupplyInputVoltageSwitchingAutoSwitch
+	SystemPowerSupplyInputVoltageSwitchingWiderange
+	SystemPowerSupplyInputVoltageSwitchingNotApplicable
+	SystemPowerSupplyInputVoltageSwitchingReserved
+)
+
+func (s SystemPowerSupplyInputVoltageSwitching) String() string {
+	switches := [...]string{
+		"Other",
+		"Unknown",
+		"Manual",
+		"Auto-switch",
+		"Wide range",
+		"Not applicable",
+		"Reserved",
+	}
+	if s < 6 {
+		return switches[s-1]
+	}
+	return switches[6]
+}
+
+type SystemPowerSupplyCharacteristics struct {
+	DMTFPowerSupplyType       SystemPowerSupplyType
+	Status                    SystemPowerSupplyStatus
+	DMTFInputVoltageSwitching SystemPowerSupplyInputVoltageSwitching
+	IsUnpluggedFromWall       bool
+	IsPresent                 bool
+	IsHotRepleaceable         bool
+}
+
+func newSystemPowerSupplyCharacteristics(ch uint16) SystemPowerSupplyCharacteristics {
+	var sp SystemPowerSupplyCharacteristics
+	sp.DMTFPowerSupplyType = SystemPowerSupplyType((ch & 0x3c00) >> 10)
+	sp.Status = SystemPowerSupplyStatus((ch & 0x380) >> 7)
+	sp.DMTFInputVoltageSwitching = SystemPowerSupplyInputVoltageSwitching((ch & 0x70) >> 3)
+	sp.IsUnpluggedFromWall = (ch&0x04 != 0)
+	sp.IsPresent = (ch&0x02 != 0)
+	sp.IsHotRepleaceable = (ch&0x01 != 0)
+	return sp
+}
+
+func (s SystemPowerSupplyCharacteristics) String() string {
+	return fmt.Sprintf("System Power Supply Characteristics:"+
+		"\n\t\t\t\tDMTF Power Supply Type: %s"+
+		"\n\t\t\t\tStatus: %s"+
+		"\n\t\t\t\tDMTF Input Voltage Switching: %s"+
+		"\n\t\t\t\tIs Unplugged From Wall: %t"+
+		"\n\t\t\t\tIs Present: %t"+
+		"\n\t\t\t\tIs Hot Repleaceable: %t\n",
+		s.DMTFPowerSupplyType,
+		s.Status,
+		s.DMTFInputVoltageSwitching,
+		s.IsUnpluggedFromWall,
+		s.IsPresent,
+		s.IsHotRepleaceable)
+}
+
+type SystemPowerSupply struct {
+	InfoCommon
+	PowerUnitGroup             byte
+	Location                   string
+	DeviceName                 string
+	Manufacturer               string
+	SerialNumber               string
+	AssetTagNumber             string
+	ModelPartNumber            string
+	RevisionLevel              string
+	MaxPowerCapacity           uint16
+	PowerSupplyCharacteristics SystemPowerSupplyCharacteristics
+	InputVoltageProbeHandle    uint16
+	CoolingDeviceHandle        uint16
+	InputCurrentProbeHandle    uint16
+}
+
+func (s SystemPowerSupply) String() string {
+	return fmt.Sprintf("System Power Supply:\n\t\t"+
+		"Power Unit Group: %d\n\t\t"+
+		"Location: %s\n\t\t"+
+		"Device Name: %s\n\t\t"+
+		"Manufacturer: %s\n\t\t"+
+		"Serial Number: %s\n\t\t"+
+		"Asset Tag Number: %s\n\t\t"+
+		"Model Part Number: %s\n\t\t"+
+		"Revision Level: %s\n\t\t"+
+		"Max Power Capacity: %d\n\t\t"+
+		"Power Supply Characteristics: %s\n\t\t"+
+		"Input Voltage Probe Handle: %d\n\t\t"+
+		"Cooling Device Handle: %d\n\t\t"+
+		"Input Current Probe Handle: %d\n",
+		s.PowerUnitGroup,
+		s.Location,
+		s.DeviceName,
+		s.Manufacturer,
+		s.SerialNumber,
+		s.AssetTagNumber,
+		s.ModelPartNumber,
+		s.RevisionLevel,
+		s.MaxPowerCapacity,
+		s.PowerSupplyCharacteristics,
+		s.InputVoltageProbeHandle,
+		s.CoolingDeviceHandle,
+		s.InputCurrentProbeHandle)
+}
+
+func (h DMIHeader) SystemPowerSupply() *SystemPowerSupply {
+	data := h.data
+	return &SystemPowerSupply{
+		PowerUnitGroup:             data[0x04],
+		Location:                   h.FieldString(int(data[0x05])),
+		DeviceName:                 h.FieldString(int(data[0x06])),
+		Manufacturer:               h.FieldString(int(data[0x07])),
+		SerialNumber:               h.FieldString(int(data[0x08])),
+		AssetTagNumber:             h.FieldString(int(data[0x09])),
+		ModelPartNumber:            h.FieldString(int(data[0x0A])),
+		RevisionLevel:              h.FieldString(int(data[0x0B])),
+		MaxPowerCapacity:           U16(data[0x0C:0x0E]),
+		PowerSupplyCharacteristics: newSystemPowerSupplyCharacteristics(U16(data[0x0E : 0x0E+2])),
+		InputVoltageProbeHandle:    U16(data[0x0F:0x11]),
+		CoolingDeviceHandle:        U16(data[0x11:0x13]),
+		InputCurrentProbeHandle:    U16(data[0x13:0x15]),
+	}
+}
+
 func bcd(data []byte) int64 {
 	var b int64
 	l := len(data)
@@ -4373,6 +4556,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeIPMIDevice:
 		id := h.IPMIDeviceInformation()
 		fmt.Println(id)
+	case SMBIOSStructureTypePowerSupply:
+		sp := h.SystemPowerSupply()
+		fmt.Println(sp)
 	default:
 		fmt.Println("Unknown")
 	}
