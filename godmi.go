@@ -4582,6 +4582,18 @@ func (h DMIHeader) Inactive() *Inactive {
 	return &Inactive{}
 }
 
+type EndOfTable struct {
+	InfoCommon
+}
+
+func (e EndOfTable) String() string {
+	return "End-of-Table"
+}
+
+func (h DMIHeader) EndOfTable() *EndOfTable {
+	return &EndOfTable{}
+}
+
 func bcd(data []byte) int64 {
 	var b int64
 	l := len(data)
@@ -4786,6 +4798,9 @@ func (h DMIHeader) Decode() {
 	case SMBIOSStructureTypeInactive:
 		in := h.Inactive()
 		fmt.Println(in)
+	case SMBIOSStructureTypeEndOfTable:
+		et := h.EndOfTable()
+		fmt.Println(et)
 	default:
 		fmt.Println("Unknown")
 	}
