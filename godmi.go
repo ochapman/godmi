@@ -1,7 +1,9 @@
 /*
 * godmi.go
+* DMI SMBIOS information
 *
 * Chapman Ou <ochapman.cn@gmail.com>
+*
  */
 package godmi
 
