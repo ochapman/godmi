@@ -3,7 +3,7 @@
 *
 * Chapman Ou <ochapman.cn@gmail.com>
  */
-package main
+package godmi
 
 import (
 	"bytes"
@@ -4993,14 +4993,4 @@ func anchor(mem []byte) []byte {
 func version(mem []byte) string {
 	ver := strconv.Itoa(int(mem[0x06])) + "." + strconv.Itoa(int(mem[0x07]))
 	return ver
-}
-
-func main() {
-	eps, err := NewSMBIOS_EPS()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(-1)
-	}
-	eps.StructureTable()
-	//fmt.Printf("%2X", m)
 }
