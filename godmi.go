@@ -1,5 +1,7 @@
 /*
+* godmi.go
 *
+* Chapman Ou <ochapman.cn@gmail.com>
  */
 package main
 
