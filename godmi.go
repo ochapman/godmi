@@ -4647,14 +4647,12 @@ func NewDMIHeader(data []byte) DMIHeader {
 	return hd
 }
 
-func NewSMBIOS_EPS() (SMBIOS_EPS, error) {
-	var eps SMBIOS_EPS
-	var u16 uint16
-	var u32 uint32
+func NewSMBIOS_EPS() (eps *SMBIOS_EPS, err error) {
+	eps = new(SMBIOS_EPS)
 
 	mem, err := getMem(0xF0000, 0x10000)
 	if err != nil {
-		return eps, err
+		return
 	}
 	data := anchor(mem)
 	eps.Anchor = data[:0x04]
@@ -4662,19 +4660,15 @@ func NewSMBIOS_EPS() (SMBIOS_EPS, error) {
 	eps.Length = data[0x05]
 	eps.MajorVersion = data[0x06]
 	eps.MinorVersion = data[0x07]
-	binary.Read(bytes.NewBuffer(data[0x08:0x0A]), binary.LittleEndian, &u16)
-	eps.MaxSize = u16
+	eps.MaxSize = U16(data[0x08:0x0A])
 	eps.FormattedArea = data[0x0B:0x0F]
 	eps.InterAnchor = data[0x10:0x15]
 	eps.InterChecksum = data[0x15]
-	binary.Read(bytes.NewBuffer(data[0x16:0x18]), binary.LittleEndian, &u16)
-	eps.TableLength = u16
-	binary.Read(bytes.NewBuffer(data[0x18:0x1C]), binary.LittleEndian, &u32)
-	eps.TableAddress = u32
-	binary.Read(bytes.NewBuffer(data[0x1C:0x1E]), binary.LittleEndian, &u16)
-	eps.NumberOfSM = u16
+	eps.TableLength = U16(data[0x16:0x18])
+	eps.TableAddress = U32(data[0x18:0x1C])
+	eps.NumberOfSM = U16(data[0x1C:0x1E])
 	eps.BCDRevision = data[0x1E]
-	return eps, nil
+	return
 }
 
 func (e SMBIOS_EPS) StructureTableMem() ([]byte, error) {
