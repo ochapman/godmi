@@ -4938,46 +4938,25 @@ func (e SMBIOS_EPS) StructureTable() {
 	}
 }
 
-func getMem(base uint32, length uint32) ([]byte, error) {
+func getMem(base uint32, length uint32) (mem []byte, err error) {
 	file, err := os.Open("/dev/mem")
 	if err != nil {
-		return []byte{}, err
+		return
 	}
 	defer file.Close()
 	fd := file.Fd()
 	mmoffset := base % uint32(os.Getpagesize())
 	mm, err := syscall.Mmap(int(fd), int64(base-mmoffset), int(mmoffset+length), syscall.PROT_READ, syscall.MAP_SHARED)
 	if err != nil {
-		return []byte{}, err
+		return
 	}
-	mem := make([]byte, len(mm))
+	mem = make([]byte, len(mm))
 	copy(mem, mm)
 	err = syscall.Munmap(mm)
 	if err != nil {
-		return []byte{}, err
+		return
 	}
-	return mem, nil
-}
-
-func readMem() ([]byte, error) {
-	base := 0xF0000
-	file, err := os.Open("/dev/mem")
-	if err != nil {
-		return []byte{}, err
-	}
-	fd := file.Fd()
-	mmoffset := base % os.Getpagesize()
-	mm, err := syscall.Mmap(int(fd), int64(base-mmoffset), mmoffset+0x10000, syscall.PROT_READ, syscall.MAP_SHARED)
-	if err != nil {
-		return []byte{}, err
-	}
-	mem := make([]byte, len(mm))
-	copy(mem, mm)
-	err = syscall.Munmap(mm)
-	if err != nil {
-		return []byte{}, err
-	}
-	return mem, nil
+	return
 }
 
 func anchor(mem []byte) []byte {
