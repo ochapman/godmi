@@ -215,7 +215,23 @@ type SystemInformation struct {
 }
 
 func (si SystemInformation) String() string {
-	return fmt.Sprintf("SystemInformation:\n\tManufacturer: %s\n\tProduct Name: %s\n\tVersion: %s\n\tSerial Number: %s\n\tUUID: %s\n\tWake-up Type: %s\n\tSKU Number: %s\n\tFamily: %s\n\t", si.Manufacturer, si.ProductName, si.Version, si.SerialNumber, si.UUID, si.WakeUpType, si.SKUNumber, si.Family)
+	return fmt.Sprintf("SystemInformation:"+
+		"\n\tManufacturer: %s"+
+		"\n\tProduct Name: %s"+
+		"\n\tVersion: %s"+
+		"\n\tSerial Number: %s"+
+		"\n\tUUID: %s"+
+		"\n\tWake-up Type: %s"+
+		"\n\tSKU Number: %s"+
+		"\n\tFamily: %s\n\t",
+		si.Manufacturer,
+		si.ProductName,
+		si.Version,
+		si.SerialNumber,
+		si.UUID,
+		si.WakeUpType,
+		si.SKUNumber,
+		si.Family)
 }
 
 type FeatureFlags byte
