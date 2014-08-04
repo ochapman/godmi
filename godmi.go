@@ -312,7 +312,23 @@ type BaseboardInformation struct {
 }
 
 func (bi BaseboardInformation) String() string {
-	return fmt.Sprintf("BaseboardInformation:\n\tManufacturer: %s\n\tProduct: %s\n\tVersion: %s\n\tSerial Number: %s\n\tAsset Tag: %s\n\tFeature Flags: %s\n\tLocation In Chassis: %s\n\tBoard Type: %s\n\t", bi.Manufacturer, bi.Product, bi.Version, bi.SerailNumber, bi.AssetTag, bi.FeatureFlags, bi.LocationInChassis, bi.BoardType)
+	return fmt.Sprintf("BaseboardInformation:"+
+		"\n\tManufacturer: %s"+
+		"\n\tProduct: %s"+
+		"\n\tVersion: %s"+
+		"\n\tSerial Number: %s"+
+		"\n\tAsset Tag: %s"+
+		"\n\tFeature Flags: %s"+
+		"\n\tLocation In Chassis: %s"+
+		"\n\tBoard Type: %s\n\t",
+		bi.Manufacturer,
+		bi.Product,
+		bi.Version,
+		bi.SerailNumber,
+		bi.AssetTag,
+		bi.FeatureFlags,
+		bi.LocationInChassis,
+		bi.BoardType)
 }
 
 // BIOS Characteristics
@@ -607,7 +623,25 @@ func (h DMIHeader) ChassisInformation() ChassisInformation {
 }
 
 func (ci ChassisInformation) String() string {
-	return fmt.Sprintf("Chassis Information:\n\tManufacturer: %s\n\tType: %s\n\tVersion: %s\n\tSerial Number: %s\n\tAsset Tag: %s\n\tBoot-up State: %s\n\tPower Supply State: %s\n\tThermal State: %s\n\tSecurity Status: %s\n\t", ci.Manufacturer, ci.ChassisType, ci.Version, ci.SerialNumber, ci.AssetTag, ci.BootUpState, ci.PowerSupplyState, ci.ThermalState, ci.SecurityStatus)
+	return fmt.Sprintf("Chassis Information:\n\t"+
+		"Manufacturer: %s"+
+		"\n\tType: %s"+
+		"\n\tVersion: %s"+
+		"\n\tSerial Number: %s"+
+		"\n\tAsset Tag: %s"+
+		"\n\tBoot-up State: %s"+
+		"\n\tPower Supply State: %s"+
+		"\n\tThermal State: %s"+
+		"\n\tSecurity Status: %s\n\t",
+		ci.Manufacturer,
+		ci.ChassisType,
+		ci.Version,
+		ci.SerialNumber,
+		ci.AssetTag,
+		ci.BootUpState,
+		ci.PowerSupplyState,
+		ci.ThermalState,
+		ci.SecurityStatus)
 }
 
 type ProcessorType byte
@@ -1502,7 +1536,17 @@ func NewCacheConfiguration(u uint16) CacheConfiguration {
 }
 
 func (c CacheConfiguration) String() string {
-	return fmt.Sprintf("Cache Configuration: \n\tLevel: %s\n\t\tSocketed: %v\n\t\tLocation: %s\n\t\tEnabled: %v\n\t\tMode:\n\t\t", c.Level, c.Socketed, c.Location, c.Enabled, c.Mode)
+	return fmt.Sprintf("Cache Configuration:"+
+		"\n\tLevel: %s"+
+		"\n\t\tSocketed: %v"+
+		"\n\t\tLocation: %s"+
+		"\n\t\tEnabled: %v"+
+		"\n\t\tMode:\n\t\t",
+		c.Level,
+		c.Socketed,
+		c.Location,
+		c.Enabled,
+		c.Mode)
 }
 
 type CacheGranularity byte
@@ -2133,7 +2177,29 @@ func (h DMIHeader) SystemSlot() SystemSlot {
 }
 
 func (s SystemSlot) String() string {
-	return fmt.Sprintf("System Slot: %s\n\t\tSlot Designation: %s\n\t\tSlot Type: %s\n\t\tSlot Data Bus Width: %s\n\t\tCurrent Usage: %s\n\t\tSlot Length: %s\n\t\tSlot ID: %s\n\t\tSlot Characteristics1: %s\n\t\tSlot Characteristics2: %s\n\t\tSegment Group Number: %s\n\t\tBus Number: %s\n\t\tDevice/Function Number: %s\n", s.Designation, s.Type, s.DataBusWidth, s.CurrentUsage, s.Length, s.ID, s.Characteristics1, s.Characteristics2, s.SegmentGroupNumber, s.BusNumber, s.DeviceFunctionNumber)
+	return fmt.Sprintf("System Slot: %s"+
+		"\n\t\tSlot Designation: %s"+
+		"\n\t\tSlot Type: %s"+
+		"\n\t\tSlot Data Bus Width: %s"+
+		"\n\t\tCurrent Usage: %s"+
+		"\n\t\tSlot Length: %s"+
+		"\n\t\tSlot ID: %s"+
+		"\n\t\tSlot Characteristics1: %s"+
+		"\n\t\tSlot Characteristics2: %s"+
+		"\n\t\tSegment Group Number: %s"+
+		"\n\t\tBus Number: %s"+
+		"\n\t\tDevice/Function Number: %s\n",
+		s.Designation,
+		s.Type,
+		s.DataBusWidth,
+		s.CurrentUsage,
+		s.Length,
+		s.ID,
+		s.Characteristics1,
+		s.Characteristics2,
+		s.SegmentGroupNumber,
+		s.BusNumber,
+		s.DeviceFunctionNumber)
 }
 
 type BIOSLanguageInformationFlag byte
@@ -2167,7 +2233,13 @@ func (h DMIHeader) BIOSLanguageInformation() BIOSLanguageInformation {
 }
 
 func (b BIOSLanguageInformation) String() string {
-	return fmt.Sprintf("BIOS Language Information:\n\t\tInstallable Languages %s\n\t\tFlags: %s\n\t\tCurrent Language: %s\n", b.InstallableLanguage, b.Flags, b.CurrentLanguage)
+	return fmt.Sprintf("BIOS Language Information:"+
+		"\n\t\tInstallable Languages %s"+
+		"\n\t\tFlags: %s"+
+		"\n\t\tCurrent Language: %s\n",
+		b.InstallableLanguage,
+		b.Flags,
+		b.CurrentLanguage)
 }
 
 type OnBoardDeviceTypeOfDevice byte
@@ -2309,7 +2381,11 @@ func (h DMIHeader) GroupAssociations() GroupAssociations {
 }
 
 func (g GroupAssociations) String() string {
-	return fmt.Sprintf("Group Associations:\n\t\tGroup Name: %s\n\t\tItem: %#v\n", g.GroupName, g.Item)
+	return fmt.Sprintf("Group Associations:"+
+		"\n\t\tGroup Name: %s"+
+		"\n\t\tItem: %#v\n",
+		g.GroupName,
+		g.Item)
 }
 
 type PhysicalMemoryArrayLocation byte
@@ -4885,7 +4961,19 @@ func (c CharacteristicsExt2) String() string {
 }
 
 func (bi BIOSInformation) String() string {
-	return fmt.Sprintf("BIOS Information\n\tVendor: %s\n\tVersion: %s\n\tAddress: %4X0\n\tCharacteristics: %s\n\tExt1:%s\n\tExt2: %s", bi.Vendor, bi.BIOSVersion, bi.StartingAddressSegment, bi.Characteristics, bi.CharacteristicsExt1, bi.CharacteristicsExt2)
+	return fmt.Sprintf("BIOS Information:"+
+		"\n\tVendor: %s"+
+		"\n\tVersion: %s"+
+		"\n\tAddress: %4"+
+		"X0\n\tCharacteristics: %s"+
+		"\n\tExt1:%s"+
+		"\n\tExt2: %s",
+		bi.Vendor,
+		bi.BIOSVersion,
+		bi.StartingAddressSegment,
+		bi.Characteristics,
+		bi.CharacteristicsExt1,
+		bi.CharacteristicsExt2)
 }
 
 func uuid(data []byte, ver string) string {
