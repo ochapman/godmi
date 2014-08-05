@@ -4728,15 +4728,17 @@ func U64(data []byte) uint64 {
 	return u64
 }
 
-func NewDMIHeader(data []byte) DMIHeader {
-	hd := DMIHeader{
+func NewDMIHeader(data []byte) *DMIHeader {
+	if len(data) < 0x04 {
+		return nil
+	}
+	return &DMIHeader{
 		InfoCommon: InfoCommon{
 			Type:   SMBIOSStructureType(data[0x00]),
 			Length: data[1],
 			Handle: SMBIOSStructureHandle(U16(data[0x02:0x04])),
 		},
 		data: data}
-	return hd
 }
 
 func NewSMBIOS_EPS() (eps *SMBIOS_EPS, err error) {
@@ -4767,12 +4769,14 @@ func (e SMBIOS_EPS) StructureTableMem() ([]byte, error) {
 	return getMem(e.TableAddress, uint32(e.TableLength))
 }
 
-func (h DMIHeader) Next() DMIHeader {
+func (h DMIHeader) Next() *DMIHeader {
 	de := []byte{0, 0}
 	next := h.data[h.Length:]
 	index := bytes.Index(next, de)
-	hd := NewDMIHeader(next[index+2:])
-	return hd
+	if index == -1 {
+		return nil
+	}
+	return NewDMIHeader(next[index+2:])
 }
 
 func (h DMIHeader) Decode() {
@@ -5034,11 +5038,8 @@ func (e SMBIOS_EPS) StructureTable() {
 	if err != nil {
 		return
 	}
-	//for i := 0, hd := NewDMIHeader(tmem); i < e.NumberOfSM ; i++, hd = hd.Next() {
-	hd := NewDMIHeader(tmem)
-	for i := 0; i < 4; i++ {
+	for hd := NewDMIHeader(tmem); hd != nil; hd = hd.Next() {
 		hd.Decode()
-		hd = hd.Next()
 	}
 }
 
