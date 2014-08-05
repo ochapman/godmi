@@ -4778,13 +4778,13 @@ func (h DMIHeader) Next() DMIHeader {
 func (h DMIHeader) Decode() {
 	switch h.Type {
 	case SMBIOSStructureTypeBIOS:
-		bi := h.GetBIOSInformation()
+		bi := h.BIOSInformation()
 		fmt.Println(bi)
 	case SMBIOSStructureTypeSystem:
-		si := h.GetSystemInformation()
+		si := h.SystemInformation()
 		fmt.Println(si)
 	case SMBIOSStructureTypeBaseBoard:
-		bi := h.GetBaseboardInformation()
+		bi := h.BaseboardInformation()
 		fmt.Println(bi)
 	case SMBIOSStructureTypeChassis:
 		ci := h.ChassisInformation()
@@ -4913,7 +4913,7 @@ func (h DMIHeader) FieldString(offset int) string {
 	return string(d[index : index+ib])
 }
 
-func (h DMIHeader) GetBIOSInformation() BIOSInformation {
+func (h DMIHeader) BIOSInformation() BIOSInformation {
 	var bi BIOSInformation
 	data := h.data
 	if h.Type != 0 {
@@ -4995,7 +4995,7 @@ func uuid(data []byte, ver string) string {
 		data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15])
 }
 
-func (h DMIHeader) GetSystemInformation() SystemInformation {
+func (h DMIHeader) SystemInformation() SystemInformation {
 	var si SystemInformation
 	data := h.data
 	if h.Type != 1 {
@@ -5012,7 +5012,7 @@ func (h DMIHeader) GetSystemInformation() SystemInformation {
 	return si
 }
 
-func (h DMIHeader) GetBaseboardInformation() BaseboardInformation {
+func (h DMIHeader) BaseboardInformation() BaseboardInformation {
 	var bi BaseboardInformation
 	data := h.data
 	if h.Type != 2 {
