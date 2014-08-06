@@ -4779,125 +4779,86 @@ func (h DMIHeader) Next() *DMIHeader {
 	return NewDMIHeader(next[index+2:])
 }
 
-func (h DMIHeader) Decode() {
+func (h DMIHeader) Decode() interface{} {
 	switch h.Type {
 	case SMBIOSStructureTypeBIOS:
-		bi := h.BIOSInformation()
-		fmt.Println(bi)
+		return h.BIOSInformation()
 	case SMBIOSStructureTypeSystem:
-		si := h.SystemInformation()
-		fmt.Println(si)
+		return h.SystemInformation()
 	case SMBIOSStructureTypeBaseBoard:
-		bi := h.BaseboardInformation()
-		fmt.Println(bi)
+		return h.BaseboardInformation()
 	case SMBIOSStructureTypeChassis:
-		ci := h.ChassisInformation()
-		fmt.Println(ci)
+		return h.ChassisInformation()
 	case SMBIOSStructureTypeProcessor:
-		pi := h.ProcessorInformation()
-		fmt.Println(pi)
+		return h.ProcessorInformation()
 	case SMBIOSStructureTypeCache:
-		ci := h.CacheInformation()
-		fmt.Println(ci)
+		return h.CacheInformation()
 	case SMBIOSStructureTypePortConnector:
-		pi := h.PortInformation()
-		fmt.Println(pi)
+		return h.PortInformation()
 	case SMBIOSStructureTypeSystemSlots:
-		ss := h.SystemSlot()
-		fmt.Println(ss)
+		return h.SystemSlot()
 	case SMBIOSStructureTypeOnBoardDevices:
-		di := h.OnBoardDeviceInformation()
-		fmt.Println(di)
+		return h.OnBoardDeviceInformation()
 	case SMBIOSStructureTypeBIOSLanguage:
-		bl := h.BIOSLanguageInformation()
-		fmt.Println(bl)
+		return h.BIOSLanguageInformation()
 	case SMBIOSStructureTypeSystemConfigurationOptions:
-		sc := h.SystemConfigurationOptions()
-		fmt.Println(sc)
+		return h.SystemConfigurationOptions()
 	case SMBIOSStructureTypeOEMStrings:
-		os := h.OEMStrings()
-		fmt.Println(os)
+		return h.OEMStrings()
 	case SMBIOSStructureTypeGroupAssociations:
-		ga := h.GroupAssociations()
-		fmt.Println(ga)
+		return h.GroupAssociations()
 	case SMBIOSStructureTypePhysicalMemoryArray:
-		pm := h.PhysicalMemoryArray()
-		fmt.Println(pm)
+		return h.PhysicalMemoryArray()
 	case SMBIOSStructureTypeMemoryDevice:
-		md := h.MemoryDevice()
-		fmt.Println(md)
+		return h.MemoryDevice()
 	case SMBIOSStructureType32_bitMemoryError:
-		me := h._32BitMemoryErrorInformation()
-		fmt.Println(me)
+		return h._32BitMemoryErrorInformation()
 	case SMBIOSStructureTypeBuilt_inPointingDevice:
-		bp := h.BuiltinPointingDevice()
-		fmt.Println(bp)
+		return h.BuiltinPointingDevice()
 	case SMBIOSStructureTypePortableBattery:
-		pb := h.PortableBattery()
-		fmt.Println(pb)
+		return h.PortableBattery()
 	case SMBIOSStructureTypeSystemReset:
-		sr := h.SystemReset()
-		fmt.Println(sr)
+		return h.SystemReset()
 	case SMBIOSStructureTypeHardwareSecurity:
-		hs := h.HardwareSecurity()
-		fmt.Println(hs)
+		return h.HardwareSecurity()
 	case SMBIOSStructureTypeSystemPowerControls:
-		sp := h.SystemPowerControls()
-		fmt.Println(sp)
+		return h.SystemPowerControls()
 	case SMBIOSStructureTypeVoltageProbe:
-		vp := h.VoltageProbe()
-		fmt.Println(vp)
+		return h.VoltageProbe()
 	case SMBIOSStructureTypeCoolingDevice:
-		cd := h.CoolingDevice()
-		fmt.Println(cd)
+		return h.CoolingDevice()
 	case SMBIOSStructureTypeTemperatureProbe:
-		tp := h.TemperatureProbe()
-		fmt.Println(tp)
+		return h.TemperatureProbe()
 	case SMBIOSStructureTypeElectricalCurrentProbe:
-		ec := h.ElectricalCurrentProbe()
-		fmt.Println(ec)
+		return h.ElectricalCurrentProbe()
 	case SMBIOSStructureTypeOut_of_bandRemoteAccess:
-		oo := h.OutOfBandRemoteAccess()
-		fmt.Println(oo)
+		return h.OutOfBandRemoteAccess()
 	case SMBIOSStructureTypeSystemBoot:
-		sb := h.SystemBootInformation()
-		fmt.Println(sb)
+		return h.SystemBootInformation()
 	case SMBIOSStructureType64_bitMemoryError:
-		me := h._64BitMemoryErrorInformation()
-		fmt.Println(me)
+		return h._64BitMemoryErrorInformation()
 	case SMBIOSStructureTypeManagementDevice:
-		md := h.ManagementDevice()
-		fmt.Println(md)
+		return h.ManagementDevice()
 	case SMBIOSStructureTypeManagementDeviceComponent:
-		md := h.ManagementDeviceComponent()
-		fmt.Println(md)
+		return h.ManagementDeviceComponent()
 	case SMBIOSStructureTypeMemoryChannel:
-		mc := h.MemoryChannel()
-		fmt.Println(mc)
+		return h.MemoryChannel()
 	case SMBIOSStructureTypeIPMIDevice:
-		id := h.IPMIDeviceInformation()
-		fmt.Println(id)
+		return h.IPMIDeviceInformation()
 	case SMBIOSStructureTypePowerSupply:
-		sp := h.SystemPowerSupply()
-		fmt.Println(sp)
+		return h.SystemPowerSupply()
 	case SMBIOSStructureTypeAdditionalInformation:
-		ai := h.AdditionalInformation()
-		fmt.Println(ai)
+		return h.AdditionalInformation()
 	case SMBIOSStructureTypeOnBoardDevicesExtendedInformation:
-		ob := h.OnBoardDevicesExtendedInformation()
-		fmt.Println(ob)
+		return h.OnBoardDevicesExtendedInformation()
 	case SMBIOSStructureTypeManagementControllerHostInterface:
-		mc := h.ManagementControllerHostInterface()
-		fmt.Println(mc)
+		return h.ManagementControllerHostInterface()
 	case SMBIOSStructureTypeInactive:
-		in := h.Inactive()
-		fmt.Println(in)
+		return h.Inactive()
 	case SMBIOSStructureTypeEndOfTable:
-		et := h.EndOfTable()
-		fmt.Println(et)
-	default:
-		fmt.Println("Unknown")
+		return h.EndOfTable()
 	}
+	return nil
 }
 
 func (h DMIHeader) FieldString(offset int) string {
@@ -5033,14 +4994,16 @@ func (h DMIHeader) BaseboardInformation() BaseboardInformation {
 	return bi
 }
 
-func (e SMBIOS_EPS) StructureTable() {
+func (e SMBIOS_EPS) StructureTable() map[SMBIOSStructureType]interface{} {
 	tmem, err := e.StructureTableMem()
 	if err != nil {
-		return
+		return nil
 	}
+	m := make(map[SMBIOSStructureType]interface{}, 0)
 	for hd := NewDMIHeader(tmem); hd != nil; hd = hd.Next() {
-		hd.Decode()
+		m[hd.Type] = hd.Decode()
 	}
+	return m
 }
 
 func getMem(base uint32, length uint32) (mem []byte, err error) {

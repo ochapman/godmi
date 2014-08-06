@@ -21,6 +21,9 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(-1)
 	}
-	eps.StructureTable()
+	m := eps.StructureTable()
+	system := m[godmi.SMBIOSStructureTypeSystem].(godmi.SystemInformation)
+	fmt.Println(system.UUID)
+	fmt.Println(system.ProductName)
 	//fmt.Printf("%2X", m)
 }
