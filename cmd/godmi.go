@@ -18,4 +18,6 @@ func main() {
 	si := godmi.SystemInformation()
 	fmt.Println(si.UUID)
 	fmt.Println(si.ProductName)
+	bi := godmi.BIOSInformation()
+	fmt.Println(bi.Vendor)
 }

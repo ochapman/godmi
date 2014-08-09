@@ -155,7 +155,7 @@ type Characteristics uint64
 type CharacteristicsExt1 byte
 type CharacteristicsExt2 byte
 
-type BIOSInformation struct {
+type bIOSInformation struct {
 	Type                                   byte
 	Length                                 byte
 	Handle                                 uint16
@@ -4880,8 +4880,8 @@ func (h DMIHeader) FieldString(offset int) string {
 	return string(d[index : index+ib])
 }
 
-func (h DMIHeader) BIOSInformation() BIOSInformation {
-	var bi BIOSInformation
+func (h DMIHeader) BIOSInformation() bIOSInformation {
+	var bi bIOSInformation
 	data := h.data
 	if h.Type != 0 {
 		panic("h.Type is not 0")
@@ -4927,7 +4927,7 @@ func (c CharacteristicsExt2) String() string {
 	return s
 }
 
-func (bi BIOSInformation) String() string {
+func (bi bIOSInformation) String() string {
 	return fmt.Sprintf("BIOS Information:"+
 		"\n\tVendor: %s"+
 		"\n\tVersion: %s"+
@@ -5019,6 +5019,10 @@ func init() {
 
 func SystemInformation() systemInformation {
 	return gdmi[SMBIOSStructureTypeSystem].(systemInformation)
+}
+
+func BIOSInformation() bIOSInformation {
+	return gdmi[SMBIOSStructureTypeBIOS].(bIOSInformation)
 }
 
 func getMem(base uint32, length uint32) (mem []byte, err error) {
