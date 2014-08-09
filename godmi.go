@@ -4743,7 +4743,7 @@ func NewDMIHeader(data []byte) *DMIHeader {
 		data: data}
 }
 
-func NewSMBIOS_EPS() (eps *SMBIOS_EPS, err error) {
+func newSMBIOS_EPS() (eps *SMBIOS_EPS, err error) {
 	eps = new(SMBIOS_EPS)
 
 	mem, err := getMem(0xF0000, 0x10000)
@@ -5009,7 +5009,7 @@ func (e SMBIOS_EPS) StructureTable() map[SMBIOSStructureType]interface{} {
 }
 
 func init() {
-	eps, err := NewSMBIOS_EPS()
+	eps, err := newSMBIOS_EPS()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		panic(err)
