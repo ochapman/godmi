@@ -12,18 +12,10 @@ package main
 import (
 	"fmt"
 	"github.com/ochapman/godmi"
-	"os"
 )
 
 func main() {
-	eps, err := godmi.NewSMBIOS_EPS()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(-1)
-	}
-	m := eps.StructureTable()
-	system := m[godmi.SMBIOSStructureTypeSystem].(godmi.SystemInformation)
-	fmt.Println(system.UUID)
-	fmt.Println(system.ProductName)
-	//fmt.Printf("%2X", m)
+	si := godmi.SystemInformation()
+	fmt.Println(si.UUID)
+	fmt.Println(si.ProductName)
 }

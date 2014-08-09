@@ -17,6 +17,8 @@ import (
 	"syscall"
 )
 
+var gdmi map[SMBIOSStructureType]interface{}
+
 type SMBIOSStructureType byte
 
 const (
@@ -200,7 +202,7 @@ func (w WakeUpType) String() string {
 	return types[w]
 }
 
-type SystemInformation struct {
+type systemInformation struct {
 	Type         byte
 	Length       byte
 	Handle       uint16
@@ -214,7 +216,7 @@ type SystemInformation struct {
 	Family       string
 }
 
-func (si SystemInformation) String() string {
+func (si systemInformation) String() string {
 	return fmt.Sprintf("SystemInformation:"+
 		"\n\tManufacturer: %s"+
 		"\n\tProduct Name: %s"+
@@ -4960,8 +4962,8 @@ func uuid(data []byte, ver string) string {
 		data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15])
 }
 
-func (h DMIHeader) SystemInformation() SystemInformation {
-	var si SystemInformation
+func (h DMIHeader) SystemInformation() systemInformation {
+	var si systemInformation
 	data := h.data
 	if h.Type != 1 {
 		panic("Type is not 1")
@@ -5004,6 +5006,19 @@ func (e SMBIOS_EPS) StructureTable() map[SMBIOSStructureType]interface{} {
 		m[hd.Type] = hd.Decode()
 	}
 	return m
+}
+
+func init() {
+	eps, err := NewSMBIOS_EPS()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		panic(err)
+	}
+	gdmi = eps.StructureTable()
+}
+
+func SystemInformation() systemInformation {
+	return gdmi[SMBIOSStructureTypeSystem].(systemInformation)
 }
 
 func getMem(base uint32, length uint32) (mem []byte, err error) {
