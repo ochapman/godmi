@@ -22,4 +22,6 @@ func main() {
 	fmt.Println(bi.Vendor)
 	bo := godmi.BaseboardInformation()
 	fmt.Println(bo.Manufacturer)
+	ch := godmi.Chassis()
+	fmt.Println(ch.Manufacturer)
 }

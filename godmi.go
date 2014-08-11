@@ -5029,6 +5029,10 @@ func BaseboardInformation() baseboardInformation {
 	return gdmi[SMBIOSStructureTypeBaseBoard].(baseboardInformation)
 }
 
+func Chassis() ChassisInformation {
+	return gdmi[SMBIOSStructureTypeChassis].(ChassisInformation)
+}
+
 func getMem(base uint32, length uint32) (mem []byte, err error) {
 	file, err := os.Open("/dev/mem")
 	if err != nil {
