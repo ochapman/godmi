@@ -296,14 +296,14 @@ func (b BoardType) String() string {
 	return "Out Of Spec"
 }
 
-type BaseboardInformation struct {
+type baseboardInformation struct {
 	Type                           byte
 	Length                         byte
 	Handle                         uint16
 	Manufacturer                   string
 	Product                        string
 	Version                        string
-	SerailNumber                   string
+	SerialNumber                   string
 	AssetTag                       string
 	FeatureFlags                   FeatureFlags
 	LocationInChassis              string
@@ -313,7 +313,7 @@ type BaseboardInformation struct {
 	ContainedObjectHandles         []byte
 }
 
-func (bi BaseboardInformation) String() string {
+func (bi baseboardInformation) String() string {
 	return fmt.Sprintf("BaseboardInformation:"+
 		"\n\tManufacturer: %s"+
 		"\n\tProduct: %s"+
@@ -326,7 +326,7 @@ func (bi BaseboardInformation) String() string {
 		bi.Manufacturer,
 		bi.Product,
 		bi.Version,
-		bi.SerailNumber,
+		bi.SerialNumber,
 		bi.AssetTag,
 		bi.FeatureFlags,
 		bi.LocationInChassis,
@@ -4979,8 +4979,8 @@ func (h DMIHeader) SystemInformation() systemInformation {
 	return si
 }
 
-func (h DMIHeader) BaseboardInformation() BaseboardInformation {
-	var bi BaseboardInformation
+func (h DMIHeader) BaseboardInformation() baseboardInformation {
+	var bi baseboardInformation
 	data := h.data
 	if h.Type != 2 {
 		panic("Type is not 2")
@@ -4988,7 +4988,7 @@ func (h DMIHeader) BaseboardInformation() BaseboardInformation {
 	bi.Manufacturer = h.FieldString(int(data[0x04]))
 	bi.Product = h.FieldString(int(data[0x05]))
 	bi.Version = h.FieldString(int(data[0x06]))
-	bi.SerailNumber = h.FieldString(int(data[0x07]))
+	bi.SerialNumber = h.FieldString(int(data[0x07]))
 	bi.AssetTag = h.FieldString(int(data[0x08]))
 	bi.FeatureFlags = FeatureFlags(data[0x09])
 	bi.LocationInChassis = h.FieldString(int(data[0x0A]))
@@ -5023,6 +5023,10 @@ func SystemInformation() systemInformation {
 
 func BIOSInformation() bIOSInformation {
 	return gdmi[SMBIOSStructureTypeBIOS].(bIOSInformation)
+}
+
+func BaseboardInformation() baseboardInformation {
+	return gdmi[SMBIOSStructureTypeBaseBoard].(baseboardInformation)
 }
 
 func getMem(base uint32, length uint32) (mem []byte, err error) {
