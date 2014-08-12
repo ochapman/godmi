@@ -1708,20 +1708,20 @@ type CacheInformation struct {
 	Associativity       CacheAssociativity
 }
 
-func (h DMIHeader) CacheInformation() CacheInformation {
-	var ci CacheInformation
+func (h DMIHeader) CacheInformation() *CacheInformation {
 	data := h.data
-	ci.SocketDesignation = h.FieldString(int(data[0x04]))
-	ci.Configuration = NewCacheConfiguration(U16(data[0x05:0x07]))
-	ci.MaximumCacheSize = NewCacheSize(U16(data[0x07:0x09]))
-	ci.InstalledSize = NewCacheSize(U16(data[0x09:0x0B]))
-	ci.SupportedSRAMType = SRAMType(U16(data[0x0B:0x0D]))
-	ci.CurrentSRAMType = SRAMType(U16(data[0x0D:0x0F]))
-	ci.CacheSpeed = CacheSpeed(data[0x0F])
-	ci.ErrorCorrectionType = ErrorCorrectionType(data[0x10])
-	ci.SystemCacheType = SystemCacheType(data[0x11])
-	ci.Associativity = CacheAssociativity(data[0x12])
-	return ci
+	return &CacheInformation{
+		SocketDesignation:   h.FieldString(int(data[0x04])),
+		Configuration:       NewCacheConfiguration(U16(data[0x05:0x07])),
+		MaximumCacheSize:    NewCacheSize(U16(data[0x07:0x09])),
+		InstalledSize:       NewCacheSize(U16(data[0x09:0x0B])),
+		SupportedSRAMType:   SRAMType(U16(data[0x0B:0x0D])),
+		CurrentSRAMType:     SRAMType(U16(data[0x0D:0x0F])),
+		CacheSpeed:          CacheSpeed(data[0x0F]),
+		ErrorCorrectionType: ErrorCorrectionType(data[0x10]),
+		SystemCacheType:     SystemCacheType(data[0x11]),
+		Associativity:       CacheAssociativity(data[0x12]),
+	}
 }
 
 type PortConnectorType byte
