@@ -601,27 +601,27 @@ type ChassisInformation struct {
 	SKUNumber                    string
 }
 
-func (h DMIHeader) ChassisInformation() ChassisInformation {
-	var ci ChassisInformation
+func (h DMIHeader) ChassisInformation() *ChassisInformation {
 	data := h.data
-	ci.Manufacturer = h.FieldString(int(data[0x04]))
-	ci.ChassisType = ChassisType(data[0x05])
-	ci.Version = h.FieldString(int(data[0x06]))
-	ci.SerialNumber = h.FieldString(int(data[0x07]))
-	ci.AssetTag = h.FieldString(int(data[0x08]))
-	ci.BootUpState = ChassisState(data[0x09])
-	ci.PowerSupplyState = ChassisState(data[0xA])
-	ci.ThermalState = ChassisState(data[0x0B])
-	ci.SecurityStatus = SecurityStatus(data[0x0C])
-	ci.OEMdefined = U16(data[0x0D : 0x0D+4])
-	ci.Height = Height(data[0x11])
-	ci.NumberOfPowerCords = data[0x12]
-	ci.ContainedElementCount = data[0x13]
-	ci.ContainedElementRecordLength = data[0x14]
-	// TODO: 7.4.4
-	//ci.ContainedElements =
-	ci.SKUNumber = h.FieldString(int(data[0x15]))
-	return ci
+	return &ChassisInformation{
+		Manufacturer:                 h.FieldString(int(data[0x04])),
+		ChassisType:                  ChassisType(data[0x05]),
+		Version:                      h.FieldString(int(data[0x06])),
+		SerialNumber:                 h.FieldString(int(data[0x07])),
+		AssetTag:                     h.FieldString(int(data[0x08])),
+		BootUpState:                  ChassisState(data[0x09]),
+		PowerSupplyState:             ChassisState(data[0xA]),
+		ThermalState:                 ChassisState(data[0x0B]),
+		SecurityStatus:               SecurityStatus(data[0x0C]),
+		OEMdefined:                   U16(data[0x0D : 0x0D+4]),
+		Height:                       Height(data[0x11]),
+		NumberOfPowerCords:           data[0x12],
+		ContainedElementCount:        data[0x13],
+		ContainedElementRecordLength: data[0x14],
+		// TODO: 7.4.4
+		//ci.ContainedElements:
+		SKUNumber: h.FieldString(int(data[0x15])),
+	}
 }
 
 func (ci ChassisInformation) String() string {
@@ -5029,8 +5029,8 @@ func BaseboardInformation() baseboardInformation {
 	return gdmi[SMBIOSStructureTypeBaseBoard].(baseboardInformation)
 }
 
-func Chassis() ChassisInformation {
-	return gdmi[SMBIOSStructureTypeChassis].(ChassisInformation)
+func Chassis() *ChassisInformation {
+	return gdmi[SMBIOSStructureTypeChassis].(*ChassisInformation)
 }
 
 func Processor() ProcessorInformation {
