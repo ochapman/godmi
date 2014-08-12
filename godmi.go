@@ -2222,7 +2222,7 @@ type BIOSLanguageInformation struct {
 	CurrentLanguage     string
 }
 
-func (h DMIHeader) BIOSLanguageInformation() BIOSLanguageInformation {
+func (h DMIHeader) BIOSLanguageInformation() *BIOSLanguageInformation {
 	var bl BIOSLanguageInformation
 	data := h.data
 	cnt := data[0x04]
@@ -2231,7 +2231,7 @@ func (h DMIHeader) BIOSLanguageInformation() BIOSLanguageInformation {
 	}
 	bl.Flags = NewBIOSLanguageInformationFlag(data[0x05])
 	bl.CurrentLanguage = bl.InstallableLanguage[data[0x15]]
-	return bl
+	return &bl
 }
 
 func (b BIOSLanguageInformation) String() string {
