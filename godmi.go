@@ -1911,15 +1911,15 @@ type PortInformation struct {
 	Type                        PortType
 }
 
-func (h DMIHeader) PortInformation() PortInformation {
-	var pi PortInformation
+func (h DMIHeader) PortInformation() *PortInformation {
 	data := h.data
-	pi.InternalReferenceDesignator = h.FieldString(int(data[0x04]))
-	pi.InternalConnectorType = PortConnectorType(data[0x05])
-	pi.ExternalReferenceDesignator = h.FieldString(int(data[0x06]))
-	pi.ExternalConnectorType = PortConnectorType(data[0x07])
-	pi.Type = PortType(data[0x08])
-	return pi
+	return &PortInformation{
+		InternalReferenceDesignator: h.FieldString(int(data[0x04])),
+		InternalConnectorType:       PortConnectorType(data[0x05]),
+		ExternalReferenceDesignator: h.FieldString(int(data[0x06])),
+		ExternalConnectorType:       PortConnectorType(data[0x07]),
+		Type: PortType(data[0x08]),
+	}
 }
 
 type SystemSlotType byte
