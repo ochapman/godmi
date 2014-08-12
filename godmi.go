@@ -1434,34 +1434,34 @@ type ProcessorInformation struct {
 	Family2           ProcessorFamily
 }
 
-func (h DMIHeader) ProcessorInformation() ProcessorInformation {
-	var pi ProcessorInformation
+func (h DMIHeader) ProcessorInformation() *ProcessorInformation {
 	data := h.data
-	pi.SocketDesignation = h.FieldString(int(data[0x04]))
-	pi.ProcessorType = ProcessorType(data[0x05])
-	pi.Family = ProcessorFamily(data[0x06])
-	pi.Manufacturer = h.FieldString(int(data[0x07]))
-	// TODO:
-	//pi.ProcessorID
-	pi.Version = h.FieldString(int(data[0x10]))
-	pi.Voltage = ProcessorVoltage(data[0x11])
-	pi.ExternalClock = U16(data[0x12:0x14])
-	pi.MaxSpeed = U16(data[0x14:0x16])
-	pi.CurrentSpeed = U16(data[0x16:0x18])
-	pi.Status = ProcessorStatus(data[0x18])
-	pi.Upgrade = ProcessorUpgrade(data[0x19])
-	pi.L1CacheHandle = U16(data[0x1A:0x1C])
-	pi.L2CacheHandle = U16(data[0x1C:0x1E])
-	pi.L3CacheHandle = U16(data[0x1E:0x20])
-	pi.SerialNumber = h.FieldString(int(data[0x20]))
-	pi.AssetTag = h.FieldString(int(data[0x21]))
-	pi.PartNumber = h.FieldString(int(data[0x22]))
-	pi.CoreCount = data[0x23]
-	pi.CoreEnabled = data[0x24]
-	pi.ThreadCount = data[0x25]
-	pi.Characteristics = ProcessorCharacteristics(U16(data[0x26:0x28]))
-	pi.Family2 = ProcessorFamily(data[0x28])
-	return pi
+	return &ProcessorInformation{
+		SocketDesignation: h.FieldString(int(data[0x04])),
+		ProcessorType:     ProcessorType(data[0x05]),
+		Family:            ProcessorFamily(data[0x06]),
+		Manufacturer:      h.FieldString(int(data[0x07])),
+		// TODO:
+		//pi.ProcessorID
+		Version:         h.FieldString(int(data[0x10])),
+		Voltage:         ProcessorVoltage(data[0x11]),
+		ExternalClock:   U16(data[0x12:0x14]),
+		MaxSpeed:        U16(data[0x14:0x16]),
+		CurrentSpeed:    U16(data[0x16:0x18]),
+		Status:          ProcessorStatus(data[0x18]),
+		Upgrade:         ProcessorUpgrade(data[0x19]),
+		L1CacheHandle:   U16(data[0x1A:0x1C]),
+		L2CacheHandle:   U16(data[0x1C:0x1E]),
+		L3CacheHandle:   U16(data[0x1E:0x20]),
+		SerialNumber:    h.FieldString(int(data[0x20])),
+		AssetTag:        h.FieldString(int(data[0x21])),
+		PartNumber:      h.FieldString(int(data[0x22])),
+		CoreCount:       data[0x23],
+		CoreEnabled:     data[0x24],
+		ThreadCount:     data[0x25],
+		Characteristics: ProcessorCharacteristics(U16(data[0x26:0x28])),
+		Family2:         ProcessorFamily(data[0x28]),
+	}
 }
 
 type OperationalMode byte
@@ -5033,8 +5033,8 @@ func Chassis() *ChassisInformation {
 	return gdmi[SMBIOSStructureTypeChassis].(*ChassisInformation)
 }
 
-func Processor() ProcessorInformation {
-	return gdmi[SMBIOSStructureTypeProcessor].(ProcessorInformation)
+func GetProcessorInformation() *ProcessorInformation {
+	return gdmi[SMBIOSStructureTypeProcessor].(*ProcessorInformation)
 }
 
 func getMem(base uint32, length uint32) (mem []byte, err error) {
