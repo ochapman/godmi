@@ -296,7 +296,7 @@ func (b BoardType) String() string {
 	return "Out Of Spec"
 }
 
-type baseboardInformation struct {
+type BaseboardInformation struct {
 	Type                           byte
 	Length                         byte
 	Handle                         uint16
@@ -313,7 +313,7 @@ type baseboardInformation struct {
 	ContainedObjectHandles         []byte
 }
 
-func (bi baseboardInformation) String() string {
+func (bi BaseboardInformation) String() string {
 	return fmt.Sprintf("BaseboardInformation:"+
 		"\n\tManufacturer: %s"+
 		"\n\tProduct: %s"+
@@ -4979,21 +4979,21 @@ func (h DMIHeader) SystemInformation() systemInformation {
 	return si
 }
 
-func (h DMIHeader) BaseboardInformation() baseboardInformation {
-	var bi baseboardInformation
+func (h DMIHeader) BaseboardInformation() *BaseboardInformation {
 	data := h.data
 	if h.Type != 2 {
-		panic("Type is not 2")
+		return nil
 	}
-	bi.Manufacturer = h.FieldString(int(data[0x04]))
-	bi.Product = h.FieldString(int(data[0x05]))
-	bi.Version = h.FieldString(int(data[0x06]))
-	bi.SerialNumber = h.FieldString(int(data[0x07]))
-	bi.AssetTag = h.FieldString(int(data[0x08]))
-	bi.FeatureFlags = FeatureFlags(data[0x09])
-	bi.LocationInChassis = h.FieldString(int(data[0x0A]))
-	bi.BoardType = BoardType(data[0x0D])
-	return bi
+	return &BaseboardInformation{
+		Manufacturer:      h.FieldString(int(data[0x04])),
+		Product:           h.FieldString(int(data[0x05])),
+		Version:           h.FieldString(int(data[0x06])),
+		SerialNumber:      h.FieldString(int(data[0x07])),
+		AssetTag:          h.FieldString(int(data[0x08])),
+		FeatureFlags:      FeatureFlags(data[0x09]),
+		LocationInChassis: h.FieldString(int(data[0x0A])),
+		BoardType:         BoardType(data[0x0D]),
+	}
 }
 
 func (e SMBIOS_EPS) StructureTable() map[SMBIOSStructureType]interface{} {
@@ -5025,8 +5025,8 @@ func BIOSInformation() bIOSInformation {
 	return gdmi[SMBIOSStructureTypeBIOS].(bIOSInformation)
 }
 
-func BaseboardInformation() baseboardInformation {
-	return gdmi[SMBIOSStructureTypeBaseBoard].(baseboardInformation)
+func GetBaseboardInformation() *BaseboardInformation {
+	return gdmi[SMBIOSStructureTypeBaseBoard].(*BaseboardInformation)
 }
 
 func Chassis() *ChassisInformation {

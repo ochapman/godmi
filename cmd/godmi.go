@@ -20,7 +20,7 @@ func main() {
 	fmt.Println(si.ProductName)
 	bi := godmi.BIOSInformation()
 	fmt.Println(bi.Vendor)
-	bo := godmi.BaseboardInformation()
+	bo := godmi.GetBaseboardInformation()
 	fmt.Println(bo.Manufacturer)
 	ch := godmi.Chassis()
 	fmt.Println(ch.Manufacturer)
