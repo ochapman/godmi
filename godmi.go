@@ -2853,17 +2853,17 @@ type _32BitMemoryErrorInformation struct {
 	Resolution        uint32
 }
 
-func (h DMIHeader) _32BitMemoryErrorInformation() _32BitMemoryErrorInformation {
-	var mei _32BitMemoryErrorInformation
+func (h DMIHeader) _32BitMemoryErrorInformation() *_32BitMemoryErrorInformation {
 	data := h.data
-	mei.Type = MemoryErrorInformationType(data[0x04])
-	mei.Granularity = MemoryErrorInformationGranularity(data[0x05])
-	mei.Operation = MemoryErrorInformationOperation(data[0x06])
-	mei.VendorSyndrome = U32(data[0x07:0x0B])
-	mei.ArrayErrorAddress = U32(data[0x0B:0x0F])
-	mei.ErrorAddress = U32(data[0x0F:0x13])
-	mei.Resolution = U32(data[0x13:0x22])
-	return mei
+	return &_32BitMemoryErrorInformation{
+		Type:              MemoryErrorInformationType(data[0x04]),
+		Granularity:       MemoryErrorInformationGranularity(data[0x05]),
+		Operation:         MemoryErrorInformationOperation(data[0x06]),
+		VendorSyndrome:    U32(data[0x07:0x0B]),
+		ArrayErrorAddress: U32(data[0x0B:0x0F]),
+		ErrorAddress:      U32(data[0x0F:0x13]),
+		Resolution:        U32(data[0x13:0x22]),
+	}
 }
 
 func (m _32BitMemoryErrorInformation) String() string {
@@ -2954,13 +2954,13 @@ type BuiltinPointingDevice struct {
 	NumberOfButtons byte
 }
 
-func (h DMIHeader) BuiltinPointingDevice() BuiltinPointingDevice {
-	var b BuiltinPointingDevice
+func (h DMIHeader) BuiltinPointingDevice() *BuiltinPointingDevice {
 	data := h.data
-	b.Type = BuiltinPointingDeviceType(data[0x04])
-	b.Interface = BuiltinPointingDeviceInterface(data[0x05])
-	b.NumberOfButtons = data[0x06]
-	return b
+	return &BuiltinPointingDevice{
+		Type:            BuiltinPointingDeviceType(data[0x04]),
+		Interface:       BuiltinPointingDeviceInterface(data[0x05]),
+		NumberOfButtons: data[0x06],
+	}
 }
 
 func (b BuiltinPointingDevice) String() string {
