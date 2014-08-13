@@ -4717,7 +4717,7 @@ func U64(data []byte) uint64 {
 	return u64
 }
 
-func NewDMIHeader(data []byte) *DMIHeader {
+func newDMIHeader(data []byte) *DMIHeader {
 	if len(data) < 0x04 {
 		return nil
 	}
@@ -4765,7 +4765,7 @@ func (h DMIHeader) Next() *DMIHeader {
 	if index == -1 {
 		return nil
 	}
-	return NewDMIHeader(next[index+2:])
+	return newDMIHeader(next[index+2:])
 }
 
 func (h DMIHeader) Decode() interface{} {
@@ -4981,7 +4981,7 @@ func (e SMBIOS_EPS) StructureTable() map[SMBIOSStructureType]interface{} {
 		return nil
 	}
 	m := make(map[SMBIOSStructureType]interface{})
-	for hd := NewDMIHeader(tmem); hd != nil; hd = hd.Next() {
+	for hd := newDMIHeader(tmem); hd != nil; hd = hd.Next() {
 		m[hd.SMType] = hd.Decode()
 	}
 	return m
