@@ -2286,7 +2286,7 @@ type OnBoardDeviceInformation struct {
 	Description []string
 }
 
-func (h DMIHeader) OnBoardDeviceInformation() OnBoardDeviceInformation {
+func (h DMIHeader) OnBoardDeviceInformation() *OnBoardDeviceInformation {
 	var d OnBoardDeviceInformation
 	data := h.data
 	n := (data[0x01] - 4) / 2
@@ -2300,7 +2300,7 @@ func (h DMIHeader) OnBoardDeviceInformation() OnBoardDeviceInformation {
 		desc := h.FieldString(int(data[sindex]))
 		d.Description = append(d.Description, desc)
 	}
-	return d
+	return &d
 }
 
 func (d OnBoardDeviceInformation) String() string {
@@ -2326,14 +2326,14 @@ type OEMStrings struct {
 	strings string
 }
 
-func (h DMIHeader) SystemConfigurationOptions() SystemConfigurationOptions {
+func (h DMIHeader) SystemConfigurationOptions() *SystemConfigurationOptions {
 	var sc SystemConfigurationOptions
 	data := h.data
 	sc.Count = data[0x04]
 	for i := byte(1); i <= sc.Count; i++ {
 		sc.strings += fmt.Sprintf("string %d: %s\n\t\t", i, h.FieldString(int(data[0x04+i])))
 	}
-	return sc
+	return &sc
 }
 
 func (s SystemConfigurationOptions) String() string {
