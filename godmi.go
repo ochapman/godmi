@@ -4880,20 +4880,20 @@ func (h DMIHeader) FieldString(offset int) string {
 	return string(d[index : index+ib])
 }
 
-func (h DMIHeader) BIOSInformation() bIOSInformation {
-	var bi bIOSInformation
+func (h DMIHeader) BIOSInformation() *BIOSInformation {
 	data := h.data
 	if h.Type != 0 {
-		panic("h.Type is not 0")
+		return nil
 	}
-	bi.Vendor = h.FieldString(int(data[0x04]))
-	bi.BIOSVersion = h.FieldString(int(data[0x05]))
-	bi.StartingAddressSegment = U16(data[0x06:0x08])
-	bi.ReleaseDate = h.FieldString(int(data[0x08]))
-	bi.Characteristics = Characteristics(U64(data[0x0A:0x12]))
-	bi.CharacteristicsExt1 = CharacteristicsExt1(data[0x12])
-	bi.CharacteristicsExt2 = CharacteristicsExt2(data[0x12])
-	return bi
+	return &BIOSInformation{
+		Vendor:                 h.FieldString(int(data[0x04])),
+		BIOSVersion:            h.FieldString(int(data[0x05])),
+		StartingAddressSegment: U16(data[0x06:0x08]),
+		ReleaseDate:            h.FieldString(int(data[0x08])),
+		Characteristics:        Characteristics(U64(data[0x0A:0x12])),
+		CharacteristicsExt1:    CharacteristicsExt1(data[0x12]),
+		CharacteristicsExt2:    CharacteristicsExt2(data[0x12]),
+	}
 }
 
 func (c Characteristics) String() string {
