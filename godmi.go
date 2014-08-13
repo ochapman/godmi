@@ -5059,6 +5059,13 @@ func GetSystemSlot() *SystemSlot {
 	return nil
 }
 
+func GetOnBoardDeviceInformation() *OnBoardDeviceInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeOnBoardDevices]; ok {
+		return d.(*OnBoardDeviceInformation)
+	}
+	return nil
+}
+
 func GetGDMI() map[SMBIOSStructureType]interface{} {
 	return gdmi
 }
