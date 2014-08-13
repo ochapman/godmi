@@ -2688,31 +2688,31 @@ type MemoryDevice struct {
 	ConfiguredVoltage          uint16
 }
 
-func (h DMIHeader) MemoryDevice() MemoryDevice {
-	var md MemoryDevice
+func (h DMIHeader) MemoryDevice() *MemoryDevice {
 	data := h.data
-	md.PhysicalMemoryArrayHandle = U16(data[0x04:0x06])
-	md.ErrorInformationHandle = U16(data[0x06:0x08])
-	md.TotalWidth = U16(data[0x08:0x0A])
-	md.DataWidth = U16(data[0x0A:0x0C])
-	md.Size = U16(data[0x0C:0x0e])
-	md.FormFactor = MemoryDeviceFormFactor(data[0x0E])
-	md.DeviceSet = data[0x0F]
-	md.DeviceLocator = h.FieldString(int(data[0x10]))
-	md.BankLocator = h.FieldString(int(data[0x11]))
-	md.Type = MemoryDeviceType(data[0x12])
-	md.TypeDetail = MemoryDeviceTypeDetail(U16(data[0x13:0x15]))
-	md.Speed = U16(data[0x15:0x17])
-	md.Manufacturer = h.FieldString(int(data[0x17]))
-	md.SerialNumber = h.FieldString(int(data[0x18]))
-	md.PartNumber = h.FieldString(int(data[0x1A]))
-	md.Attributes = data[0x1B]
-	md.ExtendedSize = U32(data[0x1C:0x20])
-	md.ConfiguredVoltage = U16(data[0x20:0x22])
-	md.MinimumVoltage = U16(data[0x22:0x24])
-	md.MaximumVoltage = U16(data[0x24:0x26])
-	md.ConfiguredVoltage = U16(data[0x26:0x28])
-	return md
+	return &MemoryDevice{
+		PhysicalMemoryArrayHandle:  U16(data[0x04:0x06]),
+		ErrorInformationHandle:     U16(data[0x06:0x08]),
+		TotalWidth:                 U16(data[0x08:0x0A]),
+		DataWidth:                  U16(data[0x0A:0x0C]),
+		Size:                       U16(data[0x0C:0x0e]),
+		FormFactor:                 MemoryDeviceFormFactor(data[0x0E]),
+		DeviceSet:                  data[0x0F],
+		DeviceLocator:              h.FieldString(int(data[0x10])),
+		BankLocator:                h.FieldString(int(data[0x11])),
+		Type:                       MemoryDeviceType(data[0x12]),
+		TypeDetail:                 MemoryDeviceTypeDetail(U16(data[0x13:0x15])),
+		Speed:                      U16(data[0x15:0x17]),
+		Manufacturer:               h.FieldString(int(data[0x17])),
+		SerialNumber:               h.FieldString(int(data[0x18])),
+		PartNumber:                 h.FieldString(int(data[0x1A])),
+		Attributes:                 data[0x1B],
+		ExtendedSize:               U32(data[0x1C:0x20]),
+		ConfiguredMemoryClockSpeed: U16(data[0x20:0x22]),
+		MinimumVoltage:             U16(data[0x22:0x24]),
+		MaximumVoltage:             U16(data[0x24:0x26]),
+		ConfiguredVoltage:          U16(data[0x26:0x28]),
+	}
 }
 
 func (m MemoryDevice) String() string {
