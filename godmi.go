@@ -4983,7 +4983,7 @@ func (e SMBIOS_EPS) StructureTable() map[SMBIOSStructureType]interface{} {
 	if err != nil {
 		return nil
 	}
-	m := make(map[SMBIOSStructureType]interface{}, 0)
+	m := make(map[SMBIOSStructureType]interface{})
 	for hd := NewDMIHeader(tmem); hd != nil; hd = hd.Next() {
 		m[hd.SMType] = hd.Decode()
 	}
