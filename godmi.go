@@ -202,7 +202,7 @@ func (w WakeUpType) String() string {
 	return types[w]
 }
 
-type systemInformation struct {
+type SystemInformation struct {
 	Type         byte
 	Length       byte
 	Handle       uint16
@@ -216,7 +216,7 @@ type systemInformation struct {
 	Family       string
 }
 
-func (si systemInformation) String() string {
+func (si SystemInformation) String() string {
 	return fmt.Sprintf("SystemInformation:"+
 		"\n\tManufacturer: %s"+
 		"\n\tProduct Name: %s"+
@@ -4962,21 +4962,22 @@ func uuid(data []byte, ver string) string {
 		data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15])
 }
 
-func (h DMIHeader) SystemInformation() systemInformation {
-	var si systemInformation
+func (h DMIHeader) SystemInformation() *SystemInformation {
 	data := h.data
 	if h.Type != 1 {
-		panic("Type is not 1")
+		return nil
 	}
-	si.Manufacturer = h.FieldString(int(data[0x04]))
-	si.ProductName = h.FieldString(int(data[0x05]))
-	si.Version = h.FieldString(int(data[0x06]))
-	si.SerialNumber = h.FieldString(int(data[0x07]))
-	si.UUID = uuid(data[0x08:0x18], si.Version)
-	si.WakeUpType = WakeUpType(data[0x18])
-	si.SKUNumber = h.FieldString(int(data[0x19]))
-	si.Family = h.FieldString(int(data[0x1A]))
-	return si
+	version := h.FieldString(int(data[0x06]))
+	return &SystemInformation{
+		Manufacturer: h.FieldString(int(data[0x04])),
+		ProductName:  h.FieldString(int(data[0x05])),
+		Version:      version,
+		SerialNumber: h.FieldString(int(data[0x07])),
+		UUID:         uuid(data[0x08:0x18], version),
+		WakeUpType:   WakeUpType(data[0x18]),
+		SKUNumber:    h.FieldString(int(data[0x19])),
+		Family:       h.FieldString(int(data[0x1A])),
+	}
 }
 
 func (h DMIHeader) BaseboardInformation() *BaseboardInformation {
@@ -5017,8 +5018,8 @@ func init() {
 	gdmi = eps.StructureTable()
 }
 
-func SystemInformation() systemInformation {
-	return gdmi[SMBIOSStructureTypeSystem].(systemInformation)
+func GetSystemInformation() *SystemInformation {
+	return gdmi[SMBIOSStructureTypeSystem].(*SystemInformation)
 }
 
 func GetBIOSInformation() *BIOSInformation {
