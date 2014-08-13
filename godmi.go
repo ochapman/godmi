@@ -2366,7 +2366,7 @@ type GroupAssociations struct {
 	Item      []GroupAssociationsItem
 }
 
-func (h DMIHeader) GroupAssociations() GroupAssociations {
+func (h DMIHeader) GroupAssociations() *GroupAssociations {
 	var ga GroupAssociations
 	data := h.data
 	ga.GroupName = h.FieldString(int(data[0x04]))
@@ -2379,7 +2379,7 @@ func (h DMIHeader) GroupAssociations() GroupAssociations {
 		gai.Handle = SMBIOSStructureHandle(U16(items[i*3+1:]))
 		ga.Item = append(ga.Item, gai)
 	}
-	return ga
+	return &ga
 }
 
 func (g GroupAssociations) String() string {
