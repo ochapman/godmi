@@ -15,10 +15,10 @@ import (
 )
 
 func main() {
-	si := godmi.SystemInformation()
+	si := godmi.GetSystemInformation()
 	fmt.Println(si.UUID)
 	fmt.Println(si.ProductName)
-	bi := godmi.BIOSInformation()
+	bi := godmi.GetBIOSInformation()
 	fmt.Println(bi.Vendor)
 	bo := godmi.GetBaseboardInformation()
 	fmt.Println(bo.Manufacturer)
