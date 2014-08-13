@@ -3146,15 +3146,15 @@ func (s SystemReset) String() string {
 		s.Timeout)
 }
 
-func (h DMIHeader) SystemReset() SystemReset {
-	var s SystemReset
+func (h DMIHeader) SystemReset() *SystemReset {
 	data := h.data
-	s.Capabilities = data[0x04]
-	s.ResetCount = U16(data[0x05:0x07])
-	s.ResetLimit = U16(data[0x07:0x09])
-	s.TimerInterval = U16(data[0x09:0x0B])
-	s.Timeout = U16(data[0x0B:0x0D])
-	return s
+	return &SystemReset{
+		Capabilities:  data[0x04],
+		ResetCount:    U16(data[0x05:0x07]),
+		ResetLimit:    U16(data[0x07:0x09]),
+		TimerInterval: U16(data[0x09:0x0B]),
+		Timeout:       U16(data[0x0B:0x0D]),
+	}
 }
 
 type HardwareSecurityStatus byte
