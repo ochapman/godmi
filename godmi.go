@@ -148,9 +148,6 @@ type DMIHeader struct {
 	data []byte
 }
 
-type SMBIOS_Structure struct {
-}
-
 type Characteristics uint64
 type CharacteristicsExt1 byte
 type CharacteristicsExt2 byte
