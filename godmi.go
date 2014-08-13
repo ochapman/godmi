@@ -155,7 +155,7 @@ type Characteristics uint64
 type CharacteristicsExt1 byte
 type CharacteristicsExt2 byte
 
-type bIOSInformation struct {
+type BIOSInformation struct {
 	Type                                   byte
 	Length                                 byte
 	Handle                                 uint16
@@ -4927,7 +4927,7 @@ func (c CharacteristicsExt2) String() string {
 	return s
 }
 
-func (bi bIOSInformation) String() string {
+func (bi BIOSInformation) String() string {
 	return fmt.Sprintf("BIOS Information:"+
 		"\n\tVendor: %s"+
 		"\n\tVersion: %s"+
@@ -5021,8 +5021,8 @@ func SystemInformation() systemInformation {
 	return gdmi[SMBIOSStructureTypeSystem].(systemInformation)
 }
 
-func BIOSInformation() bIOSInformation {
-	return gdmi[SMBIOSStructureTypeBIOS].(bIOSInformation)
+func GetBIOSInformation() *BIOSInformation {
+	return gdmi[SMBIOSStructureTypeBIOS].(*BIOSInformation)
 }
 
 func GetBaseboardInformation() *BaseboardInformation {
