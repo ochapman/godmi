@@ -5052,6 +5052,17 @@ func GetPortInformation() *PortInformation {
 	return nil
 }
 
+func GetSystemSlot() *SystemSlot {
+	if d, ok := gdmi[SMBIOSStructureTypeSystemSlots]; ok {
+		return d.(*SystemSlot)
+	}
+	return nil
+}
+
+func GetGDMI() map[SMBIOSStructureType]interface{} {
+	return gdmi
+}
+
 func getMem(base uint32, length uint32) (mem []byte, err error) {
 	file, err := os.Open("/dev/mem")
 	if err != nil {
