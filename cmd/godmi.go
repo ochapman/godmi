@@ -24,4 +24,8 @@ func main() {
 	fmt.Println(bo.Manufacturer)
 	ch := godmi.GetChassisInformation()
 	fmt.Println(ch.Manufacturer)
+	ca := godmi.GetCacheInformation()
+	if ca != nil {
+		fmt.Println(ca)
+	}
 }

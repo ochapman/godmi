@@ -5038,6 +5038,13 @@ func GetProcessorInformation() *ProcessorInformation {
 	return gdmi[SMBIOSStructureTypeProcessor].(*ProcessorInformation)
 }
 
+func GetCacheInformation() *CacheInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeCache]; ok {
+		return d.(*CacheInformation)
+	}
+	return nil
+}
+
 func getMem(base uint32, length uint32) (mem []byte, err error) {
 	file, err := os.Open("/dev/mem")
 	if err != nil {
