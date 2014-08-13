@@ -5018,33 +5018,6 @@ func init() {
 	gdmi = eps.StructureTable()
 }
 
-func GetSystemInformation() *SystemInformation {
-	return gdmi[SMBIOSStructureTypeSystem].(*SystemInformation)
-}
-
-func GetBIOSInformation() *BIOSInformation {
-	return gdmi[SMBIOSStructureTypeBIOS].(*BIOSInformation)
-}
-
-func GetBaseboardInformation() *BaseboardInformation {
-	return gdmi[SMBIOSStructureTypeBaseBoard].(*BaseboardInformation)
-}
-
-func GetChassisInformation() *ChassisInformation {
-	return gdmi[SMBIOSStructureTypeChassis].(*ChassisInformation)
-}
-
-func GetProcessorInformation() *ProcessorInformation {
-	return gdmi[SMBIOSStructureTypeProcessor].(*ProcessorInformation)
-}
-
-func GetCacheInformation() *CacheInformation {
-	if d, ok := gdmi[SMBIOSStructureTypeCache]; ok {
-		return d.(*CacheInformation)
-	}
-	return nil
-}
-
 func GetPortInformation() *PortInformation {
 	if d, ok := gdmi[SMBIOSStructureTypePortConnector]; ok {
 		return d.(*PortInformation)
@@ -5069,6 +5042,237 @@ func GetOnBoardDeviceInformation() *OnBoardDeviceInformation {
 func GetBIOSLanguageInformation() *BIOSLanguageInformation {
 	if d, ok := gdmi[SMBIOSStructureTypeBIOSLanguage]; ok {
 		return d.(*BIOSLanguageInformation)
+	}
+	return nil
+}
+
+func GetChassisInformation() *ChassisInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeChassis]; ok {
+		return d.(*ChassisInformation)
+	}
+	return nil
+}
+
+func GetProcessorInformation() *ProcessorInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeProcessor]; ok {
+		return d.(*ProcessorInformation)
+	}
+	return nil
+}
+
+func GetCacheInformation() *CacheInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeCache]; ok {
+		return d.(*CacheInformation)
+	}
+	return nil
+}
+
+func GetSystemConfigurationOptions() *SystemConfigurationOptions {
+	if d, ok := gdmi[SMBIOSStructureTypeSystemConfigurationOptions]; ok {
+		return d.(*SystemConfigurationOptions)
+	}
+	return nil
+}
+
+func GetOEMStrings() *OEMStrings {
+	if d, ok := gdmi[SMBIOSStructureTypeOEMStrings]; ok {
+		return d.(*OEMStrings)
+	}
+	return nil
+}
+
+func GetGroupAssociations() *GroupAssociations {
+	if d, ok := gdmi[SMBIOSStructureTypeGroupAssociations]; ok {
+		return d.(*GroupAssociations)
+	}
+	return nil
+}
+
+func GetPhysicalMemoryArray() *PhysicalMemoryArray {
+	if d, ok := gdmi[SMBIOSStructureTypePhysicalMemoryArray]; ok {
+		return d.(*PhysicalMemoryArray)
+	}
+	return nil
+}
+
+func GetMemoryDevice() *MemoryDevice {
+	if d, ok := gdmi[SMBIOSStructureTypeMemoryDevice]; ok {
+		return d.(*MemoryDevice)
+	}
+	return nil
+}
+
+func Get_32BitMemoryErrorInformation() *_32BitMemoryErrorInformation {
+	if d, ok := gdmi[SMBIOSStructureType32_bitMemoryError]; ok {
+		return d.(*_32BitMemoryErrorInformation)
+	}
+	return nil
+}
+
+func GetBuiltinPointingDevice() *BuiltinPointingDevice {
+	if d, ok := gdmi[SMBIOSStructureTypeBuilt_inPointingDevice]; ok {
+		return d.(*BuiltinPointingDevice)
+	}
+	return nil
+}
+
+func GetPortableBattery() *PortableBattery {
+	if d, ok := gdmi[SMBIOSStructureTypePortableBattery]; ok {
+		return d.(*PortableBattery)
+	}
+	return nil
+}
+
+func GetSystemReset() *SystemReset {
+	if d, ok := gdmi[SMBIOSStructureTypeSystemReset]; ok {
+		return d.(*SystemReset)
+	}
+	return nil
+}
+
+func GetHardwareSecurity() *HardwareSecurity {
+	if d, ok := gdmi[SMBIOSStructureTypeHardwareSecurity]; ok {
+		return d.(*HardwareSecurity)
+	}
+	return nil
+}
+
+func GetSystemPowerControls() *SystemPowerControls {
+	if d, ok := gdmi[SMBIOSStructureTypeSystemPowerControls]; ok {
+		return d.(*SystemPowerControls)
+	}
+	return nil
+}
+
+func GetVoltageProbe() *VoltageProbe {
+	if d, ok := gdmi[SMBIOSStructureTypeVoltageProbe]; ok {
+		return d.(*VoltageProbe)
+	}
+	return nil
+}
+
+func GetCoolingDevice() *CoolingDevice {
+	if d, ok := gdmi[SMBIOSStructureTypeCoolingDevice]; ok {
+		return d.(*CoolingDevice)
+	}
+	return nil
+}
+
+func GetTemperatureProbe() *TemperatureProbe {
+	if d, ok := gdmi[SMBIOSStructureTypeTemperatureProbe]; ok {
+		return d.(*TemperatureProbe)
+	}
+	return nil
+}
+
+func GetElectricalCurrentProbe() *ElectricalCurrentProbe {
+	if d, ok := gdmi[SMBIOSStructureTypeElectricalCurrentProbe]; ok {
+		return d.(*ElectricalCurrentProbe)
+	}
+	return nil
+}
+
+func GetOutOfBandRemoteAccess() *OutOfBandRemoteAccess {
+	if d, ok := gdmi[SMBIOSStructureTypeOut_of_bandRemoteAccess]; ok {
+		return d.(*OutOfBandRemoteAccess)
+	}
+	return nil
+}
+
+func GetSystemBootInformation() *SystemBootInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeSystemBoot]; ok {
+		return d.(*SystemBootInformation)
+	}
+	return nil
+}
+
+func Get_64BitMemoryErrorInformation() *_64BitMemoryErrorInformation {
+	if d, ok := gdmi[SMBIOSStructureType64_bitMemoryError]; ok {
+		return d.(*_64BitMemoryErrorInformation)
+	}
+	return nil
+}
+
+func GetManagementDevice() *ManagementDevice {
+	if d, ok := gdmi[SMBIOSStructureTypeManagementDevice]; ok {
+		return d.(*ManagementDevice)
+	}
+	return nil
+}
+
+func GetManagementDeviceComponent() *ManagementDeviceComponent {
+	if d, ok := gdmi[SMBIOSStructureTypeManagementDeviceComponent]; ok {
+		return d.(*ManagementDeviceComponent)
+	}
+	return nil
+}
+
+func GetManagementDeviceThresholdData() *ManagementDeviceThresholdData {
+	if d, ok := gdmi[SMBIOSStructureTypeManagementDeviceThresholdData]; ok {
+		return d.(*ManagementDeviceThresholdData)
+	}
+	return nil
+}
+
+func GetMemoryChannel() *MemoryChannel {
+	if d, ok := gdmi[SMBIOSStructureTypeMemoryChannel]; ok {
+		return d.(*MemoryChannel)
+	}
+	return nil
+}
+
+func GetIPMIDeviceInformation() *IPMIDeviceInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeIPMIDevice]; ok {
+		return d.(*IPMIDeviceInformation)
+	}
+	return nil
+}
+
+func GetSystemPowerSupply() *SystemPowerSupply {
+	if d, ok := gdmi[SMBIOSStructureTypePowerSupply]; ok {
+		return d.(*SystemPowerSupply)
+	}
+	return nil
+}
+
+func GetAdditionalInformation() *AdditionalInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeAdditionalInformation]; ok {
+		return d.(*AdditionalInformation)
+	}
+	return nil
+}
+
+func GetOnBoardDevicesExtendedInformation() *OnBoardDevicesExtendedInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeOnBoardDevicesExtendedInformation]; ok {
+		return d.(*OnBoardDevicesExtendedInformation)
+	}
+	return nil
+}
+
+func GetManagementControllerHostInterface() *ManagementControllerHostInterface {
+	if d, ok := gdmi[SMBIOSStructureTypeManagementControllerHostInterface]; ok {
+		return d.(*ManagementControllerHostInterface)
+	}
+	return nil
+}
+
+func GetBIOSInformation() *BIOSInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeBIOS]; ok {
+		return d.(*BIOSInformation)
+	}
+	return nil
+}
+
+func GetSystemInformation() *SystemInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeSystem]; ok {
+		return d.(*SystemInformation)
+	}
+	return nil
+}
+
+func GetBaseboardInformation() *BaseboardInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeBaseBoard]; ok {
+		return d.(*BaseboardInformation)
 	}
 	return nil
 }
