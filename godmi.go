@@ -3208,11 +3208,11 @@ type HardwareSecurity struct {
 	Setting HardwareSecuritySettings
 }
 
-func (h DMIHeader) HardwareSecurity() HardwareSecurity {
+func (h DMIHeader) HardwareSecurity() *HardwareSecurity {
 	var hw HardwareSecurity
 	data := h.data
 	hw.Setting = NewHardwareSecurity(data[0x04])
-	return hw
+	return &hw
 }
 
 func (h HardwareSecurity) String() string {
