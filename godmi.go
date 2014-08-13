@@ -2340,14 +2340,14 @@ func (s SystemConfigurationOptions) String() string {
 	return fmt.Sprintf("System Configuration Option\n\t\t%s", s.strings)
 }
 
-func (h DMIHeader) OEMStrings() OEMStrings {
+func (h DMIHeader) OEMStrings() *OEMStrings {
 	var o OEMStrings
 	data := h.data
 	o.Count = data[0x04]
 	for i := byte(0); i < o.Count; i++ {
 		o.strings += fmt.Sprintf("strings: %d %s\n\t\t", i, h.FieldString(int(data[i])))
 	}
-	return o
+	return &o
 }
 
 func (o OEMStrings) String() string {
