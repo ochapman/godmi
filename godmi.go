@@ -2490,17 +2490,17 @@ type PhysicalMemoryArray struct {
 	ExtendedMaximumCapacity uint64
 }
 
-func (h DMIHeader) PhysicalMemoryArray() PhysicalMemoryArray {
-	var pma PhysicalMemoryArray
+func (h DMIHeader) PhysicalMemoryArray() *PhysicalMemoryArray {
 	data := h.data
-	pma.Location = PhysicalMemoryArrayLocation(data[0x04])
-	pma.Use = PhysicalMemoryArrayUse(data[0x05])
-	pma.ErrorCorrection = PhysicalMemoryArrayErrorCorrection(data[0x06])
-	pma.MaximumCapacity = U32(data[0x07:0x0B])
-	pma.ErrorInformationHandle = U16(data[0x0B:0x0D])
-	pma.NumberOfMemoryDevices = U16(data[0x0D:0x0F])
-	pma.ExtendedMaximumCapacity = U64(data[0x0F:])
-	return pma
+	return &PhysicalMemoryArray{
+		Location:                PhysicalMemoryArrayLocation(data[0x04]),
+		Use:                     PhysicalMemoryArrayUse(data[0x05]),
+		ErrorCorrection:         PhysicalMemoryArrayErrorCorrection(data[0x06]),
+		MaximumCapacity:         U32(data[0x07:0x0B]),
+		ErrorInformationHandle:  U16(data[0x0B:0x0D]),
+		NumberOfMemoryDevices:   U16(data[0x0D:0x0F]),
+		ExtendedMaximumCapacity: U64(data[0x0F:]),
+	}
 }
 
 func (p PhysicalMemoryArray) String() string {
