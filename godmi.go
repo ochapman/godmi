@@ -5030,7 +5030,7 @@ func GetBaseboardInformation() *BaseboardInformation {
 	return gdmi[SMBIOSStructureTypeBaseBoard].(*BaseboardInformation)
 }
 
-func GetChassis() *ChassisInformation {
+func GetChassisInformation() *ChassisInformation {
 	return gdmi[SMBIOSStructureTypeChassis].(*ChassisInformation)
 }
 
