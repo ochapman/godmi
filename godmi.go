@@ -3020,25 +3020,25 @@ type PortableBattery struct {
 	OEMSepecific              uint32
 }
 
-func (h DMIHeader) PortableBattery() PortableBattery {
-	var p PortableBattery
+func (h DMIHeader) PortableBattery() *PortableBattery {
 	data := h.data
-	p.Location = h.FieldString(int(data[0x04]))
-	p.Manufacturer = h.FieldString(int(data[0x05]))
-	p.ManufacturerDate = h.FieldString(int(data[0x06]))
-	p.SerialNumber = h.FieldString(int(data[0x07]))
-	p.DeviceName = h.FieldString(int(data[0x08]))
-	p.DeviceChemistry = PortableBatteryDeviceChemistry(data[0x09])
-	p.DesignCapacity = U16(data[0x0A:0x0C])
-	p.DesignVoltage = U16(data[0x0C:0x0E])
-	p.SBDSVersionNumber = h.FieldString(int(data[0x0E]))
-	p.MaximumErrorInBatteryData = data[0x0F]
-	p.SBDSSerialNumber = U16(data[0x10:0x12])
-	p.SBDSManufactureDate = U16(data[0x12:0x14])
-	p.SBDSDeviceChemistry = h.FieldString(int(data[0x14]))
-	p.DesignCapacityMultiplier = data[0x15]
-	p.OEMSepecific = U32(data[0x16:0x1A])
-	return p
+	return &PortableBattery{
+		Location:                  h.FieldString(int(data[0x04])),
+		Manufacturer:              h.FieldString(int(data[0x05])),
+		ManufacturerDate:          h.FieldString(int(data[0x06])),
+		SerialNumber:              h.FieldString(int(data[0x07])),
+		DeviceName:                h.FieldString(int(data[0x08])),
+		DeviceChemistry:           PortableBatteryDeviceChemistry(data[0x09]),
+		DesignCapacity:            U16(data[0x0A:0x0C]),
+		DesignVoltage:             U16(data[0x0C:0x0E]),
+		SBDSVersionNumber:         h.FieldString(int(data[0x0E])),
+		MaximumErrorInBatteryData: data[0x0F],
+		SBDSSerialNumber:          U16(data[0x10:0x12]),
+		SBDSManufactureDate:       U16(data[0x12:0x14]),
+		SBDSDeviceChemistry:       h.FieldString(int(data[0x14])),
+		DesignCapacityMultiplier:  data[0x15],
+		OEMSepecific:              U32(data[0x16:0x1A]),
+	}
 }
 
 func (p PortableBattery) String() string {
