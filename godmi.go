@@ -121,7 +121,7 @@ func (b SMBIOSStructureType) String() string {
 type SMBIOSStructureHandle uint16
 
 type InfoCommon struct {
-	Type   SMBIOSStructureType
+	SMType SMBIOSStructureType
 	Length byte
 	Handle SMBIOSStructureHandle
 }
@@ -156,9 +156,7 @@ type CharacteristicsExt1 byte
 type CharacteristicsExt2 byte
 
 type BIOSInformation struct {
-	Type                                   byte
-	Length                                 byte
-	Handle                                 uint16
+	InfoCommon
 	Vendor                                 string
 	BIOSVersion                            string
 	StartingAddressSegment                 uint16
@@ -203,9 +201,7 @@ func (w WakeUpType) String() string {
 }
 
 type SystemInformation struct {
-	Type         byte
-	Length       byte
-	Handle       uint16
+	InfoCommon
 	Manufacturer string
 	ProductName  string
 	Version      string
@@ -297,9 +293,7 @@ func (b BoardType) String() string {
 }
 
 type BaseboardInformation struct {
-	Type                           byte
-	Length                         byte
-	Handle                         uint16
+	InfoCommon
 	Manufacturer                   string
 	Product                        string
 	Version                        string
@@ -580,9 +574,7 @@ type Height byte
 
 // type 3
 type ChassisInformation struct {
-	Type                         byte
-	Length                       byte
-	Handle                       byte
+	InfoCommon
 	Manufacturer                 string
 	ChassisType                  ChassisType
 	Version                      string
@@ -1406,9 +1398,7 @@ func (pc ProcessorCharacteristics) String() string {
 
 // type 4
 type ProcessorInformation struct {
-	Type              byte
-	Length            byte
-	Handle            uint16
+	InfoCommon
 	SocketDesignation string
 	ProcessorType     ProcessorType
 	Family            ProcessorFamily
@@ -4736,7 +4726,7 @@ func NewDMIHeader(data []byte) *DMIHeader {
 	}
 	return &DMIHeader{
 		InfoCommon: InfoCommon{
-			Type:   SMBIOSStructureType(data[0x00]),
+			SMType: SMBIOSStructureType(data[0x00]),
 			Length: data[1],
 			Handle: SMBIOSStructureHandle(U16(data[0x02:0x04])),
 		},
@@ -4782,7 +4772,7 @@ func (h DMIHeader) Next() *DMIHeader {
 }
 
 func (h DMIHeader) Decode() interface{} {
-	switch h.Type {
+	switch h.SMType {
 	case SMBIOSStructureTypeBIOS:
 		return h.BIOSInformation()
 	case SMBIOSStructureTypeSystem:
@@ -4882,9 +4872,6 @@ func (h DMIHeader) FieldString(offset int) string {
 
 func (h DMIHeader) BIOSInformation() *BIOSInformation {
 	data := h.data
-	if h.Type != 0 {
-		return nil
-	}
 	return &BIOSInformation{
 		Vendor:                 h.FieldString(int(data[0x04])),
 		BIOSVersion:            h.FieldString(int(data[0x05])),
@@ -4964,9 +4951,6 @@ func uuid(data []byte, ver string) string {
 
 func (h DMIHeader) SystemInformation() *SystemInformation {
 	data := h.data
-	if h.Type != 1 {
-		return nil
-	}
 	version := h.FieldString(int(data[0x06]))
 	return &SystemInformation{
 		Manufacturer: h.FieldString(int(data[0x04])),
@@ -4982,9 +4966,6 @@ func (h DMIHeader) SystemInformation() *SystemInformation {
 
 func (h DMIHeader) BaseboardInformation() *BaseboardInformation {
 	data := h.data
-	if h.Type != 2 {
-		return nil
-	}
 	return &BaseboardInformation{
 		Manufacturer:      h.FieldString(int(data[0x04])),
 		Product:           h.FieldString(int(data[0x05])),
@@ -5004,7 +4985,7 @@ func (e SMBIOS_EPS) StructureTable() map[SMBIOSStructureType]interface{} {
 	}
 	m := make(map[SMBIOSStructureType]interface{}, 0)
 	for hd := NewDMIHeader(tmem); hd != nil; hd = hd.Next() {
-		m[hd.Type] = hd.Decode()
+		m[hd.SMType] = hd.Decode()
 	}
 	return m
 }

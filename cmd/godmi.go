@@ -34,6 +34,4 @@ func main() {
 	if d := godmi.GetSystemSlot(); d != nil {
 		fmt.Println(d)
 	}
-	gdmi := godmi.GetGDMI()
-	fmt.Printf("%v", gdmi)
 }
