@@ -5066,6 +5066,13 @@ func GetOnBoardDeviceInformation() *OnBoardDeviceInformation {
 	return nil
 }
 
+func GetBIOSLanguageInformation() *BIOSLanguageInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeBIOSLanguage]; ok {
+		return d.(*BIOSLanguageInformation)
+	}
+	return nil
+}
+
 func GetGDMI() map[SMBIOSStructureType]interface{} {
 	return gdmi
 }
