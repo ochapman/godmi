@@ -28,4 +28,7 @@ func main() {
 	if ca != nil {
 		fmt.Println(ca)
 	}
+	if d := godmi.GetPortInformation(); d != nil {
+		fmt.Println(d)
+	}
 }

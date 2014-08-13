@@ -5045,6 +5045,13 @@ func GetCacheInformation() *CacheInformation {
 	return nil
 }
 
+func GetPortInformation() *PortInformation {
+	if d, ok := gdmi[SMBIOSStructureTypePortConnector]; ok {
+		return d.(*PortInformation)
+	}
+	return nil
+}
+
 func getMem(base uint32, length uint32) (mem []byte, err error) {
 	file, err := os.Open("/dev/mem")
 	if err != nil {
