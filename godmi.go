@@ -436,13 +436,13 @@ const (
 	// Bits 5:7 Reserved for future assignment
 )
 
-//BaseboardFeatureFlags
+// Baseboard feature flags
 const (
-	FeatureFlagsHostingBoard       = iota
-	FeatureFlagsAtLeastOneDaughter = 1 << 1
-	FeatureFlagsRemovable          = 1 << 2
-	FeatureFlagsRepleaceable       = 1 << 3
-	FeatureFlagsHotSwappable       = 1 << 4
+	FeatureFlagsHostingBoard = 1 << iota
+	FeatureFlagsAtLeastOneDaughter
+	FeatureFlagsRemovable
+	FeatureFlagsRepleaceable
+	FeatureFlagsHotSwappable
 	//FeatureFlagsReserved = 000b
 )
 
