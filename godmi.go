@@ -2483,7 +2483,7 @@ func (h DMIHeader) PhysicalMemoryArray() *PhysicalMemoryArray {
 		Location:                PhysicalMemoryArrayLocation(data[0x04]),
 		Use:                     PhysicalMemoryArrayUse(data[0x05]),
 		ErrorCorrection:         PhysicalMemoryArrayErrorCorrection(data[0x06]),
-		MaximumCapacity:         U32(data[0x07:0x0B]),
+		MaximumCapacity:         u32(data[0x07:0x0B]),
 		ErrorInformationHandle:  u16(data[0x0B:0x0D]),
 		NumberOfMemoryDevices:   u16(data[0x0D:0x0F]),
 		ExtendedMaximumCapacity: U64(data[0x0F:]),
@@ -2694,7 +2694,7 @@ func (h DMIHeader) MemoryDevice() *MemoryDevice {
 		SerialNumber:               h.FieldString(int(data[0x18])),
 		PartNumber:                 h.FieldString(int(data[0x1A])),
 		Attributes:                 data[0x1B],
-		ExtendedSize:               U32(data[0x1C:0x20]),
+		ExtendedSize:               u32(data[0x1C:0x20]),
 		ConfiguredMemoryClockSpeed: u16(data[0x20:0x22]),
 		MinimumVoltage:             u16(data[0x22:0x24]),
 		MaximumVoltage:             u16(data[0x24:0x26]),
@@ -2846,10 +2846,10 @@ func (h DMIHeader) _32BitMemoryErrorInformation() *_32BitMemoryErrorInformation 
 		Type:              MemoryErrorInformationType(data[0x04]),
 		Granularity:       MemoryErrorInformationGranularity(data[0x05]),
 		Operation:         MemoryErrorInformationOperation(data[0x06]),
-		VendorSyndrome:    U32(data[0x07:0x0B]),
-		ArrayErrorAddress: U32(data[0x0B:0x0F]),
-		ErrorAddress:      U32(data[0x0F:0x13]),
-		Resolution:        U32(data[0x13:0x22]),
+		VendorSyndrome:    u32(data[0x07:0x0B]),
+		ArrayErrorAddress: u32(data[0x0B:0x0F]),
+		ErrorAddress:      u32(data[0x0F:0x13]),
+		Resolution:        u32(data[0x13:0x22]),
 	}
 }
 
@@ -3024,7 +3024,7 @@ func (h DMIHeader) PortableBattery() *PortableBattery {
 		SBDSManufactureDate:       u16(data[0x12:0x14]),
 		SBDSDeviceChemistry:       h.FieldString(int(data[0x14])),
 		DesignCapacityMultiplier:  data[0x15],
-		OEMSepecific:              U32(data[0x16:0x1A]),
+		OEMSepecific:              u32(data[0x16:0x1A]),
 	}
 }
 
@@ -3475,7 +3475,7 @@ func (h DMIHeader) CoolingDevice() *CoolingDevice {
 		TemperatureProbeHandle: u16(data[0x04:0x06]),
 		DeviceTypeAndStatus:    NewCoolingDeviceTypeAndStatus(data[0x06]),
 		CoolingUintGroup:       data[0x07],
-		OEMdefined:             U32(data[0x08:0x0C]),
+		OEMdefined:             u32(data[0x08:0x0C]),
 	}
 	if h.Length > 0x0C {
 		cd.NominalSpeed = u16(data[0x0C:0x0E])
@@ -3612,7 +3612,7 @@ func (h DMIHeader) TemperatureProbe() *TemperatureProbe {
 		Resolution:        u16(data[0x0A:0x0C]),
 		Tolerance:         u16(data[0x0C:0x0E]),
 		Accuracy:          u16(data[0x0E:0x10]),
-		OEMdefined:        U32(data[0x10:0x14]),
+		OEMdefined:        u32(data[0x10:0x14]),
 		NominalValue:      u16(data[0x14:0x16]),
 	}
 }
@@ -3736,7 +3736,7 @@ func (h DMIHeader) ElectricalCurrentProbe() *ElectricalCurrentProbe {
 		Resolution:        u16(data[0x0A:0x0C]),
 		Tolerance:         u16(data[0x0C:0x0E]),
 		Accuracy:          u16(data[0x0E:0x10]),
-		OEMdefined:        U32(data[0x10:0x14]),
+		OEMdefined:        u32(data[0x10:0x14]),
 		NomimalValue:      u16(data[0x14:0x16]),
 	}
 }
@@ -3857,10 +3857,10 @@ func (h DMIHeader) _64BitMemoryErrorInformation() *_64BitMemoryErrorInformation 
 		Type:              MemoryErrorInformationType(data[0x04]),
 		Granularity:       MemoryErrorInformationGranularity(data[0x05]),
 		Operation:         MemoryErrorInformationOperation(data[0x06]),
-		VendorSyndrome:    U32(data[0x07:0x0B]),
-		ArrayErrorAddress: U32(data[0x0B:0x0F]),
-		ErrorAddress:      U32(data[0x0F:0x13]),
-		Reslution:         U32(data[0x13:0x17]),
+		VendorSyndrome:    u32(data[0x07:0x0B]),
+		ArrayErrorAddress: u32(data[0x0B:0x0F]),
+		ErrorAddress:      u32(data[0x0F:0x13]),
+		Reslution:         u32(data[0x13:0x17]),
 	}
 }
 
@@ -3947,7 +3947,7 @@ func (h DMIHeader) ManagementDevice() *ManagementDevice {
 	return &ManagementDevice{
 		Description: h.FieldString(int(data[0x04])),
 		Type:        ManagementDeviceType(data[0x05]),
-		Address:     U32(data[0x06:0x0A]),
+		Address:     u32(data[0x06:0x0A]),
 		AddressType: ManagementDeviceAddressType(data[0x0A]),
 	}
 }
@@ -4705,10 +4705,10 @@ func u16(data []byte) uint16 {
 	return u
 }
 
-func U32(data []byte) uint32 {
-	var u32 uint32
-	binary.Read(bytes.NewBuffer(data[0:4]), binary.LittleEndian, &u32)
-	return u32
+func u32(data []byte) uint32 {
+	var u uint32
+	binary.Read(bytes.NewBuffer(data[0:4]), binary.LittleEndian, &u)
+	return u
 }
 
 func U64(data []byte) uint64 {
@@ -4748,7 +4748,7 @@ func newSMBIOS_EPS() (eps *SMBIOS_EPS, err error) {
 	eps.InterAnchor = data[0x10:0x15]
 	eps.InterChecksum = data[0x15]
 	eps.TableLength = u16(data[0x16:0x18])
-	eps.TableAddress = U32(data[0x18:0x1C])
+	eps.TableAddress = u32(data[0x18:0x1C])
 	eps.NumberOfSM = u16(data[0x1C:0x1E])
 	eps.BCDRevision = data[0x1E]
 	return
