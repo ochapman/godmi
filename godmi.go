@@ -602,7 +602,7 @@ func (h DMIHeader) ChassisInformation() *ChassisInformation {
 		PowerSupplyState:             ChassisState(data[0xA]),
 		ThermalState:                 ChassisState(data[0x0B]),
 		SecurityStatus:               SecurityStatus(data[0x0C]),
-		OEMdefined:                   U16(data[0x0D : 0x0D+4]),
+		OEMdefined:                   u16(data[0x0D : 0x0D+4]),
 		Height:                       Height(data[0x11]),
 		NumberOfPowerCords:           data[0x12],
 		ContainedElementCount:        data[0x13],
@@ -1432,21 +1432,21 @@ func (h DMIHeader) ProcessorInformation() *ProcessorInformation {
 		//pi.ProcessorID
 		Version:         h.FieldString(int(data[0x10])),
 		Voltage:         ProcessorVoltage(data[0x11]),
-		ExternalClock:   U16(data[0x12:0x14]),
-		MaxSpeed:        U16(data[0x14:0x16]),
-		CurrentSpeed:    U16(data[0x16:0x18]),
+		ExternalClock:   u16(data[0x12:0x14]),
+		MaxSpeed:        u16(data[0x14:0x16]),
+		CurrentSpeed:    u16(data[0x16:0x18]),
 		Status:          ProcessorStatus(data[0x18]),
 		Upgrade:         ProcessorUpgrade(data[0x19]),
-		L1CacheHandle:   U16(data[0x1A:0x1C]),
-		L2CacheHandle:   U16(data[0x1C:0x1E]),
-		L3CacheHandle:   U16(data[0x1E:0x20]),
+		L1CacheHandle:   u16(data[0x1A:0x1C]),
+		L2CacheHandle:   u16(data[0x1C:0x1E]),
+		L3CacheHandle:   u16(data[0x1E:0x20]),
 		SerialNumber:    h.FieldString(int(data[0x20])),
 		AssetTag:        h.FieldString(int(data[0x21])),
 		PartNumber:      h.FieldString(int(data[0x22])),
 		CoreCount:       data[0x23],
 		CoreEnabled:     data[0x24],
 		ThreadCount:     data[0x25],
-		Characteristics: ProcessorCharacteristics(U16(data[0x26:0x28])),
+		Characteristics: ProcessorCharacteristics(u16(data[0x26:0x28])),
 		Family2:         ProcessorFamily(data[0x28]),
 	}
 }
@@ -1699,11 +1699,11 @@ func (h DMIHeader) CacheInformation() *CacheInformation {
 	data := h.data
 	return &CacheInformation{
 		SocketDesignation:   h.FieldString(int(data[0x04])),
-		Configuration:       NewCacheConfiguration(U16(data[0x05:0x07])),
-		MaximumCacheSize:    NewCacheSize(U16(data[0x07:0x09])),
-		InstalledSize:       NewCacheSize(U16(data[0x09:0x0B])),
-		SupportedSRAMType:   SRAMType(U16(data[0x0B:0x0D])),
-		CurrentSRAMType:     SRAMType(U16(data[0x0D:0x0F])),
+		Configuration:       NewCacheConfiguration(u16(data[0x05:0x07])),
+		MaximumCacheSize:    NewCacheSize(u16(data[0x07:0x09])),
+		InstalledSize:       NewCacheSize(u16(data[0x09:0x0B])),
+		SupportedSRAMType:   SRAMType(u16(data[0x0B:0x0D])),
+		CurrentSRAMType:     SRAMType(u16(data[0x0D:0x0F])),
 		CacheSpeed:          CacheSpeed(data[0x0F]),
 		ErrorCorrectionType: ErrorCorrectionType(data[0x10]),
 		SystemCacheType:     SystemCacheType(data[0x11]),
@@ -2156,10 +2156,10 @@ func (h DMIHeader) SystemSlot() *SystemSlot {
 		DataBusWidth:         SystemSlotDataBusWidth(data[0x06]),
 		CurrentUsage:         SystemSlotUsage(data[0x07]),
 		Length:               SystemSlotLength(data[0x08]),
-		ID:                   SystemSlotID(U16(data[0x09:0x0A])),
+		ID:                   SystemSlotID(u16(data[0x09:0x0A])),
 		Characteristics1:     SystemSlotCharacteristics1(data[0x0B]),
 		Characteristics2:     SystemSlotCharacteristics2(data[0x0C]),
-		SegmentGroupNumber:   SystemSlotSegmengGroupNumber(U16(data[0x0D:0x0F])),
+		SegmentGroupNumber:   SystemSlotSegmengGroupNumber(u16(data[0x0D:0x0F])),
 		BusNumber:            SystemSlotNumber(data[0x0F]),
 		DeviceFunctionNumber: SystemSlotNumber(data[0x10]),
 	}
@@ -2363,7 +2363,7 @@ func (h DMIHeader) GroupAssociations() *GroupAssociations {
 	for i = 0; i < cnt; i++ {
 		var gai GroupAssociationsItem
 		gai.Type = SMBIOSStructureType(items[i*3])
-		gai.Handle = SMBIOSStructureHandle(U16(items[i*3+1:]))
+		gai.Handle = SMBIOSStructureHandle(u16(items[i*3+1:]))
 		ga.Item = append(ga.Item, gai)
 	}
 	return &ga
@@ -2484,8 +2484,8 @@ func (h DMIHeader) PhysicalMemoryArray() *PhysicalMemoryArray {
 		Use:                     PhysicalMemoryArrayUse(data[0x05]),
 		ErrorCorrection:         PhysicalMemoryArrayErrorCorrection(data[0x06]),
 		MaximumCapacity:         U32(data[0x07:0x0B]),
-		ErrorInformationHandle:  U16(data[0x0B:0x0D]),
-		NumberOfMemoryDevices:   U16(data[0x0D:0x0F]),
+		ErrorInformationHandle:  u16(data[0x0B:0x0D]),
+		NumberOfMemoryDevices:   u16(data[0x0D:0x0F]),
 		ExtendedMaximumCapacity: U64(data[0x0F:]),
 	}
 }
@@ -2678,27 +2678,27 @@ type MemoryDevice struct {
 func (h DMIHeader) MemoryDevice() *MemoryDevice {
 	data := h.data
 	return &MemoryDevice{
-		PhysicalMemoryArrayHandle:  U16(data[0x04:0x06]),
-		ErrorInformationHandle:     U16(data[0x06:0x08]),
-		TotalWidth:                 U16(data[0x08:0x0A]),
-		DataWidth:                  U16(data[0x0A:0x0C]),
-		Size:                       U16(data[0x0C:0x0e]),
+		PhysicalMemoryArrayHandle:  u16(data[0x04:0x06]),
+		ErrorInformationHandle:     u16(data[0x06:0x08]),
+		TotalWidth:                 u16(data[0x08:0x0A]),
+		DataWidth:                  u16(data[0x0A:0x0C]),
+		Size:                       u16(data[0x0C:0x0e]),
 		FormFactor:                 MemoryDeviceFormFactor(data[0x0E]),
 		DeviceSet:                  data[0x0F],
 		DeviceLocator:              h.FieldString(int(data[0x10])),
 		BankLocator:                h.FieldString(int(data[0x11])),
 		Type:                       MemoryDeviceType(data[0x12]),
-		TypeDetail:                 MemoryDeviceTypeDetail(U16(data[0x13:0x15])),
-		Speed:                      U16(data[0x15:0x17]),
+		TypeDetail:                 MemoryDeviceTypeDetail(u16(data[0x13:0x15])),
+		Speed:                      u16(data[0x15:0x17]),
 		Manufacturer:               h.FieldString(int(data[0x17])),
 		SerialNumber:               h.FieldString(int(data[0x18])),
 		PartNumber:                 h.FieldString(int(data[0x1A])),
 		Attributes:                 data[0x1B],
 		ExtendedSize:               U32(data[0x1C:0x20]),
-		ConfiguredMemoryClockSpeed: U16(data[0x20:0x22]),
-		MinimumVoltage:             U16(data[0x22:0x24]),
-		MaximumVoltage:             U16(data[0x24:0x26]),
-		ConfiguredVoltage:          U16(data[0x26:0x28]),
+		ConfiguredMemoryClockSpeed: u16(data[0x20:0x22]),
+		MinimumVoltage:             u16(data[0x22:0x24]),
+		MaximumVoltage:             u16(data[0x24:0x26]),
+		ConfiguredVoltage:          u16(data[0x26:0x28]),
 	}
 }
 
@@ -3016,12 +3016,12 @@ func (h DMIHeader) PortableBattery() *PortableBattery {
 		SerialNumber:              h.FieldString(int(data[0x07])),
 		DeviceName:                h.FieldString(int(data[0x08])),
 		DeviceChemistry:           PortableBatteryDeviceChemistry(data[0x09]),
-		DesignCapacity:            U16(data[0x0A:0x0C]),
-		DesignVoltage:             U16(data[0x0C:0x0E]),
+		DesignCapacity:            u16(data[0x0A:0x0C]),
+		DesignVoltage:             u16(data[0x0C:0x0E]),
 		SBDSVersionNumber:         h.FieldString(int(data[0x0E])),
 		MaximumErrorInBatteryData: data[0x0F],
-		SBDSSerialNumber:          U16(data[0x10:0x12]),
-		SBDSManufactureDate:       U16(data[0x12:0x14]),
+		SBDSSerialNumber:          u16(data[0x10:0x12]),
+		SBDSManufactureDate:       u16(data[0x12:0x14]),
 		SBDSDeviceChemistry:       h.FieldString(int(data[0x14])),
 		DesignCapacityMultiplier:  data[0x15],
 		OEMSepecific:              U32(data[0x16:0x1A]),
@@ -3137,10 +3137,10 @@ func (h DMIHeader) SystemReset() *SystemReset {
 	data := h.data
 	return &SystemReset{
 		Capabilities:  data[0x04],
-		ResetCount:    U16(data[0x05:0x07]),
-		ResetLimit:    U16(data[0x07:0x09]),
-		TimerInterval: U16(data[0x09:0x0B]),
-		Timeout:       U16(data[0x0B:0x0D]),
+		ResetCount:    u16(data[0x05:0x07]),
+		ResetLimit:    u16(data[0x07:0x09]),
+		TimerInterval: u16(data[0x09:0x0B]),
+		Timeout:       u16(data[0x0B:0x0D]),
 	}
 }
 
@@ -3361,13 +3361,13 @@ func (h DMIHeader) VoltageProbe() *VoltageProbe {
 	return &VoltageProbe{
 		Description:       h.FieldString(int(data[0x04])),
 		LocationAndStatus: NewVoltageProbeLocationAndStatus(data[0x05]),
-		MaximumValue:      U16(data[0x06:0x08]),
-		MinimumValude:     U16(data[0x08:0x0A]),
-		Resolution:        U16(data[0x0A:0x0C]),
-		Tolerance:         U16(data[0x0C:0x0E]),
-		Accuracy:          U16(data[0x0E:0x10]),
-		OEMdefined:        U16(data[0x10:0x12]),
-		NominalValue:      U16(data[0x12:0x14]),
+		MaximumValue:      u16(data[0x06:0x08]),
+		MinimumValude:     u16(data[0x08:0x0A]),
+		Resolution:        u16(data[0x0A:0x0C]),
+		Tolerance:         u16(data[0x0C:0x0E]),
+		Accuracy:          u16(data[0x0E:0x10]),
+		OEMdefined:        u16(data[0x10:0x12]),
+		NominalValue:      u16(data[0x12:0x14]),
 	}
 }
 
@@ -3472,13 +3472,13 @@ func (c CoolingDevice) String() string {
 func (h DMIHeader) CoolingDevice() *CoolingDevice {
 	data := h.data
 	cd := &CoolingDevice{
-		TemperatureProbeHandle: U16(data[0x04:0x06]),
+		TemperatureProbeHandle: u16(data[0x04:0x06]),
 		DeviceTypeAndStatus:    NewCoolingDeviceTypeAndStatus(data[0x06]),
 		CoolingUintGroup:       data[0x07],
 		OEMdefined:             U32(data[0x08:0x0C]),
 	}
 	if h.Length > 0x0C {
-		cd.NominalSpeed = U16(data[0x0C:0x0E])
+		cd.NominalSpeed = u16(data[0x0C:0x0E])
 	}
 	if h.Length > 0x0F {
 		cd.Description = h.FieldString(int(data[0x0E]))
@@ -3607,13 +3607,13 @@ func (h DMIHeader) TemperatureProbe() *TemperatureProbe {
 	return &TemperatureProbe{
 		Description:       h.FieldString(int(data[0x04])),
 		LocationAndStatus: NewTemperatureProbeLocationAndStatus(data[0x05]),
-		MaximumValue:      U16(data[0x06:0x08]),
-		MinimumValue:      U16(data[0x08:0x0A]),
-		Resolution:        U16(data[0x0A:0x0C]),
-		Tolerance:         U16(data[0x0C:0x0E]),
-		Accuracy:          U16(data[0x0E:0x10]),
+		MaximumValue:      u16(data[0x06:0x08]),
+		MinimumValue:      u16(data[0x08:0x0A]),
+		Resolution:        u16(data[0x0A:0x0C]),
+		Tolerance:         u16(data[0x0C:0x0E]),
+		Accuracy:          u16(data[0x0E:0x10]),
 		OEMdefined:        U32(data[0x10:0x14]),
-		NominalValue:      U16(data[0x14:0x16]),
+		NominalValue:      u16(data[0x14:0x16]),
 	}
 }
 
@@ -3731,13 +3731,13 @@ func (h DMIHeader) ElectricalCurrentProbe() *ElectricalCurrentProbe {
 	return &ElectricalCurrentProbe{
 		Description:       h.FieldString(int(data[0x04])),
 		LocationAndStatus: NewElectricalCurrentProbeLocationAndStatus(data[0x05]),
-		MaximumValue:      U16(data[0x06:0x08]),
-		MinimumValue:      U16(data[0x08:0x0A]),
-		Resolution:        U16(data[0x0A:0x0C]),
-		Tolerance:         U16(data[0x0C:0x0E]),
-		Accuracy:          U16(data[0x0E:0x10]),
+		MaximumValue:      u16(data[0x06:0x08]),
+		MinimumValue:      u16(data[0x08:0x0A]),
+		Resolution:        u16(data[0x0A:0x0C]),
+		Tolerance:         u16(data[0x0C:0x0E]),
+		Accuracy:          u16(data[0x0E:0x10]),
 		OEMdefined:        U32(data[0x10:0x14]),
-		NomimalValue:      U16(data[0x14:0x16]),
+		NomimalValue:      u16(data[0x14:0x16]),
 	}
 }
 
@@ -3976,9 +3976,9 @@ func (h DMIHeader) ManagementDeviceComponent() *ManagementDeviceComponent {
 	data := h.data
 	return &ManagementDeviceComponent{
 		Description:            h.FieldString(int(data[0x04])),
-		ManagementDeviceHandle: U16(data[0x05:0x07]),
-		ComponentHandle:        U16(data[0x07:0x09]),
-		ThresholdHandle:        U16(data[0x09:0x0B]),
+		ManagementDeviceHandle: u16(data[0x05:0x07]),
+		ComponentHandle:        u16(data[0x07:0x09]),
+		ThresholdHandle:        u16(data[0x09:0x0B]),
 	}
 }
 
@@ -4011,12 +4011,12 @@ func (m ManagementDeviceThresholdData) String() string {
 func (h DMIHeader) ManagementDeviceThresholdData() *ManagementDeviceThresholdData {
 	data := h.data
 	return &ManagementDeviceThresholdData{
-		LowerThresholdNonCritical:    U16(data[0x04:0x06]),
-		UpperThresholdNonCritical:    U16(data[0x06:0x08]),
-		LowerThresholdCritical:       U16(data[0x08:0x0A]),
-		UpperThresholdCritical:       U16(data[0x0A:0x0C]),
-		LowerThresholdNonRecoverable: U16(data[0x0C:0x0E]),
-		UpperThresholdNonRecoverable: U16(data[0x0E:0x10]),
+		LowerThresholdNonCritical:    u16(data[0x04:0x06]),
+		UpperThresholdNonCritical:    u16(data[0x06:0x08]),
+		LowerThresholdCritical:       u16(data[0x08:0x0A]),
+		UpperThresholdCritical:       u16(data[0x0A:0x0C]),
+		LowerThresholdNonRecoverable: u16(data[0x0C:0x0E]),
+		UpperThresholdNonRecoverable: u16(data[0x0E:0x10]),
 	}
 }
 
@@ -4055,7 +4055,7 @@ func newMemoryDeviceLoadHandles(data []byte, count byte, length byte) MemoryDevi
 		var mem MemoryDeviceLoadHandle
 		offset := 3 * (i - 1)
 		mem.Load = data[0x07+offset]
-		mem.Handle = U16(data[0x08+offset : 0x0A+offset])
+		mem.Handle = u16(data[0x08+offset : 0x0A+offset])
 		md = append(md, mem)
 	}
 	return md
@@ -4446,11 +4446,11 @@ func (h DMIHeader) SystemPowerSupply() *SystemPowerSupply {
 		AssetTagNumber:             h.FieldString(int(data[0x09])),
 		ModelPartNumber:            h.FieldString(int(data[0x0A])),
 		RevisionLevel:              h.FieldString(int(data[0x0B])),
-		MaxPowerCapacity:           U16(data[0x0C:0x0E]),
-		PowerSupplyCharacteristics: newSystemPowerSupplyCharacteristics(U16(data[0x0E : 0x0E+2])),
-		InputVoltageProbeHandle:    U16(data[0x0F:0x11]),
-		CoolingDeviceHandle:        U16(data[0x11:0x13]),
-		InputCurrentProbeHandle:    U16(data[0x13:0x15]),
+		MaxPowerCapacity:           u16(data[0x0C:0x0E]),
+		PowerSupplyCharacteristics: newSystemPowerSupplyCharacteristics(u16(data[0x0E : 0x0E+2])),
+		InputVoltageProbeHandle:    u16(data[0x0F:0x11]),
+		CoolingDeviceHandle:        u16(data[0x11:0x13]),
+		InputCurrentProbeHandle:    u16(data[0x13:0x15]),
 	}
 }
 
@@ -4502,7 +4502,7 @@ func (h DMIHeader) AdditionalInformation() *AdditionalInformation {
 	for i := byte(0); i < ai.NumberOfEntries; i++ {
 		var e AdditionalInformationEntries
 		e.Length = d[0x0]
-		e.ReferencedHandle = U16(d[0x01:0x03])
+		e.ReferencedHandle = u16(d[0x01:0x03])
 		e.ReferencedOffset = d[0x03]
 		e.String = h.FieldString(int(d[0x04]))
 		e.Value = data[0x05:e.Length]
@@ -4583,7 +4583,7 @@ func (h DMIHeader) OnBoardDevicesExtendedInformation() *OnBoardDevicesExtendedIn
 		ReferenceDesignation: h.FieldString(int(data[0x04])),
 		DeviceType:           OnBoardDevicesExtendedInformationType(data[0x05]),
 		DeviceTypeInstance:   data[0x06],
-		SegmentGroupNumber:   U16(data[0x07:0x09]),
+		SegmentGroupNumber:   u16(data[0x07:0x09]),
 		BusNumber:            data[0x09],
 		DeviceFunctionNumber: data[0x0A],
 	}
@@ -4699,10 +4699,10 @@ func bcd(data []byte) int64 {
 	return b
 }
 
-func U16(data []byte) uint16 {
-	var u16 uint16
-	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u16)
-	return u16
+func u16(data []byte) uint16 {
+	var u uint16
+	binary.Read(bytes.NewBuffer(data[0:2]), binary.LittleEndian, &u)
+	return u
 }
 
 func U32(data []byte) uint32 {
@@ -4725,7 +4725,7 @@ func newDMIHeader(data []byte) *DMIHeader {
 		InfoCommon: InfoCommon{
 			SMType: SMBIOSStructureType(data[0x00]),
 			Length: data[1],
-			Handle: SMBIOSStructureHandle(U16(data[0x02:0x04])),
+			Handle: SMBIOSStructureHandle(u16(data[0x02:0x04])),
 		},
 		data: data}
 }
@@ -4743,13 +4743,13 @@ func newSMBIOS_EPS() (eps *SMBIOS_EPS, err error) {
 	eps.Length = data[0x05]
 	eps.MajorVersion = data[0x06]
 	eps.MinorVersion = data[0x07]
-	eps.MaxSize = U16(data[0x08:0x0A])
+	eps.MaxSize = u16(data[0x08:0x0A])
 	eps.FormattedArea = data[0x0B:0x0F]
 	eps.InterAnchor = data[0x10:0x15]
 	eps.InterChecksum = data[0x15]
-	eps.TableLength = U16(data[0x16:0x18])
+	eps.TableLength = u16(data[0x16:0x18])
 	eps.TableAddress = U32(data[0x18:0x1C])
-	eps.NumberOfSM = U16(data[0x1C:0x1E])
+	eps.NumberOfSM = u16(data[0x1C:0x1E])
 	eps.BCDRevision = data[0x1E]
 	return
 }
@@ -4872,7 +4872,7 @@ func (h DMIHeader) BIOSInformation() *BIOSInformation {
 	return &BIOSInformation{
 		Vendor:                 h.FieldString(int(data[0x04])),
 		BIOSVersion:            h.FieldString(int(data[0x05])),
-		StartingAddressSegment: U16(data[0x06:0x08]),
+		StartingAddressSegment: u16(data[0x06:0x08]),
 		ReleaseDate:            h.FieldString(int(data[0x08])),
 		Characteristics:        Characteristics(U64(data[0x0A:0x12])),
 		CharacteristicsExt1:    CharacteristicsExt1(data[0x12]),
