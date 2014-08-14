@@ -120,7 +120,7 @@ func (b SMBIOSStructureType) String() string {
 
 type SMBIOSStructureHandle uint16
 
-type InfoCommon struct {
+type infoCommon struct {
 	SMType SMBIOSStructureType
 	Length byte
 	Handle SMBIOSStructureHandle
@@ -144,7 +144,7 @@ type SMBIOS_EPS struct {
 }
 
 type dmiHeader struct {
-	InfoCommon
+	infoCommon
 	data []byte
 }
 
@@ -153,7 +153,7 @@ type CharacteristicsExt1 byte
 type CharacteristicsExt2 byte
 
 type BIOSInformation struct {
-	InfoCommon
+	infoCommon
 	Vendor                                 string
 	BIOSVersion                            string
 	StartingAddressSegment                 uint16
@@ -198,7 +198,7 @@ func (w WakeUpType) String() string {
 }
 
 type SystemInformation struct {
-	InfoCommon
+	infoCommon
 	Manufacturer string
 	ProductName  string
 	Version      string
@@ -290,7 +290,7 @@ func (b BoardType) String() string {
 }
 
 type BaseboardInformation struct {
-	InfoCommon
+	infoCommon
 	Manufacturer                   string
 	Product                        string
 	Version                        string
@@ -571,7 +571,7 @@ type Height byte
 
 // type 3
 type ChassisInformation struct {
-	InfoCommon
+	infoCommon
 	Manufacturer                 string
 	ChassisType                  ChassisType
 	Version                      string
@@ -1395,7 +1395,7 @@ func (pc ProcessorCharacteristics) String() string {
 
 // type 4
 type ProcessorInformation struct {
-	InfoCommon
+	infoCommon
 	SocketDesignation string
 	ProcessorType     ProcessorType
 	Family            ProcessorFamily
@@ -1682,7 +1682,7 @@ func (a CacheAssociativity) String() string {
 }
 
 type CacheInformation struct {
-	InfoCommon
+	infoCommon
 	SocketDesignation   string
 	Configuration       CacheConfiguration
 	MaximumCacheSize    CacheSize
@@ -1890,7 +1890,7 @@ func (p PortType) String() string {
 }
 
 type PortInformation struct {
-	InfoCommon
+	infoCommon
 	InternalReferenceDesignator string
 	InternalConnectorType       PortConnectorType
 	ExternalReferenceDesignator string
@@ -2134,7 +2134,7 @@ type SystemSlotSegmengGroupNumber uint16
 type SystemSlotNumber byte
 
 type SystemSlot struct {
-	InfoCommon
+	infoCommon
 	Designation          string
 	Type                 SystemSlotType
 	DataBusWidth         SystemSlotDataBusWidth
@@ -2203,7 +2203,7 @@ func NewBIOSLanguageInformationFlag(f byte) BIOSLanguageInformationFlag {
 }
 
 type BIOSLanguageInformation struct {
-	InfoCommon
+	infoCommon
 	InstallableLanguage []string
 	Flags               BIOSLanguageInformationFlag
 	CurrentLanguage     string
@@ -2268,7 +2268,7 @@ type OnBoardDeviceType struct {
 }
 
 type OnBoardDeviceInformation struct {
-	InfoCommon
+	infoCommon
 	Type        []OnBoardDeviceType
 	Description []string
 }
@@ -2301,14 +2301,14 @@ func (d OnBoardDeviceInformation) String() string {
 }
 
 type SystemConfigurationOptions struct {
-	InfoCommon
+	infoCommon
 	Count   byte
 	strings string
 }
 
 //Type 11
 type OEMStrings struct {
-	InfoCommon
+	infoCommon
 	Count   byte
 	strings string
 }
@@ -2348,7 +2348,7 @@ type GroupAssociationsItem struct {
 
 // Type 14
 type GroupAssociations struct {
-	InfoCommon
+	infoCommon
 	GroupName string
 	Item      []GroupAssociationsItem
 }
@@ -2467,7 +2467,7 @@ func (p PhysicalMemoryArrayErrorCorrection) String() string {
 }
 
 type PhysicalMemoryArray struct {
-	InfoCommon
+	infoCommon
 	Location                PhysicalMemoryArrayLocation
 	Use                     PhysicalMemoryArrayUse
 	ErrorCorrection         PhysicalMemoryArrayErrorCorrection
@@ -2650,7 +2650,7 @@ func (m MemoryDeviceTypeDetail) String() string {
 }
 
 type MemoryDevice struct {
-	InfoCommon
+	infoCommon
 	PhysicalMemoryArrayHandle  uint16
 	ErrorInformationHandle     uint16
 	TotalWidth                 uint16
@@ -2830,7 +2830,7 @@ func (m MemoryErrorInformationOperation) String() string {
 }
 
 type _32BitMemoryErrorInformation struct {
-	InfoCommon
+	infoCommon
 	Type              MemoryErrorInformationType
 	Granularity       MemoryErrorInformationGranularity
 	Operation         MemoryErrorInformationOperation
@@ -2935,7 +2935,7 @@ func (b BuiltinPointingDeviceInterface) String() string {
 }
 
 type BuiltinPointingDevice struct {
-	InfoCommon
+	infoCommon
 	Type            BuiltinPointingDeviceType
 	Interface       BuiltinPointingDeviceInterface
 	NumberOfButtons byte
@@ -2989,7 +2989,7 @@ func (p PortableBatteryDeviceChemistry) String() string {
 }
 
 type PortableBattery struct {
-	InfoCommon
+	infoCommon
 	Location                  string
 	Manufacturer              string
 	ManufacturerDate          string
@@ -3111,7 +3111,7 @@ func (s SystemResetCapabilities) String() string {
 }
 
 type SystemReset struct {
-	InfoCommon
+	infoCommon
 	Capabilities  byte
 	ResetCount    uint16
 	ResetLimit    uint16
@@ -3191,7 +3191,7 @@ func (h HardwareSecuritySettings) String() string {
 }
 
 type HardwareSecurity struct {
-	InfoCommon
+	infoCommon
 	Setting HardwareSecuritySettings
 }
 
@@ -3215,7 +3215,7 @@ type SystemPowerControlsMinute byte
 type SystemPowerControlsSecond byte
 
 type SystemPowerControls struct {
-	InfoCommon
+	infoCommon
 	NextScheduledPowerOnMonth      SystemPowerControlsMonth
 	NextScheduledPowerOnDayOfMonth SystemPowerControlsDayOfMonth
 	NextScheduledPowerOnHour       SystemPowerControlsHour
@@ -3322,7 +3322,7 @@ func (v VoltageProbeLocationAndStatus) String() string {
 }
 
 type VoltageProbe struct {
-	InfoCommon
+	infoCommon
 	Description       string
 	LocationAndStatus VoltageProbeLocationAndStatus
 	MaximumValue      uint16
@@ -3440,7 +3440,7 @@ func NewCoolingDeviceTypeAndStatus(data byte) CoolingDeviceTypeAndStatus {
 }
 
 type CoolingDevice struct {
-	InfoCommon
+	infoCommon
 	TemperatureProbeHandle uint16
 	DeviceTypeAndStatus    CoolingDeviceTypeAndStatus
 	CoolingUintGroup       byte
@@ -3568,7 +3568,7 @@ func NewTemperatureProbeLocationAndStatus(data byte) TemperatureProbeLocationAnd
 }
 
 type TemperatureProbe struct {
-	InfoCommon
+	infoCommon
 	Description       string
 	LocationAndStatus TemperatureProbeLocationAndStatus
 	MaximumValue      uint16
@@ -3692,7 +3692,7 @@ func NewElectricalCurrentProbeLocationAndStatus(data byte) ElectricalCurrentProb
 }
 
 type ElectricalCurrentProbe struct {
-	InfoCommon
+	infoCommon
 	Description       string
 	LocationAndStatus ElectricalCurrentProbeLocationAndStatus
 	MaximumValue      uint16
@@ -3759,7 +3759,7 @@ func (o OutOfBandRemoteAccessConnections) String() string {
 }
 
 type OutOfBandRemoteAccess struct {
-	InfoCommon
+	infoCommon
 	ManufacturerName string
 	Connections      OutOfBandRemoteAccessConnections
 }
@@ -3805,7 +3805,7 @@ func (s SystemBootInformationStatus) String() string {
 }
 
 type SystemBootInformation struct {
-	InfoCommon
+	infoCommon
 	BootStatus SystemBootInformationStatus
 }
 
@@ -3823,7 +3823,7 @@ func (h dmiHeader) SystemBootInformation() *SystemBootInformation {
 }
 
 type _64BitMemoryErrorInformation struct {
-	InfoCommon
+	infoCommon
 	Type              MemoryErrorInformationType
 	Granularity       MemoryErrorInformationGranularity
 	Operation         MemoryErrorInformationOperation
@@ -3923,7 +3923,7 @@ func (m ManagementDeviceAddressType) String() string {
 }
 
 type ManagementDevice struct {
-	InfoCommon
+	infoCommon
 	Description string
 	Type        ManagementDeviceType
 	Address     uint32
@@ -3953,7 +3953,7 @@ func (h dmiHeader) ManagementDevice() *ManagementDevice {
 }
 
 type ManagementDeviceComponent struct {
-	InfoCommon
+	infoCommon
 	Description            string
 	ManagementDeviceHandle uint16
 	ComponentHandle        uint16
@@ -3983,7 +3983,7 @@ func (h dmiHeader) ManagementDeviceComponent() *ManagementDeviceComponent {
 }
 
 type ManagementDeviceThresholdData struct {
-	InfoCommon
+	infoCommon
 	LowerThresholdNonCritical    uint16
 	UpperThresholdNonCritical    uint16
 	LowerThresholdCritical       uint16
@@ -4070,7 +4070,7 @@ func (m MemoryDeviceLoadHandles) String() string {
 }
 
 type MemoryChannel struct {
-	InfoCommon
+	infoCommon
 	ChannelType        MemoryChannelType
 	MaximumChannelLoad byte
 	MemoryDeviceCount  byte
@@ -4230,7 +4230,7 @@ func newIPMIDeviceInformationAddressModiferInterruptInfo(base byte) IPMIDeviceIn
 }
 
 type IPMIDeviceInformation struct {
-	InfoCommon
+	infoCommon
 	InterfaceType                  IPMIDeviceInformationInterfaceType
 	Revision                       byte
 	I2CSlaveAddress                byte
@@ -4389,7 +4389,7 @@ func (s SystemPowerSupplyCharacteristics) String() string {
 }
 
 type SystemPowerSupply struct {
-	InfoCommon
+	infoCommon
 	PowerUnitGroup             byte
 	Location                   string
 	DeviceName                 string
@@ -4480,7 +4480,7 @@ func (a AdditionalInformationEntriess) String() string {
 }
 
 type AdditionalInformation struct {
-	InfoCommon
+	infoCommon
 	NumberOfEntries byte
 	Entries         []AdditionalInformationEntries
 }
@@ -4545,7 +4545,7 @@ func (o OnBoardDevicesExtendedInformationType) String() string {
 }
 
 type OnBoardDevicesExtendedInformation struct {
-	InfoCommon
+	infoCommon
 	ReferenceDesignation string
 	DeviceType           OnBoardDevicesExtendedInformationType
 	DeviceTypeInstance   byte
@@ -4623,7 +4623,7 @@ func (m ManagementControllerHostInterfaceType) String() string {
 type ManagementControllerHostInterfaceData []byte
 
 type ManagementControllerHostInterface struct {
-	InfoCommon
+	infoCommon
 	Type ManagementControllerHostInterfaceType
 	Data ManagementControllerHostInterfaceData
 }
@@ -4656,7 +4656,7 @@ func (h dmiHeader) ManagementControllerHostInterface() *ManagementControllerHost
 }
 
 type Inactive struct {
-	InfoCommon
+	infoCommon
 }
 
 func (i Inactive) String() string {
@@ -4668,7 +4668,7 @@ func (h dmiHeader) Inactive() *Inactive {
 }
 
 type EndOfTable struct {
-	InfoCommon
+	infoCommon
 }
 
 func (e EndOfTable) String() string {
@@ -4722,7 +4722,7 @@ func newdmiHeader(data []byte) *dmiHeader {
 		return nil
 	}
 	return &dmiHeader{
-		InfoCommon: InfoCommon{
+		infoCommon: infoCommon{
 			SMType: SMBIOSStructureType(data[0x00]),
 			Length: data[1],
 			Handle: SMBIOSStructureHandle(u16(data[0x02:0x04])),
