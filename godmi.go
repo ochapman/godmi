@@ -2486,7 +2486,7 @@ func (h DMIHeader) PhysicalMemoryArray() *PhysicalMemoryArray {
 		MaximumCapacity:         u32(data[0x07:0x0B]),
 		ErrorInformationHandle:  u16(data[0x0B:0x0D]),
 		NumberOfMemoryDevices:   u16(data[0x0D:0x0F]),
-		ExtendedMaximumCapacity: U64(data[0x0F:]),
+		ExtendedMaximumCapacity: u64(data[0x0F:]),
 	}
 }
 
@@ -4265,7 +4265,7 @@ func (h DMIHeader) IPMIDeviceInformation() *IPMIDeviceInformation {
 		Revision:                       data[0x05],
 		I2CSlaveAddress:                data[0x06],
 		NVStorageAddress:               data[0x07],
-		BaseAddress:                    U64(data[0x08:0x10]),
+		BaseAddress:                    u64(data[0x08:0x10]),
 		BaseAddressModiferInterrutInfo: newIPMIDeviceInformationAddressModiferInterruptInfo(data[0x10]),
 		InterruptNumbe:                 data[0x11],
 	}
@@ -4711,10 +4711,10 @@ func u32(data []byte) uint32 {
 	return u
 }
 
-func U64(data []byte) uint64 {
-	var u64 uint64
-	binary.Read(bytes.NewBuffer(data[0:8]), binary.LittleEndian, &u64)
-	return u64
+func u64(data []byte) uint64 {
+	var u uint64
+	binary.Read(bytes.NewBuffer(data[0:8]), binary.LittleEndian, &u)
+	return u
 }
 
 func newDMIHeader(data []byte) *DMIHeader {
@@ -4874,7 +4874,7 @@ func (h DMIHeader) BIOSInformation() *BIOSInformation {
 		BIOSVersion:            h.FieldString(int(data[0x05])),
 		StartingAddressSegment: u16(data[0x06:0x08]),
 		ReleaseDate:            h.FieldString(int(data[0x08])),
-		Characteristics:        Characteristics(U64(data[0x0A:0x12])),
+		Characteristics:        Characteristics(u64(data[0x0A:0x12])),
 		CharacteristicsExt1:    CharacteristicsExt1(data[0x12]),
 		CharacteristicsExt2:    CharacteristicsExt2(data[0x12]),
 	}
