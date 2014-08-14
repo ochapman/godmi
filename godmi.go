@@ -143,7 +143,7 @@ type SMBIOS_EPS struct {
 	BCDRevision   byte
 }
 
-type DMIHeader struct {
+type dmiHeader struct {
 	InfoCommon
 	data []byte
 }
@@ -590,7 +590,7 @@ type ChassisInformation struct {
 	SKUNumber                    string
 }
 
-func (h DMIHeader) ChassisInformation() *ChassisInformation {
+func (h dmiHeader) ChassisInformation() *ChassisInformation {
 	data := h.data
 	return &ChassisInformation{
 		Manufacturer:                 h.FieldString(int(data[0x04])),
@@ -1421,7 +1421,7 @@ type ProcessorInformation struct {
 	Family2           ProcessorFamily
 }
 
-func (h DMIHeader) ProcessorInformation() *ProcessorInformation {
+func (h dmiHeader) ProcessorInformation() *ProcessorInformation {
 	data := h.data
 	return &ProcessorInformation{
 		SocketDesignation: h.FieldString(int(data[0x04])),
@@ -1695,7 +1695,7 @@ type CacheInformation struct {
 	Associativity       CacheAssociativity
 }
 
-func (h DMIHeader) CacheInformation() *CacheInformation {
+func (h dmiHeader) CacheInformation() *CacheInformation {
 	data := h.data
 	return &CacheInformation{
 		SocketDesignation:   h.FieldString(int(data[0x04])),
@@ -1898,7 +1898,7 @@ type PortInformation struct {
 	Type                        PortType
 }
 
-func (h DMIHeader) PortInformation() *PortInformation {
+func (h dmiHeader) PortInformation() *PortInformation {
 	data := h.data
 	return &PortInformation{
 		InternalReferenceDesignator: h.FieldString(int(data[0x04])),
@@ -2148,7 +2148,7 @@ type SystemSlot struct {
 	DeviceFunctionNumber SystemSlotNumber
 }
 
-func (h DMIHeader) SystemSlot() *SystemSlot {
+func (h dmiHeader) SystemSlot() *SystemSlot {
 	data := h.data
 	return &SystemSlot{
 		Designation:          h.FieldString(int(data[0x04])),
@@ -2209,7 +2209,7 @@ type BIOSLanguageInformation struct {
 	CurrentLanguage     string
 }
 
-func (h DMIHeader) BIOSLanguageInformation() *BIOSLanguageInformation {
+func (h dmiHeader) BIOSLanguageInformation() *BIOSLanguageInformation {
 	var bl BIOSLanguageInformation
 	data := h.data
 	cnt := data[0x04]
@@ -2273,7 +2273,7 @@ type OnBoardDeviceInformation struct {
 	Description []string
 }
 
-func (h DMIHeader) OnBoardDeviceInformation() *OnBoardDeviceInformation {
+func (h dmiHeader) OnBoardDeviceInformation() *OnBoardDeviceInformation {
 	var d OnBoardDeviceInformation
 	data := h.data
 	n := (data[0x01] - 4) / 2
@@ -2313,7 +2313,7 @@ type OEMStrings struct {
 	strings string
 }
 
-func (h DMIHeader) SystemConfigurationOptions() *SystemConfigurationOptions {
+func (h dmiHeader) SystemConfigurationOptions() *SystemConfigurationOptions {
 	var sc SystemConfigurationOptions
 	data := h.data
 	sc.Count = data[0x04]
@@ -2327,7 +2327,7 @@ func (s SystemConfigurationOptions) String() string {
 	return fmt.Sprintf("System Configuration Option\n\t\t%s", s.strings)
 }
 
-func (h DMIHeader) OEMStrings() *OEMStrings {
+func (h dmiHeader) OEMStrings() *OEMStrings {
 	var o OEMStrings
 	data := h.data
 	o.Count = data[0x04]
@@ -2353,7 +2353,7 @@ type GroupAssociations struct {
 	Item      []GroupAssociationsItem
 }
 
-func (h DMIHeader) GroupAssociations() *GroupAssociations {
+func (h dmiHeader) GroupAssociations() *GroupAssociations {
 	var ga GroupAssociations
 	data := h.data
 	ga.GroupName = h.FieldString(int(data[0x04]))
@@ -2477,7 +2477,7 @@ type PhysicalMemoryArray struct {
 	ExtendedMaximumCapacity uint64
 }
 
-func (h DMIHeader) PhysicalMemoryArray() *PhysicalMemoryArray {
+func (h dmiHeader) PhysicalMemoryArray() *PhysicalMemoryArray {
 	data := h.data
 	return &PhysicalMemoryArray{
 		Location:                PhysicalMemoryArrayLocation(data[0x04]),
@@ -2675,7 +2675,7 @@ type MemoryDevice struct {
 	ConfiguredVoltage          uint16
 }
 
-func (h DMIHeader) MemoryDevice() *MemoryDevice {
+func (h dmiHeader) MemoryDevice() *MemoryDevice {
 	data := h.data
 	return &MemoryDevice{
 		PhysicalMemoryArrayHandle:  u16(data[0x04:0x06]),
@@ -2840,7 +2840,7 @@ type _32BitMemoryErrorInformation struct {
 	Resolution        uint32
 }
 
-func (h DMIHeader) _32BitMemoryErrorInformation() *_32BitMemoryErrorInformation {
+func (h dmiHeader) _32BitMemoryErrorInformation() *_32BitMemoryErrorInformation {
 	data := h.data
 	return &_32BitMemoryErrorInformation{
 		Type:              MemoryErrorInformationType(data[0x04]),
@@ -2941,7 +2941,7 @@ type BuiltinPointingDevice struct {
 	NumberOfButtons byte
 }
 
-func (h DMIHeader) BuiltinPointingDevice() *BuiltinPointingDevice {
+func (h dmiHeader) BuiltinPointingDevice() *BuiltinPointingDevice {
 	data := h.data
 	return &BuiltinPointingDevice{
 		Type:            BuiltinPointingDeviceType(data[0x04]),
@@ -3007,7 +3007,7 @@ type PortableBattery struct {
 	OEMSepecific              uint32
 }
 
-func (h DMIHeader) PortableBattery() *PortableBattery {
+func (h dmiHeader) PortableBattery() *PortableBattery {
 	data := h.data
 	return &PortableBattery{
 		Location:                  h.FieldString(int(data[0x04])),
@@ -3133,7 +3133,7 @@ func (s SystemReset) String() string {
 		s.Timeout)
 }
 
-func (h DMIHeader) SystemReset() *SystemReset {
+func (h dmiHeader) SystemReset() *SystemReset {
 	data := h.data
 	return &SystemReset{
 		Capabilities:  data[0x04],
@@ -3195,7 +3195,7 @@ type HardwareSecurity struct {
 	Setting HardwareSecuritySettings
 }
 
-func (h DMIHeader) HardwareSecurity() *HardwareSecurity {
+func (h dmiHeader) HardwareSecurity() *HardwareSecurity {
 	var hw HardwareSecurity
 	data := h.data
 	hw.Setting = NewHardwareSecurity(data[0x04])
@@ -3223,7 +3223,7 @@ type SystemPowerControls struct {
 	NextScheduledPowerSecond       SystemPowerControlsSecond
 }
 
-func (h DMIHeader) SystemPowerControls() *SystemPowerControls {
+func (h dmiHeader) SystemPowerControls() *SystemPowerControls {
 	data := h.data
 	return &SystemPowerControls{
 		NextScheduledPowerOnMonth:      SystemPowerControlsMonth(bcd(data[0x04:0x05])),
@@ -3356,7 +3356,7 @@ func (v VoltageProbe) String() string {
 		v.NominalValue)
 }
 
-func (h DMIHeader) VoltageProbe() *VoltageProbe {
+func (h dmiHeader) VoltageProbe() *VoltageProbe {
 	data := h.data
 	return &VoltageProbe{
 		Description:       h.FieldString(int(data[0x04])),
@@ -3469,7 +3469,7 @@ func (c CoolingDevice) String() string {
 	return s
 }
 
-func (h DMIHeader) CoolingDevice() *CoolingDevice {
+func (h dmiHeader) CoolingDevice() *CoolingDevice {
 	data := h.data
 	cd := &CoolingDevice{
 		TemperatureProbeHandle: u16(data[0x04:0x06]),
@@ -3602,7 +3602,7 @@ func (t TemperatureProbe) String() string {
 		t.NominalValue)
 }
 
-func (h DMIHeader) TemperatureProbe() *TemperatureProbe {
+func (h dmiHeader) TemperatureProbe() *TemperatureProbe {
 	data := h.data
 	return &TemperatureProbe{
 		Description:       h.FieldString(int(data[0x04])),
@@ -3726,7 +3726,7 @@ func (e ElectricalCurrentProbe) String() string {
 		e.NomimalValue)
 }
 
-func (h DMIHeader) ElectricalCurrentProbe() *ElectricalCurrentProbe {
+func (h dmiHeader) ElectricalCurrentProbe() *ElectricalCurrentProbe {
 	data := h.data
 	return &ElectricalCurrentProbe{
 		Description:       h.FieldString(int(data[0x04])),
@@ -3772,7 +3772,7 @@ func (o OutOfBandRemoteAccess) String() string {
 		o.Connections)
 }
 
-func (h DMIHeader) OutOfBandRemoteAccess() *OutOfBandRemoteAccess {
+func (h dmiHeader) OutOfBandRemoteAccess() *OutOfBandRemoteAccess {
 	data := h.data
 	return &OutOfBandRemoteAccess{
 		ManufacturerName: h.FieldString(int(data[0x04])),
@@ -3815,7 +3815,7 @@ func (s SystemBootInformation) String() string {
 		s.BootStatus)
 }
 
-func (h DMIHeader) SystemBootInformation() *SystemBootInformation {
+func (h dmiHeader) SystemBootInformation() *SystemBootInformation {
 	data := h.data
 	return &SystemBootInformation{
 		BootStatus: SystemBootInformationStatus(data[0x0A]),
@@ -3851,7 +3851,7 @@ func (m _64BitMemoryErrorInformation) String() string {
 		m.Reslution)
 }
 
-func (h DMIHeader) _64BitMemoryErrorInformation() *_64BitMemoryErrorInformation {
+func (h dmiHeader) _64BitMemoryErrorInformation() *_64BitMemoryErrorInformation {
 	data := h.data
 	return &_64BitMemoryErrorInformation{
 		Type:              MemoryErrorInformationType(data[0x04]),
@@ -3942,7 +3942,7 @@ func (m ManagementDevice) String() string {
 		m.AddressType)
 }
 
-func (h DMIHeader) ManagementDevice() *ManagementDevice {
+func (h dmiHeader) ManagementDevice() *ManagementDevice {
 	data := h.data
 	return &ManagementDevice{
 		Description: h.FieldString(int(data[0x04])),
@@ -3972,7 +3972,7 @@ func (m ManagementDeviceComponent) String() string {
 		m.ThresholdHandle)
 }
 
-func (h DMIHeader) ManagementDeviceComponent() *ManagementDeviceComponent {
+func (h dmiHeader) ManagementDeviceComponent() *ManagementDeviceComponent {
 	data := h.data
 	return &ManagementDeviceComponent{
 		Description:            h.FieldString(int(data[0x04])),
@@ -4008,7 +4008,7 @@ func (m ManagementDeviceThresholdData) String() string {
 		m.UpperThresholdNonRecoverable)
 }
 
-func (h DMIHeader) ManagementDeviceThresholdData() *ManagementDeviceThresholdData {
+func (h dmiHeader) ManagementDeviceThresholdData() *ManagementDeviceThresholdData {
 	data := h.data
 	return &ManagementDeviceThresholdData{
 		LowerThresholdNonCritical:    u16(data[0x04:0x06]),
@@ -4087,7 +4087,7 @@ func (m MemoryChannel) String() string {
 		m.LoadHandle)
 }
 
-func (h DMIHeader) MemoryChannel() *MemoryChannel {
+func (h dmiHeader) MemoryChannel() *MemoryChannel {
 	data := h.data
 	mc := &MemoryChannel{
 		ChannelType:        MemoryChannelType(data[0x04]),
@@ -4258,7 +4258,7 @@ func (i IPMIDeviceInformation) String() string {
 		i.InterruptNumbe)
 }
 
-func (h DMIHeader) IPMIDeviceInformation() *IPMIDeviceInformation {
+func (h dmiHeader) IPMIDeviceInformation() *IPMIDeviceInformation {
 	data := h.data
 	return &IPMIDeviceInformation{
 		InterfaceType:                  IPMIDeviceInformationInterfaceType(data[0x04]),
@@ -4435,7 +4435,7 @@ func (s SystemPowerSupply) String() string {
 		s.InputCurrentProbeHandle)
 }
 
-func (h DMIHeader) SystemPowerSupply() *SystemPowerSupply {
+func (h dmiHeader) SystemPowerSupply() *SystemPowerSupply {
 	data := h.data
 	return &SystemPowerSupply{
 		PowerUnitGroup:             data[0x04],
@@ -4493,7 +4493,7 @@ func (a AdditionalInformation) String() string {
 		AdditionalInformationEntriess(a.Entries))
 }
 
-func (h DMIHeader) AdditionalInformation() *AdditionalInformation {
+func (h dmiHeader) AdditionalInformation() *AdditionalInformation {
 	data := h.data
 	ai := new(AdditionalInformation)
 	ai.NumberOfEntries = data[0x04]
@@ -4577,7 +4577,7 @@ func (o OnBoardDevicesExtendedInformation) String() string {
 		o.SlotSegment())
 }
 
-func (h DMIHeader) OnBoardDevicesExtendedInformation() *OnBoardDevicesExtendedInformation {
+func (h dmiHeader) OnBoardDevicesExtendedInformation() *OnBoardDevicesExtendedInformation {
 	data := h.data
 	return &OnBoardDevicesExtendedInformation{
 		ReferenceDesignation: h.FieldString(int(data[0x04])),
@@ -4644,7 +4644,7 @@ func (m ManagementControllerHostInterface) MCHostInterfaceData() string {
 	return ""
 }
 
-func (h DMIHeader) ManagementControllerHostInterface() *ManagementControllerHostInterface {
+func (h dmiHeader) ManagementControllerHostInterface() *ManagementControllerHostInterface {
 	data := h.data
 	mc := &ManagementControllerHostInterface{
 		Type: ManagementControllerHostInterfaceType(data[0x04]),
@@ -4663,7 +4663,7 @@ func (i Inactive) String() string {
 	return "Inactive"
 }
 
-func (h DMIHeader) Inactive() *Inactive {
+func (h dmiHeader) Inactive() *Inactive {
 	return &Inactive{}
 }
 
@@ -4675,7 +4675,7 @@ func (e EndOfTable) String() string {
 	return "End-of-Table"
 }
 
-func (h DMIHeader) EndOfTable() *EndOfTable {
+func (h dmiHeader) EndOfTable() *EndOfTable {
 	return &EndOfTable{}
 }
 
@@ -4717,11 +4717,11 @@ func u64(data []byte) uint64 {
 	return u
 }
 
-func newDMIHeader(data []byte) *DMIHeader {
+func newdmiHeader(data []byte) *dmiHeader {
 	if len(data) < 0x04 {
 		return nil
 	}
-	return &DMIHeader{
+	return &dmiHeader{
 		InfoCommon: InfoCommon{
 			SMType: SMBIOSStructureType(data[0x00]),
 			Length: data[1],
@@ -4758,17 +4758,17 @@ func (e SMBIOS_EPS) StructureTableMem() ([]byte, error) {
 	return getMem(e.TableAddress, uint32(e.TableLength))
 }
 
-func (h DMIHeader) Next() *DMIHeader {
+func (h dmiHeader) Next() *dmiHeader {
 	de := []byte{0, 0}
 	next := h.data[h.Length:]
 	index := bytes.Index(next, de)
 	if index == -1 {
 		return nil
 	}
-	return newDMIHeader(next[index+2:])
+	return newdmiHeader(next[index+2:])
 }
 
-func (h DMIHeader) Decode() interface{} {
+func (h dmiHeader) Decode() interface{} {
 	switch h.SMType {
 	case SMBIOSStructureTypeBIOS:
 		return h.BIOSInformation()
@@ -4850,7 +4850,7 @@ func (h DMIHeader) Decode() interface{} {
 	return nil
 }
 
-func (h DMIHeader) FieldString(offset int) string {
+func (h dmiHeader) FieldString(offset int) string {
 	d := h.data
 	index := int(h.Length)
 	if offset == 0 {
@@ -4867,7 +4867,7 @@ func (h DMIHeader) FieldString(offset int) string {
 	return string(d[index : index+ib])
 }
 
-func (h DMIHeader) BIOSInformation() *BIOSInformation {
+func (h dmiHeader) BIOSInformation() *BIOSInformation {
 	data := h.data
 	return &BIOSInformation{
 		Vendor:                 h.FieldString(int(data[0x04])),
@@ -4946,7 +4946,7 @@ func uuid(data []byte, ver string) string {
 		data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15])
 }
 
-func (h DMIHeader) SystemInformation() *SystemInformation {
+func (h dmiHeader) SystemInformation() *SystemInformation {
 	data := h.data
 	version := h.FieldString(int(data[0x06]))
 	return &SystemInformation{
@@ -4961,7 +4961,7 @@ func (h DMIHeader) SystemInformation() *SystemInformation {
 	}
 }
 
-func (h DMIHeader) BaseboardInformation() *BaseboardInformation {
+func (h dmiHeader) BaseboardInformation() *BaseboardInformation {
 	data := h.data
 	return &BaseboardInformation{
 		Manufacturer:      h.FieldString(int(data[0x04])),
@@ -4981,7 +4981,7 @@ func (e SMBIOS_EPS) StructureTable() map[SMBIOSStructureType]interface{} {
 		return nil
 	}
 	m := make(map[SMBIOSStructureType]interface{})
-	for hd := newDMIHeader(tmem); hd != nil; hd = hd.Next() {
+	for hd := newdmiHeader(tmem); hd != nil; hd = hd.Next() {
 		m[hd.SMType] = hd.Decode()
 	}
 	return m
