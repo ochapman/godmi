@@ -90,3 +90,15 @@ func TestBaseboard(t *testing.T) {
 	}
 	compare(m, t)
 }
+
+func TestChassis(t *testing.T) {
+	ci := GetChassisInformation()
+	m := map[string]string{
+		"chassis-manufacturer":  ci.Manufacturer,
+		"chassis-type":          ci.ChassisType.String(),
+		"chassis-version":       ci.Version,
+		"chassis-serial-number": ci.SerialNumber,
+		"chassis-asset-tag":     ci.AssetTag,
+	}
+	compare(m, t)
+}
