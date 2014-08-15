@@ -79,3 +79,20 @@ func TestSystem(t *testing.T) {
 		}
 	}
 }
+
+func TestBaseboard(t *testing.T) {
+	bi := GetBaseboardInformation()
+	m := make(map[string]string, 0)
+	m["baseboard-manufacturer"] = bi.Manufacturer
+	m["baseboard-product-name"] = bi.Product
+	m["baseboard-version"] = bi.Version
+	m["baseboard-serial-number"] = bi.SerialNumber
+	m["baseboard-asset-tag"] = bi.AssetTag
+
+	for k, v := range m {
+		dmiv := dmidecode_s(k)
+		if dmiv != v {
+			t.Errorf("%s: \n[godmi]: %s\n[dmidecode]: %s\n", k, v, dmiv)
+		}
+	}
+}
