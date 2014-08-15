@@ -21,6 +21,15 @@ func dmidecode_s(kw string) string {
 	return strings.TrimSpace(output)
 }
 
+func compare(m map[string]string, t *testing.T) {
+	for k, v := range m {
+		dmiv := dmidecode_s(k)
+		if dmiv != v {
+			t.Errorf("%s: \n[godmi]: %s\n[dmidecode]: %s\n", k, v, dmiv)
+		}
+	}
+}
+
 /*
 dmidecode command has following keywords:
   bios-vendor
@@ -54,13 +63,7 @@ func TestBIOS(t *testing.T) {
 	m["bios-version"] = bi.BIOSVersion
 	m["bios-release-date"] = bi.ReleaseDate
 
-	for k, v := range m {
-		dmiv := dmidecode_s(k)
-		if dmiv != v {
-			t.Errorf("%s: \n[godmi]: %s\n[dmidecode]: %s\n", k, v, dmiv)
-		}
-	}
-
+	compare(m, t)
 }
 
 func TestSystem(t *testing.T) {
@@ -72,12 +75,7 @@ func TestSystem(t *testing.T) {
 	m["system-serial-number"] = si.SerialNumber
 	m["system-uuid"] = si.UUID
 
-	for k, v := range m {
-		dmiv := dmidecode_s(k)
-		if dmiv != v {
-			t.Errorf("%s: \n[godmi]: %s\n[dmidecode]: %s\n", k, v, dmiv)
-		}
-	}
+	compare(m, t)
 }
 
 func TestBaseboard(t *testing.T) {
@@ -88,11 +86,5 @@ func TestBaseboard(t *testing.T) {
 	m["baseboard-version"] = bi.Version
 	m["baseboard-serial-number"] = bi.SerialNumber
 	m["baseboard-asset-tag"] = bi.AssetTag
-
-	for k, v := range m {
-		dmiv := dmidecode_s(k)
-		if dmiv != v {
-			t.Errorf("%s: \n[godmi]: %s\n[dmidecode]: %s\n", k, v, dmiv)
-		}
-	}
+	compare(m, t)
 }
