@@ -413,7 +413,7 @@ var sCharateristicsExt2 = [...]string{
 	"System is a virtual machine", /* 4 */
 }
 
-// BIOS Characteristics Extension Bytes
+// BIOS Characteristics Extension Bytes(Ext1)
 // Byte 1
 const (
 	BIOSCharacteristicsExt1ACPISupported = 1 << iota
@@ -426,6 +426,7 @@ const (
 	BIOSCharacteristicsExt1SmartBatterySupported
 )
 
+// BIOS Characteristics Extension Bytes(Ext2)
 // Byte 2
 const (
 	BIOSCharacteristicsExt2BIOSBootSpecSupported = 1 << iota
