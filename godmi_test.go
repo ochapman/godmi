@@ -58,33 +58,35 @@ dmidecode command has following keywords:
 
 func TestBIOS(t *testing.T) {
 	bi := GetBIOSInformation()
-	m := make(map[string]string, 0)
-	m["bios-vendor"] = bi.Vendor
-	m["bios-version"] = bi.BIOSVersion
-	m["bios-release-date"] = bi.ReleaseDate
+	m := map[string]string{
+		"bios-vendor":       bi.Vendor,
+		"bios-version":      bi.BIOSVersion,
+		"bios-release-date": bi.ReleaseDate,
+	}
 
 	compare(m, t)
 }
 
 func TestSystem(t *testing.T) {
 	si := GetSystemInformation()
-	m := make(map[string]string, 0)
-	m["system-manufacturer"] = si.Manufacturer
-	m["system-product-name"] = si.ProductName
-	m["system-version"] = si.Version
-	m["system-serial-number"] = si.SerialNumber
-	m["system-uuid"] = si.UUID
-
+	m := map[string]string{
+		"system-manufacturer":  si.Manufacturer,
+		"system-product-name":  si.ProductName,
+		"system-version":       si.Version,
+		"system-serial-number": si.SerialNumber,
+		"system-uuid":          si.UUID,
+	}
 	compare(m, t)
 }
 
 func TestBaseboard(t *testing.T) {
 	bi := GetBaseboardInformation()
-	m := make(map[string]string, 0)
-	m["baseboard-manufacturer"] = bi.Manufacturer
-	m["baseboard-product-name"] = bi.Product
-	m["baseboard-version"] = bi.Version
-	m["baseboard-serial-number"] = bi.SerialNumber
-	m["baseboard-asset-tag"] = bi.AssetTag
+	m := map[string]string{
+		"baseboard-manufacturer":  bi.Manufacturer,
+		"baseboard-product-name":  bi.Product,
+		"baseboard-version":       bi.Version,
+		"baseboard-serial-number": bi.SerialNumber,
+		"baseboard-asset-tag":     bi.AssetTag,
+	}
 	compare(m, t)
 }
