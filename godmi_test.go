@@ -47,10 +47,35 @@ dmidecode command has following keywords:
   processor-frequency
 */
 
-func TestBIOSVendor(t *testing.T) {
-	vendor := dmidecode_s("bios-vendor")
+func TestBIOS(t *testing.T) {
 	bi := GetBIOSInformation()
-	if vendor != bi.Vendor {
-		t.Errorf("bios-vendor godmi: %s dmidecode: %s", bi.Vendor, vendor)
+	m := make(map[string]string, 0)
+	m["bios-vendor"] = bi.Vendor
+	m["bios-version"] = bi.BIOSVersion
+	m["bios-release-date"] = bi.ReleaseDate
+
+	for k, v := range m {
+		dmiv := dmidecode_s(k)
+		if dmiv != v {
+			t.Errorf("%s: \n[godmi]: %s\n[dmidecode]: %s\n", k, v, dmiv)
+		}
+	}
+
+}
+
+func TestSystem(t *testing.T) {
+	si := GetSystemInformation()
+	m := make(map[string]string, 0)
+	m["system-manufacturer"] = si.Manufacturer
+	m["system-product-name"] = si.ProductName
+	m["system-version"] = si.Version
+	m["system-serial-number"] = si.SerialNumber
+	m["system-uuid"] = si.UUID
+
+	for k, v := range m {
+		dmiv := dmidecode_s(k)
+		if dmiv != v {
+			t.Errorf("%s: \n[godmi]: %s\n[dmidecode]: %s\n", k, v, dmiv)
+		}
 	}
 }
