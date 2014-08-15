@@ -16,6 +16,11 @@ func dmidecode(arg ...string) string {
 	return string(output)
 }
 
+func dmidecode_s(kw string) string {
+	output := dmidecode("-s", kw)
+	return strings.TrimSpace(output)
+}
+
 /*
 dmidecode command has following keywords:
   bios-vendor
@@ -43,9 +48,7 @@ dmidecode command has following keywords:
 */
 
 func TestBIOSVendor(t *testing.T) {
-	v := dmidecode("-s", "bios-vendor")
-	// v has "\n"
-	vendor := strings.TrimSpace(v)
+	vendor := dmidecode_s("bios-vendor")
 	bi := GetBIOSInformation()
 	if vendor != bi.Vendor {
 		t.Errorf("bios-vendor godmi: %s dmidecode: %s", bi.Vendor, vendor)
