@@ -17,6 +17,8 @@ import (
 	"syscall"
 )
 
+const OUT_OF_SPEC = "<OUT OF SPEC>"
+
 var gdmi map[SMBIOSStructureType]interface{}
 
 type SMBIOSStructureType byte
@@ -513,7 +515,21 @@ func (ct ChassisType) String() string {
 		"Blade",
 		"BladeEnclosure",
 	}
-	return types[ct-1]
+	ct &= 0x7F
+	if ct >= 0x01 && ct < 0x1D {
+		return types[ct-1]
+	}
+	return OUT_OF_SPEC
+}
+
+type ChassisLock byte
+
+func (c ChassisLock) String() string {
+	locks := [...]string{
+		"Not Present", /* 0x00 */
+		"Present",     /* 0x01 */
+	}
+	return locks[c]
 }
 
 type ChassisState byte
@@ -575,6 +591,7 @@ type ChassisInformation struct {
 	infoCommon
 	Manufacturer                 string
 	ChassisType                  ChassisType
+	Lock                         ChassisLock
 	Version                      string
 	AssetTag                     string
 	SerialNumber                 string
@@ -596,6 +613,7 @@ func (h dmiHeader) ChassisInformation() *ChassisInformation {
 	return &ChassisInformation{
 		Manufacturer:                 h.FieldString(int(data[0x04])),
 		ChassisType:                  ChassisType(data[0x05]),
+		Lock:                         ChassisLock(data[0x05] >> 7),
 		Version:                      h.FieldString(int(data[0x06])),
 		SerialNumber:                 h.FieldString(int(data[0x07])),
 		AssetTag:                     h.FieldString(int(data[0x08])),
@@ -615,18 +633,20 @@ func (h dmiHeader) ChassisInformation() *ChassisInformation {
 }
 
 func (ci ChassisInformation) String() string {
-	return fmt.Sprintf("Chassis Information:\n\t"+
-		"Manufacturer: %s"+
+	return fmt.Sprintf("Chassis Information"+
+		"\n\tManufacturer: %s"+
 		"\n\tType: %s"+
+		"\n\tLock: %s"+
 		"\n\tVersion: %s"+
 		"\n\tSerial Number: %s"+
 		"\n\tAsset Tag: %s"+
 		"\n\tBoot-up State: %s"+
 		"\n\tPower Supply State: %s"+
 		"\n\tThermal State: %s"+
-		"\n\tSecurity Status: %s\n\t",
+		"\n\tSecurity Status: %s",
 		ci.Manufacturer,
 		ci.ChassisType,
+		ci.Lock,
 		ci.Version,
 		ci.SerialNumber,
 		ci.AssetTag,

@@ -1,6 +1,8 @@
 package godmi_test
 
 import (
+	"bufio"
+	"bytes"
 	"fmt"
 	. "github.com/ochapman/godmi"
 	"log"
@@ -25,7 +27,21 @@ func dmidecode_s(kw string) string {
 }
 
 func dmidecode_t(kw string) string {
-	output := dmidecode("-q", "-t", kw)
+	var output string
+	dd := dmidecode("-q", "-t", kw)
+	// Remove empty line
+	r := bytes.NewReader([]byte(dd))
+	s := bufio.NewScanner(r)
+	for s.Scan() {
+		line := s.Text()
+		if line != "" {
+			if len(output) > 0 {
+				output = output + "\n" + line
+			} else {
+				output = line
+			}
+		}
+	}
 	return output
 }
 
