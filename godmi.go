@@ -228,7 +228,7 @@ type SystemInformation struct {
 }
 
 func (si SystemInformation) String() string {
-	return fmt.Sprintf("SystemInformation:"+
+	return fmt.Sprintf("System Information"+
 		"\n\tManufacturer: %s"+
 		"\n\tProduct Name: %s"+
 		"\n\tVersion: %s"+
@@ -236,7 +236,7 @@ func (si SystemInformation) String() string {
 		"\n\tUUID: %s"+
 		"\n\tWake-up Type: %s"+
 		"\n\tSKU Number: %s"+
-		"\n\tFamily: %s\n\t",
+		"\n\tFamily: %s",
 		si.Manufacturer,
 		si.ProductName,
 		si.Version,
