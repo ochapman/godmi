@@ -4,6 +4,7 @@ import (
 	. "github.com/ochapman/godmi"
 	"log"
 	"os/exec"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -99,6 +100,20 @@ func TestChassis(t *testing.T) {
 		"chassis-version":       ci.Version,
 		"chassis-serial-number": ci.SerialNumber,
 		"chassis-asset-tag":     ci.AssetTag,
+	}
+	compare(m, t)
+}
+
+func TestProcessor(t *testing.T) {
+	pi := GetProcessorInformation()
+	if pi == nil {
+		t.Skip("GetProcessorInformation failed")
+	}
+	m := map[string]string{
+		"processor-family":       pi.Family.String(),
+		"processor-manufacturer": pi.Manufacturer,
+		"processor-version":      pi.Version,
+		"processor-frequency":    strconv.Itoa(int(pi.MaxSpeed)),
 	}
 	compare(m, t)
 }
