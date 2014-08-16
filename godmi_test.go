@@ -59,6 +59,9 @@ dmidecode command has following keywords:
 
 func TestBIOS(t *testing.T) {
 	bi := GetBIOSInformation()
+	if bi == nil {
+		t.Skip("GetBIOSInformation failed")
+	}
 	m := map[string]string{
 		"bios-vendor":       bi.Vendor,
 		"bios-version":      bi.BIOSVersion,
@@ -70,6 +73,9 @@ func TestBIOS(t *testing.T) {
 
 func TestSystem(t *testing.T) {
 	si := GetSystemInformation()
+	if si == nil {
+		t.Skip("GetSystemInformation failed")
+	}
 	m := map[string]string{
 		"system-manufacturer":  si.Manufacturer,
 		"system-product-name":  si.ProductName,
@@ -82,6 +88,9 @@ func TestSystem(t *testing.T) {
 
 func TestBaseboard(t *testing.T) {
 	bi := GetBaseboardInformation()
+	if bi == nil {
+		t.Skip("GetBaseboardInformation failed")
+	}
 	m := map[string]string{
 		"baseboard-manufacturer":  bi.Manufacturer,
 		"baseboard-product-name":  bi.Product,
@@ -94,6 +103,9 @@ func TestBaseboard(t *testing.T) {
 
 func TestChassis(t *testing.T) {
 	ci := GetChassisInformation()
+	if ci == nil {
+		t.Skip("GetChassisInformation failed")
+	}
 	m := map[string]string{
 		"chassis-manufacturer":  ci.Manufacturer,
 		"chassis-type":          ci.ChassisType.String(),
