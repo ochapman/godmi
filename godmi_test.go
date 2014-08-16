@@ -22,6 +22,11 @@ func dmidecode_s(kw string) string {
 	return strings.TrimSpace(output)
 }
 
+func dmidecode_t(kw string) string {
+	output := dmidecode("-q", "-t", kw)
+	return output
+}
+
 func compare(m map[string]string, t *testing.T) {
 	for k, v := range m {
 		dmiv := dmidecode_s(k)
@@ -32,7 +37,7 @@ func compare(m map[string]string, t *testing.T) {
 }
 
 /*
-dmidecode command has following keywords:
+dmidecode command has following STRING keywords:
   bios-vendor
   bios-version
   bios-release-date
@@ -132,4 +137,25 @@ func TestProcessor(t *testing.T) {
 		"processor-frequency":    strconv.Itoa(int(pi.MaxSpeed)),
 	}
 	compare(m, t)
+}
+
+/*
+dmidecode has following TYPE keywords:
+	bios
+	system
+	baseboard
+	chassis
+	processor
+	memory
+	cache
+	connector
+	slot
+*/
+
+func TestBIOSType(t *testing.T) {
+	gd := GetBIOSInformation()
+	dd := dmidecode_t("bios")
+	if gd.String() != dd {
+		t.Errorf("%s: \n[godmi]: %s\n[dmidecode]: %s\n", "BIOS", gd, dd)
+	}
 }
