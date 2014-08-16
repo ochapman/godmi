@@ -590,7 +590,7 @@ type Height byte
 type ChassisInformation struct {
 	infoCommon
 	Manufacturer                 string
-	ChassisType                  ChassisType
+	Type                         ChassisType
 	Lock                         ChassisLock
 	Version                      string
 	AssetTag                     string
@@ -612,7 +612,7 @@ func (h dmiHeader) ChassisInformation() *ChassisInformation {
 	data := h.data
 	return &ChassisInformation{
 		Manufacturer:                 h.FieldString(int(data[0x04])),
-		ChassisType:                  ChassisType(data[0x05]),
+		Type:                         ChassisType(data[0x05]),
 		Lock:                         ChassisLock(data[0x05] >> 7),
 		Version:                      h.FieldString(int(data[0x06])),
 		SerialNumber:                 h.FieldString(int(data[0x07])),
@@ -645,7 +645,7 @@ func (ci ChassisInformation) String() string {
 		"\n\tThermal State: %s"+
 		"\n\tSecurity Status: %s",
 		ci.Manufacturer,
-		ci.ChassisType,
+		ci.Type,
 		ci.Lock,
 		ci.Version,
 		ci.SerialNumber,
