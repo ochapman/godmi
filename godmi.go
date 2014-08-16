@@ -154,6 +154,15 @@ type Characteristics uint64
 type CharacteristicsExt1 byte
 type CharacteristicsExt2 byte
 
+type BIOSRuntimeSize uint
+
+func (b BIOSRuntimeSize) String() string {
+	if (b & 0x3FF) > 0 {
+		return fmt.Sprintf("%d Bytes", b)
+	}
+	return fmt.Sprintf("%d kB", b>>10)
+}
+
 type BIOSInformation struct {
 	infoCommon
 	Vendor                                 string
@@ -161,6 +170,7 @@ type BIOSInformation struct {
 	StartingAddressSegment                 uint16
 	ReleaseDate                            string
 	RomSize                                byte
+	RuntimeSize                            BIOSRuntimeSize
 	Characteristics                        Characteristics
 	CharacteristicsExt1                    CharacteristicsExt1
 	CharacteristicsExt2                    CharacteristicsExt2
@@ -4890,11 +4900,14 @@ func (h dmiHeader) FieldString(offset int) string {
 
 func (h dmiHeader) BIOSInformation() *BIOSInformation {
 	data := h.data
+	sas := u16(data[0x06:0x08])
 	return &BIOSInformation{
 		Vendor:                 h.FieldString(int(data[0x04])),
 		BIOSVersion:            h.FieldString(int(data[0x05])),
-		StartingAddressSegment: u16(data[0x06:0x08]),
+		StartingAddressSegment: sas,
 		ReleaseDate:            h.FieldString(int(data[0x08])),
+		RomSize:                64 * (data[0x09] + 1),
+		RuntimeSize:            BIOSRuntimeSize((uint(0x10000) - uint(sas)) << 4),
 		Characteristics:        Characteristics(u64(data[0x0A:0x12])),
 		CharacteristicsExt1:    CharacteristicsExt1(data[0x12]),
 		CharacteristicsExt2:    CharacteristicsExt2(data[0x12]),
@@ -4936,13 +4949,19 @@ func (bi BIOSInformation) String() string {
 	return fmt.Sprintf("BIOS Information:"+
 		"\n\tVendor: %s"+
 		"\n\tVersion: %s"+
-		"\n\tAddress: %4"+
-		"X0\n\tCharacteristics: %s"+
-		"\n\tExt1:%s"+
-		"\n\tExt2: %s",
+		"\n\tRelease Date: %s"+
+		"\n\tAddress: 0x%4X0"+
+		"\n\tRuntime Size: %s"+
+		"\n\tROM Size: %s kB"+
+		"\n\tCharacteristics: %s"+
+		"\t%s"+
+		"\t%s",
 		bi.Vendor,
 		bi.BIOSVersion,
+		bi.ReleaseDate,
 		bi.StartingAddressSegment,
+		bi.RuntimeSize,
+		strconv.Itoa(int(bi.RomSize)),
 		bi.Characteristics,
 		bi.CharacteristicsExt1,
 		bi.CharacteristicsExt2)
