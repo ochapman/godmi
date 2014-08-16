@@ -163,13 +163,19 @@ func (b BIOSRuntimeSize) String() string {
 	return fmt.Sprintf("%d kB", b>>10)
 }
 
+type BIOSRomSize byte
+
+func (b BIOSRomSize) String() string {
+	return fmt.Sprintf("%d kB", b)
+}
+
 type BIOSInformation struct {
 	infoCommon
 	Vendor                                 string
 	BIOSVersion                            string
 	StartingAddressSegment                 uint16
 	ReleaseDate                            string
-	RomSize                                byte
+	RomSize                                BIOSRomSize
 	RuntimeSize                            BIOSRuntimeSize
 	Characteristics                        Characteristics
 	CharacteristicsExt1                    CharacteristicsExt1
@@ -4906,7 +4912,7 @@ func (h dmiHeader) BIOSInformation() *BIOSInformation {
 		BIOSVersion:            h.FieldString(int(data[0x05])),
 		StartingAddressSegment: sas,
 		ReleaseDate:            h.FieldString(int(data[0x08])),
-		RomSize:                64 * (data[0x09] + 1),
+		RomSize:                BIOSRomSize(64 * (data[0x09] + 1)),
 		RuntimeSize:            BIOSRuntimeSize((uint(0x10000) - uint(sas)) << 4),
 		Characteristics:        Characteristics(u64(data[0x0A:0x12])),
 	}
@@ -4957,14 +4963,14 @@ func (bi BIOSInformation) String() string {
 		"\n\tRelease Date: %s"+
 		"\n\tAddress: 0x%4X0"+
 		"\n\tRuntime Size: %s"+
-		"\n\tROM Size: %s kB"+
+		"\n\tROM Size: %s"+
 		"\n\tCharacteristics:%s",
 		bi.Vendor,
 		bi.BIOSVersion,
 		bi.ReleaseDate,
 		bi.StartingAddressSegment,
 		bi.RuntimeSize,
-		strconv.Itoa(int(bi.RomSize)),
+		bi.RomSize,
 		bi.Characteristics)
 
 	if bi.CharacteristicsExt1 != 0 {
