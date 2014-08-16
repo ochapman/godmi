@@ -259,7 +259,6 @@ func (f FeatureFlags) String() string {
 	}
 	var s string
 	for i := uint32(0); i < 5; i++ {
-		//fmt.Printf("F%08b\nI%08b\n", f, 1<<i)
 		if f&(1<<i) != 0 {
 			s += "\n\t\t" + features[i]
 		}
@@ -323,15 +322,15 @@ type BaseboardInformation struct {
 }
 
 func (bi BaseboardInformation) String() string {
-	return fmt.Sprintf("BaseboardInformation:"+
+	return fmt.Sprintf("Base Board Information"+
 		"\n\tManufacturer: %s"+
-		"\n\tProduct: %s"+
+		"\n\tProduct Name: %s"+
 		"\n\tVersion: %s"+
 		"\n\tSerial Number: %s"+
 		"\n\tAsset Tag: %s"+
-		"\n\tFeature Flags: %s"+
+		"\n\tFeatures:%s"+
 		"\n\tLocation In Chassis: %s"+
-		"\n\tBoard Type: %s\n\t",
+		"\n\tType: %s",
 		bi.Manufacturer,
 		bi.Product,
 		bi.Version,
