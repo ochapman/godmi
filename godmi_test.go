@@ -1,9 +1,11 @@
 package godmi_test
 
 import (
+	"fmt"
 	. "github.com/ochapman/godmi"
 	"log"
 	"os/exec"
+	"reflect"
 	"strconv"
 	"strings"
 	"testing"
@@ -152,10 +154,28 @@ dmidecode has following TYPE keywords:
 	slot
 */
 
-func TestBIOSType(t *testing.T) {
-	gd := GetBIOSInformation()
-	dd := dmidecode_t("bios")
-	if gd.String() != dd {
-		t.Errorf("%s: \n[godmi]: %s\n[dmidecode]: %s\n", "BIOS", gd, dd)
+func TestType(t *testing.T) {
+	m := map[string]interface{}{
+		"bios":      GetBIOSInformation(),
+		"system":    GetSystemInformation(),
+		"baseboard": GetBaseboardInformation(),
+		"chassis":   GetChassisInformation(),
+		"processor": GetProcessorInformation(),
+		"memory":    GetMemoryDevice(),
+		"cache":     GetCacheInformation(),
+		"connector": GetPortInformation(),
+		"slot":      GetSystemSlot(),
+	}
+	for k, v := range m {
+		vv := reflect.ValueOf(v)
+		if vv.IsNil() {
+			t.Logf("[godmi] %s has nil", k)
+			continue
+		}
+		gv := fmt.Sprintf("%s", v)
+		dv := dmidecode_t(k)
+		if gv != dv {
+			t.Errorf("%s: \n[godmi]:\n%s\n[dmidecode]:\n%s\n", k, gv, dv)
+		}
 	}
 }
