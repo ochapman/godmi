@@ -321,7 +321,7 @@ type BaseboardInformation struct {
 	ContainedObjectHandles         []byte
 }
 
-func (bi BaseboardInformation) String() string {
+func (b BaseboardInformation) String() string {
 	return fmt.Sprintf("Base Board Information"+
 		"\n\tManufacturer: %s"+
 		"\n\tProduct Name: %s"+
@@ -331,14 +331,14 @@ func (bi BaseboardInformation) String() string {
 		"\n\tFeatures:%s"+
 		"\n\tLocation In Chassis: %s"+
 		"\n\tType: %s",
-		bi.Manufacturer,
-		bi.Product,
-		bi.Version,
-		bi.SerialNumber,
-		bi.AssetTag,
-		bi.FeatureFlags,
-		bi.LocationInChassis,
-		bi.BoardType)
+		b.Manufacturer,
+		b.Product,
+		b.Version,
+		b.SerialNumber,
+		b.AssetTag,
+		b.FeatureFlags,
+		b.LocationInChassis,
+		b.BoardType)
 }
 
 // BIOS Characteristics
