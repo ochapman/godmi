@@ -4955,7 +4955,7 @@ func (c CharacteristicsExt2) String() string {
 	return s
 }
 
-func (bi BIOSInformation) String() string {
+func (b BIOSInformation) String() string {
 	s := fmt.Sprintf("BIOS Information"+
 		"\n\tVendor: %s"+
 		"\n\tVersion: %s"+
@@ -4964,19 +4964,19 @@ func (bi BIOSInformation) String() string {
 		"\n\tRuntime Size: %s"+
 		"\n\tROM Size: %s"+
 		"\n\tCharacteristics:%s",
-		bi.Vendor,
-		bi.BIOSVersion,
-		bi.ReleaseDate,
-		bi.StartingAddressSegment,
-		bi.RuntimeSize,
-		bi.RomSize,
-		bi.Characteristics)
+		b.Vendor,
+		b.BIOSVersion,
+		b.ReleaseDate,
+		b.StartingAddressSegment,
+		b.RuntimeSize,
+		b.RomSize,
+		b.Characteristics)
 
-	if bi.CharacteristicsExt1 != 0 {
-		s += bi.CharacteristicsExt1.String()
+	if b.CharacteristicsExt1 != 0 {
+		s += b.CharacteristicsExt1.String()
 	}
-	if bi.CharacteristicsExt2 != 0 {
-		s += bi.CharacteristicsExt2.String()
+	if b.CharacteristicsExt2 != 0 {
+		s += b.CharacteristicsExt2.String()
 	}
 	return s
 }
