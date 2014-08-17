@@ -558,7 +558,7 @@ const (
 	ChassisStateNonRecoverable
 )
 
-func (cc ChassisState) String() string {
+func (c ChassisState) String() string {
 	states := [...]string{
 		"Other",
 		"Unknown",
@@ -567,7 +567,7 @@ func (cc ChassisState) String() string {
 		"Critical",
 		"NonRecoverable",
 	}
-	return states[cc-1]
+	return states[c-1]
 }
 
 type SecurityStatus byte
@@ -580,7 +580,7 @@ const (
 	SecurityStatusExternalInterfaceEnabled
 )
 
-func (ss SecurityStatus) String() string {
+func (s SecurityStatus) String() string {
 	status := [...]string{
 		"Other",
 		"Unknown",
@@ -588,7 +588,7 @@ func (ss SecurityStatus) String() string {
 		"ExternalInterfaceLockedOut",
 		"ExternalInterfaceEnabled",
 	}
-	return status[ss-1]
+	return status[s-1]
 }
 
 type ContainedElementType byte
@@ -647,7 +647,7 @@ func (h dmiHeader) ChassisInformation() *ChassisInformation {
 	}
 }
 
-func (ci ChassisInformation) String() string {
+func (c ChassisInformation) String() string {
 	return fmt.Sprintf("Chassis Information"+
 		"\n\tManufacturer: %s"+
 		"\n\tType: %s"+
@@ -659,16 +659,16 @@ func (ci ChassisInformation) String() string {
 		"\n\tPower Supply State: %s"+
 		"\n\tThermal State: %s"+
 		"\n\tSecurity Status: %s",
-		ci.Manufacturer,
-		ci.Type,
-		ci.Lock,
-		ci.Version,
-		ci.SerialNumber,
-		ci.AssetTag,
-		ci.BootUpState,
-		ci.PowerSupplyState,
-		ci.ThermalState,
-		ci.SecurityStatus)
+		c.Manufacturer,
+		c.Type,
+		c.Lock,
+		c.Version,
+		c.SerialNumber,
+		c.AssetTag,
+		c.BootUpState,
+		c.PowerSupplyState,
+		c.ThermalState,
+		c.SecurityStatus)
 }
 
 type ProcessorType byte
@@ -682,7 +682,7 @@ const (
 	ProcessorTypeVideoProcessor
 )
 
-func (pt ProcessorType) String() string {
+func (p ProcessorType) String() string {
 	types := [...]string{
 		"Other",
 		"Unknown",
@@ -691,7 +691,7 @@ func (pt ProcessorType) String() string {
 		"DSPProcessor",
 		"VideoProcessor",
 	}
-	return types[pt-1]
+	return types[p-1]
 }
 
 type ProcessorFamily uint16
@@ -972,7 +972,7 @@ const (
 	_
 )
 
-func (pf ProcessorFamily) String() string {
+func (p ProcessorFamily) String() string {
 	families := [...]string{
 		"Other",
 		"Unknown",
@@ -1247,7 +1247,7 @@ func (pf ProcessorFamily) String() string {
 		"Available for assignment",
 		"Reserved",
 	}
-	return families[pf]
+	return families[p]
 }
 
 type ProcessorID uint64
@@ -1265,16 +1265,16 @@ const (
 	ProcessorVoltageLegacy
 )
 
-func (pv ProcessorVoltage) String() string {
+func (p ProcessorVoltage) String() string {
 	voltages := [...]string{
 		"5V",
 		"3.3V",
 		"2.9V",
 	}
-	if pv&ProcessorVoltageLegacy == 0 {
-		return voltages[pv]
+	if p&ProcessorVoltageLegacy == 0 {
+		return voltages[p]
 	}
-	return fmt.Sprintf("%.1f", (pv-0x80)/10)
+	return fmt.Sprintf("%.1f", (p-0x80)/10)
 }
 
 type ProcessorStatus byte
@@ -1289,7 +1289,7 @@ const (
 	ProcessorStatusOther
 )
 
-func (ps ProcessorStatus) String() string {
+func (p ProcessorStatus) String() string {
 	status := [...]string{
 		"Unknown",
 		"CPU Enabled",
@@ -1299,7 +1299,7 @@ func (ps ProcessorStatus) String() string {
 		"Reserved",
 		"Other",
 	}
-	return status[ps]
+	return status[p]
 }
 
 type ProcessorUpgrade byte
@@ -1352,7 +1352,7 @@ const (
 	ProcessorUpgradeSocketLGA1356_3
 )
 
-func (pu ProcessorUpgrade) String() string {
+func (p ProcessorUpgrade) String() string {
 	upgrades := [...]string{
 		"Other",
 		"Unknown",
@@ -1399,7 +1399,7 @@ func (pu ProcessorUpgrade) String() string {
 		"Socket LGA2011-3",
 		"Socket LGA1356-3",
 	}
-	return upgrades[pu]
+	return upgrades[p]
 }
 
 type ProcessorCharacteristics uint16
@@ -1415,7 +1415,7 @@ const (
 	ProcessorCharacteristicsPowerPerformanceControl
 )
 
-func (pc ProcessorCharacteristics) String() string {
+func (p ProcessorCharacteristics) String() string {
 	chars := [...]string{
 		"Reserved",
 		"Unknown",
@@ -1426,7 +1426,7 @@ func (pc ProcessorCharacteristics) String() string {
 		"Enhanced Virtualization",
 		"Power/Performance Control",
 	}
-	return chars[pc]
+	return chars[p]
 }
 
 // type 4
@@ -1618,7 +1618,7 @@ const (
 	SRAMTypeReserved
 )
 
-func (st SRAMType) String() string {
+func (s SRAMType) String() string {
 	types := [...]string{
 		"Other",
 		"Unknown",
@@ -1629,7 +1629,7 @@ func (st SRAMType) String() string {
 		"Asynchronous",
 		"Reserved",
 	}
-	return types[st/2]
+	return types[s/2]
 }
 
 type CacheSpeed byte
@@ -1645,7 +1645,7 @@ const (
 	ErrorCorrectionTypeMultibitECC
 )
 
-func (ec ErrorCorrectionType) String() string {
+func (e ErrorCorrectionType) String() string {
 	types := [...]string{
 		"Other",
 		"Unknown",
@@ -1654,7 +1654,7 @@ func (ec ErrorCorrectionType) String() string {
 		"Single-bit ECC",
 		"Multi-bit ECC",
 	}
-	return types[ec-1]
+	return types[e-1]
 }
 
 type SystemCacheType byte
