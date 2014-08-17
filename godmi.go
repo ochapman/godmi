@@ -498,7 +498,7 @@ const (
 	ChssisTypeBladeEnclosure
 )
 
-func (ct ChassisType) String() string {
+func (c ChassisType) String() string {
 	types := [...]string{
 		"Other",
 		"Unknown",
@@ -530,9 +530,9 @@ func (ct ChassisType) String() string {
 		"Blade",
 		"BladeEnclosure",
 	}
-	ct &= 0x7F
-	if ct >= 0x01 && ct < 0x1D {
-		return types[ct-1]
+	c &= 0x7F
+	if c >= 0x01 && c < 0x1D {
+		return types[c-1]
 	}
 	return OUT_OF_SPEC
 }
