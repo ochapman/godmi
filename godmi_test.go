@@ -183,15 +183,19 @@ func TestType(t *testing.T) {
 		"slot":      GetSystemSlot(),
 	}
 	for k, v := range m {
+		dv := dmidecode_t(k)
 		vv := reflect.ValueOf(v)
 		if vv.IsNil() {
-			t.Logf("[godmi] %s has nil", k)
-			continue
+			if len(dv) == 0 {
+				t.Logf("%s has no data", k)
+				continue
+			} else {
+				t.Errorf("%s:\n[godmi]: nil\n[dmidecode]: %s\n", k, dv)
+			}
 		}
 		gv := fmt.Sprintf("%s", v)
-		dv := dmidecode_t(k)
 		if gv != dv {
-			t.Errorf("%s: \n[godmi]:\n%s\n[dmidecode]:\n%s\n", k, gv, dv)
+			t.Errorf("%s:\n[godmi]:\n%s\n[dmidecode]:\n%s\n", k, gv, dv)
 		}
 	}
 }
