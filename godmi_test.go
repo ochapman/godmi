@@ -53,6 +53,17 @@ func compare(m map[string]string, t *testing.T) {
 		}
 	}
 }
+func checkInfo(i interface{}, kw string, t *testing.T) {
+	rv := reflect.ValueOf(i)
+	if rv.IsNil() {
+		dv := dmidecode_s(kw)
+		if len(dv) == 0 {
+			t.Skip("dmidecode and godmi has no data")
+		} else {
+			t.Errorf("dmidecode has %s, but godmi has no data\n", dv)
+		}
+	}
+}
 
 /*
 dmidecode command has following STRING keywords:
@@ -86,14 +97,7 @@ dmidecode command has following STRING keywords:
 
 func TestBIOS(t *testing.T) {
 	bi := GetBIOSInformation()
-	if bi == nil {
-		dv := dmidecode_s("bios-vendor")
-		if len(dv) == 0 {
-			t.Skip("dmidecode and godmi has no data")
-		} else {
-			t.Errorf("dmidecode has %s, but godmi has no data\n", dv)
-		}
-	}
+	checkInfo(bi, "bios-vendor", t)
 	m := map[string]string{
 		"bios-vendor":       bi.Vendor,
 		"bios-version":      bi.BIOSVersion,
@@ -105,14 +109,7 @@ func TestBIOS(t *testing.T) {
 
 func TestSystem(t *testing.T) {
 	si := GetSystemInformation()
-	if si == nil {
-		dv := dmidecode_s("system-manufacturer")
-		if len(dv) == 0 {
-			t.Skip("dmidecode and godmi has no data")
-		} else {
-			t.Errorf("dmidecode has %s, but godmi has no data\n", dv)
-		}
-	}
+	checkInfo(si, "system-manufacturer", t)
 	m := map[string]string{
 		"system-manufacturer":  si.Manufacturer,
 		"system-product-name":  si.ProductName,
@@ -125,14 +122,7 @@ func TestSystem(t *testing.T) {
 
 func TestBaseboard(t *testing.T) {
 	bi := GetBaseboardInformation()
-	if bi == nil {
-		dv := dmidecode_s("baseboard-manufacturer")
-		if len(dv) == 0 {
-			t.Skip("dmidecode and godmi has no data")
-		} else {
-			t.Errorf("dmidecode has %s, but godmi has no data\n", dv)
-		}
-	}
+	checkInfo(bi, "baseboard-manufacturer", t)
 	m := map[string]string{
 		"baseboard-manufacturer":  bi.Manufacturer,
 		"baseboard-product-name":  bi.Product,
@@ -145,14 +135,7 @@ func TestBaseboard(t *testing.T) {
 
 func TestChassis(t *testing.T) {
 	ci := GetChassisInformation()
-	if ci == nil {
-		dv := dmidecode_s("chassis-manufacturer")
-		if len(dv) == 0 {
-			t.Skip("dmidecode and godmi has no data")
-		} else {
-			t.Errorf("dmidecode has %s, but godmi has no data\n", dv)
-		}
-	}
+	checkInfo(ci, "chassis-manufacturer", t)
 	m := map[string]string{
 		"chassis-manufacturer":  ci.Manufacturer,
 		"chassis-type":          ci.Type.String(),
@@ -165,14 +148,7 @@ func TestChassis(t *testing.T) {
 
 func TestProcessor(t *testing.T) {
 	pi := GetProcessorInformation()
-	if pi == nil {
-		dv := dmidecode_s("processor-family")
-		if len(dv) == 0 {
-			t.Skip("dmidecode and godmi has no data")
-		} else {
-			t.Errorf("dmidecode has %s, but godmi has no data\n", dv)
-		}
-	}
+	checkInfo(pi, "processor-family", t)
 	m := map[string]string{
 		"processor-family":       pi.Family.String(),
 		"processor-manufacturer": pi.Manufacturer,
