@@ -227,7 +227,7 @@ type SystemInformation struct {
 	Family       string
 }
 
-func (si SystemInformation) String() string {
+func (s SystemInformation) String() string {
 	return fmt.Sprintf("System Information"+
 		"\n\tManufacturer: %s"+
 		"\n\tProduct Name: %s"+
@@ -237,14 +237,14 @@ func (si SystemInformation) String() string {
 		"\n\tWake-up Type: %s"+
 		"\n\tSKU Number: %s"+
 		"\n\tFamily: %s",
-		si.Manufacturer,
-		si.ProductName,
-		si.Version,
-		si.SerialNumber,
-		si.UUID,
-		si.WakeUpType,
-		si.SKUNumber,
-		si.Family)
+		s.Manufacturer,
+		s.ProductName,
+		s.Version,
+		s.SerialNumber,
+		s.UUID,
+		s.WakeUpType,
+		s.SKUNumber,
+		s.Family)
 }
 
 type FeatureFlags byte
