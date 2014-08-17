@@ -87,7 +87,12 @@ dmidecode command has following STRING keywords:
 func TestBIOS(t *testing.T) {
 	bi := GetBIOSInformation()
 	if bi == nil {
-		t.Skip("GetBIOSInformation failed")
+		dv := dmidecode_s("bios-vendor")
+		if len(dv) == 0 {
+			t.Skip("dmidecode and godmi has no data")
+		} else {
+			t.Errorf("dmidecode has %s, but godmi has no data\n", dv)
+		}
 	}
 	m := map[string]string{
 		"bios-vendor":       bi.Vendor,
@@ -101,7 +106,12 @@ func TestBIOS(t *testing.T) {
 func TestSystem(t *testing.T) {
 	si := GetSystemInformation()
 	if si == nil {
-		t.Skip("GetSystemInformation failed")
+		dv := dmidecode_s("system-manufacturer")
+		if len(dv) == 0 {
+			t.Skip("dmidecode and godmi has no data")
+		} else {
+			t.Errorf("dmidecode has %s, but godmi has no data\n", dv)
+		}
 	}
 	m := map[string]string{
 		"system-manufacturer":  si.Manufacturer,
@@ -116,7 +126,12 @@ func TestSystem(t *testing.T) {
 func TestBaseboard(t *testing.T) {
 	bi := GetBaseboardInformation()
 	if bi == nil {
-		t.Skip("GetBaseboardInformation failed")
+		dv := dmidecode_s("baseboard-manufacturer")
+		if len(dv) == 0 {
+			t.Skip("dmidecode and godmi has no data")
+		} else {
+			t.Errorf("dmidecode has %s, but godmi has no data\n", dv)
+		}
 	}
 	m := map[string]string{
 		"baseboard-manufacturer":  bi.Manufacturer,
@@ -131,7 +146,12 @@ func TestBaseboard(t *testing.T) {
 func TestChassis(t *testing.T) {
 	ci := GetChassisInformation()
 	if ci == nil {
-		t.Skip("GetChassisInformation failed")
+		dv := dmidecode_s("chassis-manufacturer")
+		if len(dv) == 0 {
+			t.Skip("dmidecode and godmi has no data")
+		} else {
+			t.Errorf("dmidecode has %s, but godmi has no data\n", dv)
+		}
 	}
 	m := map[string]string{
 		"chassis-manufacturer":  ci.Manufacturer,
@@ -146,7 +166,12 @@ func TestChassis(t *testing.T) {
 func TestProcessor(t *testing.T) {
 	pi := GetProcessorInformation()
 	if pi == nil {
-		t.Skip("GetProcessorInformation failed")
+		dv := dmidecode_s("processor-family")
+		if len(dv) == 0 {
+			t.Skip("dmidecode and godmi has no data")
+		} else {
+			t.Errorf("dmidecode has %s, but godmi has no data\n", dv)
+		}
 	}
 	m := map[string]string{
 		"processor-family":       pi.Family.String(),
@@ -187,7 +212,7 @@ func TestType(t *testing.T) {
 		vv := reflect.ValueOf(v)
 		if vv.IsNil() {
 			if len(dv) == 0 {
-				t.Logf("%s has no data", k)
+				t.Logf("%s: dmidecode and godmi has no data", k)
 				continue
 			} else {
 				t.Errorf("%s:\n[godmi]: nil\n[dmidecode]: %s\n", k, dv)
