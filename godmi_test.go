@@ -125,7 +125,7 @@ func TestBaseboard(t *testing.T) {
 	checkInfo(bi, "baseboard-manufacturer", t)
 	m := map[string]string{
 		"baseboard-manufacturer":  bi.Manufacturer,
-		"baseboard-product-name":  bi.Product,
+		"baseboard-product-name":  bi.ProductName,
 		"baseboard-version":       bi.Version,
 		"baseboard-serial-number": bi.SerialNumber,
 		"baseboard-asset-tag":     bi.AssetTag,

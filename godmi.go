@@ -309,7 +309,7 @@ func (b BoardType) String() string {
 type BaseboardInformation struct {
 	infoCommon
 	Manufacturer                   string
-	Product                        string
+	ProductName                    string
 	Version                        string
 	SerialNumber                   string
 	AssetTag                       string
@@ -332,7 +332,7 @@ func (b BaseboardInformation) String() string {
 		"\n\tLocation In Chassis: %s"+
 		"\n\tType: %s",
 		b.Manufacturer,
-		b.Product,
+		b.ProductName,
 		b.Version,
 		b.SerialNumber,
 		b.AssetTag,
@@ -5019,7 +5019,7 @@ func (h dmiHeader) BaseboardInformation() *BaseboardInformation {
 	data := h.data
 	return &BaseboardInformation{
 		Manufacturer:      h.FieldString(int(data[0x04])),
-		Product:           h.FieldString(int(data[0x05])),
+		ProductName:       h.FieldString(int(data[0x05])),
 		Version:           h.FieldString(int(data[0x06])),
 		SerialNumber:      h.FieldString(int(data[0x07])),
 		AssetTag:          h.FieldString(int(data[0x08])),
