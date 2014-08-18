@@ -12,26 +12,54 @@ package main
 import (
 	"fmt"
 	"github.com/ochapman/godmi"
+	"reflect"
 )
 
 func main() {
-	si := godmi.GetSystemInformation()
-	fmt.Println(si.UUID)
-	fmt.Println(si.ProductName)
-	bi := godmi.GetBIOSInformation()
-	fmt.Println(bi.Vendor)
-	bo := godmi.GetBaseboardInformation()
-	fmt.Println(bo.Manufacturer)
-	ch := godmi.GetChassisInformation()
-	fmt.Println(ch.Manufacturer)
-	ca := godmi.GetCacheInformation()
-	if ca != nil {
-		fmt.Println(ca)
+	infos := []interface{}{
+		godmi.GetPortInformation(),
+		godmi.GetSystemSlot(),
+		godmi.GetOnBoardDeviceInformation(),
+		godmi.GetBIOSLanguageInformation(),
+		godmi.GetChassisInformation(),
+		godmi.GetProcessorInformation(),
+		godmi.GetCacheInformation(),
+		godmi.GetSystemConfigurationOptions(),
+		godmi.GetOEMStrings(),
+		godmi.GetGroupAssociations(),
+		godmi.GetPhysicalMemoryArray(),
+		godmi.GetMemoryDevice(),
+		godmi.Get_32BitMemoryErrorInformation(),
+		godmi.GetBuiltinPointingDevice(),
+		godmi.GetPortableBattery(),
+		godmi.GetSystemReset(),
+		godmi.GetHardwareSecurity(),
+		godmi.GetSystemPowerControls(),
+		godmi.GetVoltageProbe(),
+		godmi.GetCoolingDevice(),
+		godmi.GetTemperatureProbe(),
+		godmi.GetElectricalCurrentProbe(),
+		godmi.GetOutOfBandRemoteAccess(),
+		godmi.GetSystemBootInformation(),
+		godmi.Get_64BitMemoryErrorInformation(),
+		godmi.GetManagementDevice(),
+		godmi.GetManagementDeviceComponent(),
+		godmi.GetManagementDeviceThresholdData(),
+		godmi.GetMemoryChannel(),
+		godmi.GetIPMIDeviceInformation(),
+		godmi.GetSystemPowerSupply(),
+		godmi.GetAdditionalInformation(),
+		godmi.GetOnBoardDevicesExtendedInformation(),
+		godmi.GetManagementControllerHostInterface(),
+		godmi.GetBIOSInformation(),
+		godmi.GetSystemInformation(),
+		godmi.GetBaseboardInformation(),
 	}
-	if d := godmi.GetPortInformation(); d != nil {
-		fmt.Println(d)
-	}
-	if d := godmi.GetSystemSlot(); d != nil {
-		fmt.Println(d)
+	for _, info := range infos {
+		rv := reflect.ValueOf(info)
+		if rv.IsNil() {
+			continue
+		}
+		fmt.Println(info)
 	}
 }

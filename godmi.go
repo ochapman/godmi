@@ -228,15 +228,15 @@ type SystemInformation struct {
 }
 
 func (s SystemInformation) String() string {
-	return fmt.Sprintf("System Information"+
-		"\n\tManufacturer: %s"+
-		"\n\tProduct Name: %s"+
-		"\n\tVersion: %s"+
-		"\n\tSerial Number: %s"+
-		"\n\tUUID: %s"+
-		"\n\tWake-up Type: %s"+
-		"\n\tSKU Number: %s"+
-		"\n\tFamily: %s",
+	return fmt.Sprintf("System Information\n"+
+		"\tManufacturer: %s\n"+
+		"\tProduct Name: %s\n"+
+		"\tVersion: %s\n"+
+		"\tSerial Number: %s\n"+
+		"\tUUID: %s\n"+
+		"\tWake-up Type: %s\n"+
+		"\tSKU Number: %s\n"+
+		"\tFamily: %s",
 		s.Manufacturer,
 		s.ProductName,
 		s.Version,
@@ -322,15 +322,15 @@ type BaseboardInformation struct {
 }
 
 func (b BaseboardInformation) String() string {
-	return fmt.Sprintf("Base Board Information"+
-		"\n\tManufacturer: %s"+
-		"\n\tProduct Name: %s"+
-		"\n\tVersion: %s"+
-		"\n\tSerial Number: %s"+
-		"\n\tAsset Tag: %s"+
-		"\n\tFeatures:%s"+
-		"\n\tLocation In Chassis: %s"+
-		"\n\tType: %s",
+	return fmt.Sprintf("Base Board Information\n"+
+		"\tManufacturer: %s\n"+
+		"\tProduct Name: %s\n"+
+		"\tVersion: %s\n"+
+		"\tSerial Number: %s\n"+
+		"\tAsset Tag: %s\n"+
+		"\tFeatures:%s\n"+
+		"\tLocation In Chassis: %s\n"+
+		"\tType: %s",
 		b.Manufacturer,
 		b.ProductName,
 		b.Version,
@@ -648,17 +648,17 @@ func (h dmiHeader) ChassisInformation() *ChassisInformation {
 }
 
 func (c ChassisInformation) String() string {
-	return fmt.Sprintf("Chassis Information"+
-		"\n\tManufacturer: %s"+
-		"\n\tType: %s"+
-		"\n\tLock: %s"+
-		"\n\tVersion: %s"+
-		"\n\tSerial Number: %s"+
-		"\n\tAsset Tag: %s"+
-		"\n\tBoot-up State: %s"+
-		"\n\tPower Supply State: %s"+
-		"\n\tThermal State: %s"+
-		"\n\tSecurity Status: %s",
+	return fmt.Sprintf("Chassis Information\n"+
+		"\tManufacturer: %s\n"+
+		"\tType: %s\n"+
+		"\tLock: %s\n"+
+		"\tVersion: %s\n"+
+		"\tSerial Number: %s\n"+
+		"\tAsset Tag: %s\n"+
+		"\tBoot-up State: %s\n"+
+		"\tPower Supply State: %s\n"+
+		"\tThermal State: %s\n"+
+		"\tSecurity Status: %s",
 		c.Manufacturer,
 		c.Type,
 		c.Lock,
@@ -1561,12 +1561,12 @@ func NewCacheConfiguration(u uint16) CacheConfiguration {
 }
 
 func (c CacheConfiguration) String() string {
-	return fmt.Sprintf("Cache Configuration:"+
-		"\n\tLevel: %s"+
-		"\n\t\tSocketed: %v"+
-		"\n\t\tLocation: %s"+
-		"\n\t\tEnabled: %v"+
-		"\n\t\tMode:\n\t\t",
+	return fmt.Sprintf("Cache Configuration:\n"+
+		"\tLevel: %s\n"+
+		"\tSocketed: %v\n"+
+		"\tLocation: %s\n"+
+		"\tEnabled: %v\n"+
+		"\tMode:\n\t\t",
 		c.Level,
 		c.Socketed,
 		c.Location,
@@ -2202,18 +2202,18 @@ func (h dmiHeader) SystemSlot() *SystemSlot {
 }
 
 func (s SystemSlot) String() string {
-	return fmt.Sprintf("System Slot: %s"+
-		"\n\t\tSlot Designation: %s"+
-		"\n\t\tSlot Type: %s"+
-		"\n\t\tSlot Data Bus Width: %s"+
-		"\n\t\tCurrent Usage: %s"+
-		"\n\t\tSlot Length: %s"+
-		"\n\t\tSlot ID: %s"+
-		"\n\t\tSlot Characteristics1: %s"+
-		"\n\t\tSlot Characteristics2: %s"+
-		"\n\t\tSegment Group Number: %s"+
-		"\n\t\tBus Number: %s"+
-		"\n\t\tDevice/Function Number: %s\n",
+	return fmt.Sprintf("System Slot %s\n"+
+		"\tSlot Designation: %s\n"+
+		"\tSlot Type: %s\n"+
+		"\tSlot Data Bus Width: %s\n"+
+		"\tCurrent Usage: %s\n"+
+		"\tSlot Length: %s\n"+
+		"\tSlot ID: %s\n"+
+		"\tSlot Characteristics1: %s\n"+
+		"\tSlot Characteristics2: %s\n"+
+		"\tSegment Group Number: %s\n"+
+		"\tBus Number: %s\n"+
+		"\tDevice/Function Number: %s",
 		s.Designation,
 		s.Type,
 		s.DataBusWidth,
@@ -2258,10 +2258,10 @@ func (h dmiHeader) BIOSLanguageInformation() *BIOSLanguageInformation {
 }
 
 func (b BIOSLanguageInformation) String() string {
-	return fmt.Sprintf("BIOS Language Information:"+
-		"\n\t\tInstallable Languages %s"+
-		"\n\t\tFlags: %s"+
-		"\n\t\tCurrent Language: %s\n",
+	return fmt.Sprintf("BIOS Language Information:\n"+
+		"\tInstallable Languages %s\n"+
+		"\tFlags: %s\n"+
+		"\tCurrent Language: %s",
 		b.InstallableLanguage,
 		b.Flags,
 		b.CurrentLanguage)
@@ -2406,9 +2406,9 @@ func (h dmiHeader) GroupAssociations() *GroupAssociations {
 }
 
 func (g GroupAssociations) String() string {
-	return fmt.Sprintf("Group Associations:"+
-		"\n\t\tGroup Name: %s"+
-		"\n\t\tItem: %#v\n",
+	return fmt.Sprintf("Group Associations:\n"+
+		"\tGroup Name: %s\n"+
+		"\tItem: %#v\n",
 		g.GroupName,
 		g.Item)
 }
@@ -2527,14 +2527,14 @@ func (h dmiHeader) PhysicalMemoryArray() *PhysicalMemoryArray {
 }
 
 func (p PhysicalMemoryArray) String() string {
-	return fmt.Sprintf("Physcial Memory Array:\n\t\t"+
-		"Location: %s\n\t\t"+
-		"Use: %s\n\t\t"+
-		"Memory Error Correction: %s\n\t\t"+
-		"Maximum Capacity: %d\n\t\t"+
-		"Memory Error Information Handle: %d\n\t\t"+
-		"Number of Memory Devices: %d\n\t\t"+
-		"Extended Maximum Capacity: %d\n",
+	return fmt.Sprintf("Physcial Memory Array\n"+
+		"\tLocation: %s\n"+
+		"\tUse: %s\n"+
+		"\tMemory Error Correction: %s\n"+
+		"\tMaximum Capacity: %d\n"+
+		"\tMemory Error Information Handle: %d\n"+
+		"\tNumber of Memory Devices: %d\n"+
+		"\tExtended Maximum Capacity: %d",
 		p.Location,
 		p.Use,
 		p.ErrorCorrection,
@@ -2739,29 +2739,29 @@ func (h dmiHeader) MemoryDevice() *MemoryDevice {
 }
 
 func (m MemoryDevice) String() string {
-	return fmt.Sprintf("Memory Device:\n\t\t"+
-		"Physical Memory Array Handle: %d\n\t\t"+
-		"Memory Error Information Handle: %d\n\t\t"+
-		"Total Width: %d\n\t\t"+
-		"Data Width: %d\n\t\t"+
-		"Size: %d\n\t\t"+
-		"Form Factor: %s\n\t\t"+
-		"Device Set: %d\n\t\t"+
-		"Device Locator: %s\n\t\t"+
-		"Bank Locator: %s\n\t\t"+
-		"Memory Type: %s\n\t\t"+
-		"Type Detail: %s\n\t\t"+
-		"Speed: %d\n\t\t"+
-		"Manufacturer: %s\n\t\t"+
-		"Serial Number: %s\n\t\t"+
-		"Asset Tag: %s\n\t\t"+
-		"Part Number: %s\n\t\t"+
-		"Attributes: %s\n\t\t"+
-		"Extended Size: %s\n\t\t"+
-		"Configured Memory Clock Speed: %d\n\t\t"+
-		"Minimum voltage: %d\n\t\t"+
-		"Maximum voltage: %d\n\t\t"+
-		"Configured voltage: %d\n\t\t",
+	return fmt.Sprintf("Memory Device\n"+
+		"\tPhysical Memory Array Handle: %d\n"+
+		"\tMemory Error Information Handle: %d\n"+
+		"\tTotal Width: %d\n"+
+		"\tData Width: %d\n"+
+		"\tSize: %d\n"+
+		"\tForm Factor: %s\n"+
+		"\tDevice Set: %d\n"+
+		"\tDevice Locator: %s\n"+
+		"\tBank Locator: %s\n"+
+		"\tMemory Type: %s\n"+
+		"\tType Detail: %s\n"+
+		"\tSpeed: %d\n"+
+		"\tManufacturer: %s\n"+
+		"\tSerial Number: %s\n"+
+		"\tAsset Tag: %s\n"+
+		"\tPart Number: %s\n"+
+		"\tAttributes: %s\n"+
+		"\tExtended Size: %s\n"+
+		"\tConfigured Memory Clock Speed: %d\n"+
+		"\tMinimum voltage: %d\n"+
+		"\tMaximum voltage: %d\n"+
+		"\tConfigured voltage: %d",
 		m.PhysicalMemoryArrayHandle,
 		m.ErrorInformationHandle,
 		m.TotalWidth,
@@ -2890,14 +2890,14 @@ func (h dmiHeader) _32BitMemoryErrorInformation() *_32BitMemoryErrorInformation 
 }
 
 func (m _32BitMemoryErrorInformation) String() string {
-	return fmt.Sprintf("32 Bit Memory Error Information:\n\t\t"+
-		"Error Type: %s\n\t\t"+
-		"Error Granularity: %s\n\t\t"+
-		"Error Operation: %s\n\t\t"+
-		"Vendor Syndrome: %d\n\t\t"+
-		"Memory Array Error Address: %d\n\t\t"+
-		"Device Error Address: %d\n\t\t"+
-		"Error Resoluton: %d\n\t\t",
+	return fmt.Sprintf("32 Bit Memory Error Information\n"+
+		"\tError Type: %s\n"+
+		"\tError Granularity: %s\n"+
+		"\tError Operation: %s\n"+
+		"\tVendor Syndrome: %d\n"+
+		"\tMemory Array Error Address: %d\n"+
+		"\tDevice Error Address: %d\n"+
+		"\tError Resoluton: %d",
 		m.Type,
 		m.Granularity,
 		m.Operation,
@@ -2987,10 +2987,10 @@ func (h dmiHeader) BuiltinPointingDevice() *BuiltinPointingDevice {
 }
 
 func (b BuiltinPointingDevice) String() string {
-	return fmt.Sprintf("Built-in Pointing Device:\n\t\t"+
-		"Type: %s\n\t\t"+
-		"Interface: %s\n\t\t"+
-		"Number of Buttons: %d\n",
+	return fmt.Sprintf("Built-in Pointing Device\n"+
+		"\tType: %s\n"+
+		"\tInterface: %s\n"+
+		"\tNumber of Buttons: %d",
 		b.Type,
 		b.Interface,
 		b.NumberOfButtons,
@@ -3065,22 +3065,22 @@ func (h dmiHeader) PortableBattery() *PortableBattery {
 }
 
 func (p PortableBattery) String() string {
-	return fmt.Sprintf("Portable Battery\n\t\t"+
-		"Location: %s\n\t\t"+
-		"Manufacturer: %s\n\t\t"+
-		"Manufacturer Date: %s\n\t\t"+
-		"Serial Number: %s\n\t\t"+
-		"Device Name: %s\n\t\t"+
-		"Device Chemistry: %s\n\t\t"+
-		"Design Capacity: %d\n\t\t"+
-		"Design Voltage: %d\n\t\t"+
-		"SBDS Version Number: %s\n\t\t"+
-		"Maximum Error in Battery Data: %d\n\t\t"+
-		"SBDS Serial Numberd: %d\n\t\t"+
-		"SBDS Manufacturer Date: %d\n\t\t"+
-		"SBDS Device Chemistry: %s\n\t\t"+
-		"Design Capacity Multiplier: %d\n\t\t"+
-		"OEM-specific: %d\n",
+	return fmt.Sprintf("Portable Battery\n"+
+		"\tLocation: %s\n"+
+		"\tManufacturer: %s\n"+
+		"\tManufacturer Date: %s\n"+
+		"\tSerial Number: %s\n"+
+		"\tDevice Name: %s\n"+
+		"\tDevice Chemistry: %s\n"+
+		"\tDesign Capacity: %d\n"+
+		"\tDesign Voltage: %d\n"+
+		"\tSBDS Version Number: %s\n"+
+		"\tMaximum Error in Battery Data: %d\n"+
+		"\tSBDS Serial Numberd: %d\n"+
+		"\tSBDS Manufacturer Date: %d\n"+
+		"\tSBDS Device Chemistry: %s\n"+
+		"\tDesign Capacity Multiplier: %d\n"+
+		"\tOEM-specific: %d",
 		p.Location,
 		p.Manufacturer,
 		p.ManufacturerDate,
@@ -3135,11 +3135,11 @@ func NewSystemResetCapablities(data byte) SystemResetCapabilities {
 }
 
 func (s SystemResetCapabilities) String() string {
-	return fmt.Sprintf("Capablities:\n\t\t"+
-		"Status: %t\n\t\t"+
-		"Boot Option: %s\n\t\t"+
-		"Boot Option On Limit: %s\n\t\t"+
-		"Watchdog Timer: %t\n",
+	return fmt.Sprintf("Capablities\n"+
+		"\tStatus: %t\n"+
+		"\tBoot Option: %s\n"+
+		"\tBoot Option On Limit: %s\n"+
+		"\tWatchdog Timer: %t",
 		s.Status,
 		s.BootOption,
 		s.BootOptionOnLimit,
@@ -3156,12 +3156,12 @@ type SystemReset struct {
 }
 
 func (s SystemReset) String() string {
-	return fmt.Sprintf("System Reset:\n\t\t"+
-		"Capabilities: %s\n\t\t"+
-		"Reset Count: %d\n\t\t"+
-		"Reset Limit: %d\n\t\t"+
-		"Timer Interval: %d\n\t\t"+
-		"Timeout: %d\n",
+	return fmt.Sprintf("System Reset\n"+
+		"\tCapabilities: %s\n"+
+		"\tReset Count: %d\n"+
+		"\tReset Limit: %d\n"+
+		"\tTimer Interval: %d\n"+
+		"\tTimeout: %d",
 		s.Capabilities,
 		s.ResetCount,
 		s.ResetLimit,
@@ -3239,8 +3239,8 @@ func (h dmiHeader) HardwareSecurity() *HardwareSecurity {
 }
 
 func (h HardwareSecurity) String() string {
-	return fmt.Sprintf("Hardware Security\n\t\t"+
-		"Setting: %s\n\t\t",
+	return fmt.Sprintf("Hardware Security\n"+
+		"\tSetting: %s\n",
 		h.Setting)
 }
 
@@ -3271,12 +3271,12 @@ func (h dmiHeader) SystemPowerControls() *SystemPowerControls {
 }
 
 func (s SystemPowerControls) String() string {
-	return fmt.Sprintf("System Power Controls:\n\t\t"+
-		"Next Scheduled Power-on Month: %d"+
-		"Next Scheduled Power-on Day-of-month: %d"+
-		"Next Scheduled Power-on Hour: %d"+
-		"Next Scheduled Power-on Minute: %d"+
-		"Next Scheduled Power-on Second: %d",
+	return fmt.Sprintf("System Power Controls\n"+
+		"\tNext Scheduled Power-on Month: %d"+
+		"\tNext Scheduled Power-on Day-of-month: %d"+
+		"\tNext Scheduled Power-on Hour: %d"+
+		"\tNext Scheduled Power-on Minute: %d"+
+		"\tNext Scheduled Power-on Second: %d",
 		s.NextScheduledPowerOnMonth,
 		s.NextScheduledPowerOnDayOfMonth,
 		s.NextScheduledPowerOnHour,
@@ -3371,16 +3371,16 @@ type VoltageProbe struct {
 }
 
 func (v VoltageProbe) String() string {
-	return fmt.Sprintf("Voltage Probe:\n\t\t"+
-		"Description: %s\n\t\t"+
-		"Location And Status: %s\n\t\t"+
-		"Maximum Value: %d\n\t\t"+
-		"Minimum Valude: %d\n\t\t"+
-		"Resolution: %d\n\t\t"+
-		"Tolerance: %d\n\t\t"+
-		"Accuracy: %d\n\t\t"+
-		"OE Mdefined: %d\n\t\t"+
-		"Nominal Value: %d\n",
+	return fmt.Sprintf("Voltage Probe\n"+
+		"\tDescription: %s\n"+
+		"\tLocation And Status: %s\n"+
+		"\tMaximum Value: %d\n"+
+		"\tMinimum Valude: %d\n"+
+		"\tResolution: %d\n"+
+		"\tTolerance: %d\n"+
+		"\tAccuracy: %d\n"+
+		"\tOE Mdefined: %d\n"+
+		"\tNominal Value: %d",
 		v.Description,
 		v.LocationAndStatus,
 		v.MaximumValue,
@@ -3486,21 +3486,21 @@ type CoolingDevice struct {
 }
 
 func (c CoolingDevice) String() string {
-	s := fmt.Sprintf("Cooling Device:\n\t\t"+
-		"Temperature Probe Handle: %d\n\t\t"+
-		"Device Type And Status: %s\n\t\t"+
-		"Cooling Uint Group: %d\n\t\t"+
-		"OE Mdefined: %d\n\t\t",
+	s := fmt.Sprintf("Cooling Device\n"+
+		"\tTemperature Probe Handle: %d\n"+
+		"\tDevice Type And Status: %s\n"+
+		"\tCooling Uint Group: %d\n"+
+		"\tOE Mdefined: %d\n",
 		c.TemperatureProbeHandle,
 		c.DeviceTypeAndStatus,
 		c.CoolingUintGroup,
 		c.OEMdefined,
 	)
 	if c.Length > 0x0C {
-		s += fmt.Sprintf("Nominal Speed: %d\n\t\t", c.NominalSpeed)
+		s += fmt.Sprintf("\tNominal Speed: %d\n", c.NominalSpeed)
 	}
 	if c.Length > 0x0F {
-		s += fmt.Sprintf("Description: %s\n", c.Description)
+		s += fmt.Sprintf("\tDescription: %s\n", c.Description)
 	}
 	return s
 }
@@ -3617,16 +3617,16 @@ type TemperatureProbe struct {
 }
 
 func (t TemperatureProbe) String() string {
-	return fmt.Sprintf("Temperature Probe:\n\t\t"+
-		"Description: %s\n\t\t"+
-		"Location And Status: %s\n\t\t"+
-		"Maximum Value: %d\n\t\t"+
-		"Minimum Value: %d\n\t\t"+
-		"Resolution: %d\n\t\t"+
-		"Tolerance: %d\n\t\t"+
-		"Accuracy: %d\n\t\t"+
-		"OE Mdefined: %d\n\t\t"+
-		"Nominal Value: %d\n",
+	return fmt.Sprintf("Temperature Probe\n"+
+		"\tDescription: %s\n"+
+		"\tLocation And Status: %s\n"+
+		"\tMaximum Value: %d\n"+
+		"\tMinimum Value: %d\n"+
+		"\tResolution: %d\n"+
+		"\tTolerance: %d\n"+
+		"\tAccuracy: %d\n"+
+		"\tOE Mdefined: %d\n"+
+		"\tNominal Value: %d",
 		t.Description,
 		t.LocationAndStatus,
 		t.MaximumValue,
@@ -3741,16 +3741,16 @@ type ElectricalCurrentProbe struct {
 }
 
 func (e ElectricalCurrentProbe) String() string {
-	return fmt.Sprintf("Electrical Current Probe:\n\t\t"+
-		"Description: %s\n\t\t"+
-		"Location And Status: %s\n\t\t"+
-		"Maximum Value: %d\n\t\t"+
-		"Minimum Value: %d\n\t\t"+
-		"Resolution: %d\n\t\t"+
-		"Tolerance: %d\n\t\t"+
-		"Accuracy: %d\n\t\t"+
-		"OE Mdefined: %d\n\t\t"+
-		"Nomimal Value: %d\n",
+	return fmt.Sprintf("Electrical Current Probe\n"+
+		"\tDescription: %s\n"+
+		"\tLocation And Status: %s\n"+
+		"\tMaximum Value: %d\n"+
+		"\tMinimum Value: %d\n"+
+		"\tResolution: %d\n"+
+		"\tTolerance: %d\n"+
+		"\tAccuracy: %d\n"+
+		"\tOE Mdefined: %d\n"+
+		"\tNomimal Value: %d\n",
 		e.Description,
 		e.LocationAndStatus,
 		e.MaximumValue,
@@ -3846,8 +3846,8 @@ type SystemBootInformation struct {
 }
 
 func (s SystemBootInformation) String() string {
-	return fmt.Sprintf("System Boot Information:\n\t\t"+
-		"Boot Status: %s\n",
+	return fmt.Sprintf("System Boot Information\n"+
+		"\tBoot Status: %s",
 		s.BootStatus)
 }
 
@@ -3870,14 +3870,14 @@ type _64BitMemoryErrorInformation struct {
 }
 
 func (m _64BitMemoryErrorInformation) String() string {
-	return fmt.Sprintf("_64 Bit Memory Error Information:\n\t\t"+
-		"Type: %s\n\t\t"+
-		"Granularity: %s\n\t\t"+
-		"Operation: %s\n\t\t"+
-		"Vendor Syndrome: %d\n\t\t"+
-		"Array Error Address: %d\n\t\t"+
-		"Error Address: %d\n\t\t"+
-		"Reslution: %d\n",
+	return fmt.Sprintf("_64 Bit Memory Error Information\n"+
+		"\tType: %s\n"+
+		"\tGranularity: %s\n"+
+		"\tOperation: %s\n"+
+		"\tVendor Syndrome: %d\n"+
+		"\tArray Error Address: %d\n"+
+		"\tError Address: %d\n"+
+		"\tReslution: %d",
 		m.Type,
 		m.Granularity,
 		m.Operation,
@@ -3967,11 +3967,11 @@ type ManagementDevice struct {
 }
 
 func (m ManagementDevice) String() string {
-	return fmt.Sprintf("Management Device:\n\t\t"+
-		"Description: %s\n\t\t"+
-		"Type: %s\n\t\t"+
-		"Address: %d\n\t\t"+
-		"Address Type: %s\n",
+	return fmt.Sprintf("Management Device\n"+
+		"\tDescription: %s\n"+
+		"\tType: %s\n"+
+		"\tAddress: %d\n"+
+		"\tAddress Type: %s",
 		m.Description,
 		m.Type,
 		m.Address,
@@ -3997,11 +3997,11 @@ type ManagementDeviceComponent struct {
 }
 
 func (m ManagementDeviceComponent) String() string {
-	return fmt.Sprintf("Management Device Component:\n\t\t"+
-		"Description: %s\n\t\t"+
-		"Management Device Handle: %d\n\t\t"+
-		"Component Handle: %d\n\t\t"+
-		"Threshold Handle: %d\n",
+	return fmt.Sprintf("Management Device Component\n"+
+		"\tDescription: %s\n"+
+		"\tManagement Device Handle: %d\n"+
+		"\tComponent Handle: %d\n"+
+		"\tThreshold Handle: %d",
 		m.Description,
 		m.ManagementDeviceHandle,
 		m.ComponentHandle,
@@ -4029,13 +4029,13 @@ type ManagementDeviceThresholdData struct {
 }
 
 func (m ManagementDeviceThresholdData) String() string {
-	return fmt.Sprintf("Management Device Threshold Data:\n\t\t"+
-		"Lower Threshold Non Critical: %d\n\t\t"+
-		"Upper Threshold Non Critical: %d\n\t\t"+
-		"Lower Threshold Critical: %d\n\t\t"+
-		"Upper Threshold Critical: %d\n\t\t"+
-		"Lower Threshold Non Recoverable: %d\n\t\t"+
-		"Upper Threshold Non Recoverable: %d\n",
+	return fmt.Sprintf("Management Device Threshold Data\n"+
+		"\tLower Threshold Non Critical: %d\n"+
+		"\tUpper Threshold Non Critical: %d\n"+
+		"\tLower Threshold Critical: %d\n"+
+		"\tUpper Threshold Critical: %d\n"+
+		"\tLower Threshold Non Recoverable: %d\n"+
+		"\tUpper Threshold Non Recoverable: %d",
 		m.LowerThresholdNonCritical,
 		m.UpperThresholdNonCritical,
 		m.LowerThresholdCritical,
@@ -4114,9 +4114,9 @@ type MemoryChannel struct {
 }
 
 func (m MemoryChannel) String() string {
-	return fmt.Sprintf("Memory Channel:\n\t\t"+
-		"Channel Type: %s\n\t\t"+
-		"Maximum Channel Load: %d\n\t\t"+
+	return fmt.Sprintf("Memory Channel\n"+
+		"\tChannel Type: %s\n"+
+		"\tMaximum Channel Load: %d\n"+
 		"%s",
 		m.ChannelType,
 		m.MaximumChannelLoad,
@@ -4241,13 +4241,13 @@ type IPMIDeviceInformationAddressModiferInterruptInfo struct {
 }
 
 func (i IPMIDeviceInformationAddressModiferInterruptInfo) String() string {
-	return fmt.Sprintf("Base Address Modifier:"+
-		"\n\t\t\t\tRegister spacing: %s"+
-		"\n\t\t\t\tLs-bit for addresses: %d"+
-		"\n\t\tInterrupt Info:"+
-		"\n\t\t\t\tInfo: %s"+
-		"\n\t\t\t\tPolarity: %s"+
-		"\n\t\t\t\tTrigger Mode: %s",
+	return fmt.Sprintf("\tBase Address Modifier:\n"+
+		"\t\tRegister spacing: %s\n"+
+		"\t\tLs-bit for addresses: %d\n"+
+		"\tInterrupt Info:\n"+
+		"\t\tInfo: %s\n"+
+		"\t\tPolarity: %s\n"+
+		"\t\tTrigger Mode: %s",
 		i.BaseAddressModifier.RegisterSpacing,
 		i.BaseAddressModifier.LSbit,
 		i.InterruptInfo.Info,
@@ -4277,14 +4277,14 @@ type IPMIDeviceInformation struct {
 }
 
 func (i IPMIDeviceInformation) String() string {
-	return fmt.Sprintf("IPMI Device Information:\n\t\t"+
-		"Interface Type: %s\n\t\t"+
-		"Revision: %d\n\t\t"+
-		"I2C Slave Address: %d\n\t\t"+
-		"NV Storage Address: %d\n\t\t"+
-		"Base Address: %d\n\t\t"+
-		"Base Address Modifer Interrut Info: %s\n\t\t"+
-		"Interrupt Numbe: %d\n",
+	return fmt.Sprintf("IPMI Device Information\n"+
+		"\tInterface Type: %s\n"+
+		"\tRevision: %d\n"+
+		"\tI2C Slave Address: %d\n"+
+		"\tNV Storage Address: %d\n"+
+		"\tBase Address: %d\n"+
+		"\tBase Address Modifer Interrut Info: %s\n"+
+		"\tInterrupt Numbe: %d",
 		i.InterfaceType,
 		i.Revision,
 		i.I2CSlaveAddress,
@@ -4409,13 +4409,13 @@ func newSystemPowerSupplyCharacteristics(ch uint16) SystemPowerSupplyCharacteris
 }
 
 func (s SystemPowerSupplyCharacteristics) String() string {
-	return fmt.Sprintf("System Power Supply Characteristics:"+
-		"\n\t\t\t\tDMTF Power Supply Type: %s"+
-		"\n\t\t\t\tStatus: %s"+
-		"\n\t\t\t\tDMTF Input Voltage Switching: %s"+
-		"\n\t\t\t\tIs Unplugged From Wall: %t"+
-		"\n\t\t\t\tIs Present: %t"+
-		"\n\t\t\t\tIs Hot Repleaceable: %t\n",
+	return fmt.Sprintf("System Power Supply Characteristics:\n"+
+		"\t\t\tDMTF Power Supply Type: %s\n"+
+		"\t\t\tStatus: %s\n"+
+		"\t\t\tDMTF Input Voltage Switching: %s\n"+
+		"\t\t\tIs Unplugged From Wall: %t\n"+
+		"\t\t\tIs Present: %t\n"+
+		"\t\t\tIs Hot Repleaceable: %t\n",
 		s.DMTFPowerSupplyType,
 		s.Status,
 		s.DMTFInputVoltageSwitching,
@@ -4442,20 +4442,20 @@ type SystemPowerSupply struct {
 }
 
 func (s SystemPowerSupply) String() string {
-	return fmt.Sprintf("System Power Supply:\n\t\t"+
-		"Power Unit Group: %d\n\t\t"+
-		"Location: %s\n\t\t"+
-		"Device Name: %s\n\t\t"+
-		"Manufacturer: %s\n\t\t"+
-		"Serial Number: %s\n\t\t"+
-		"Asset Tag Number: %s\n\t\t"+
-		"Model Part Number: %s\n\t\t"+
-		"Revision Level: %s\n\t\t"+
-		"Max Power Capacity: %d\n\t\t"+
-		"Power Supply Characteristics: %s\n\t\t"+
-		"Input Voltage Probe Handle: %d\n\t\t"+
-		"Cooling Device Handle: %d\n\t\t"+
-		"Input Current Probe Handle: %d\n",
+	return fmt.Sprintf("System Power Supply\n"+
+		"\tPower Unit Group: %d\n"+
+		"\tLocation: %s\n"+
+		"\tDevice Name: %s\n"+
+		"\tManufacturer: %s\n"+
+		"\tSerial Number: %s\n"+
+		"\tAsset Tag Number: %s\n"+
+		"\tModel Part Number: %s\n"+
+		"\tRevision Level: %s\n"+
+		"\tMax Power Capacity: %d\n"+
+		"\tPower Supply Characteristics: %s\n"+
+		"\tInput Voltage Probe Handle: %d\n"+
+		"\tCooling Device Handle: %d\n"+
+		"\tInput Current Probe Handle: %d",
 		s.PowerUnitGroup,
 		s.Location,
 		s.DeviceName,
@@ -4503,10 +4503,10 @@ type AdditionalInformationEntriess []AdditionalInformationEntries
 func (a AdditionalInformationEntriess) String() string {
 	var str string
 	for _, s := range a {
-		str += fmt.Sprintf("\n\t\t\t\tReferenced Handle: %d"+
-			"\n\t\t\t\tReferenced Offset: %d"+
-			"\n\t\t\t\tString: %s"+
-			"\n\t\t\t\tValue: %v",
+		str += fmt.Sprintf("\n\t\t\t\tReferenced Handle: %d\n"+
+			"\t\t\t\tReferenced Offset: %d\n"+
+			"\t\t\t\tString: %s\n"+
+			"\t\t\t\tValue: %v",
 			s.ReferencedHandle,
 			s.ReferencedOffset,
 			s.String,
@@ -4522,9 +4522,9 @@ type AdditionalInformation struct {
 }
 
 func (a AdditionalInformation) String() string {
-	return fmt.Sprintf("Additional Information:\n\t\t"+
-		"Number Of Entries: %d\n\t\t"+
-		"Entries: %s\n",
+	return fmt.Sprintf("Additional Information\n"+
+		"\tNumber Of Entries: %d\n"+
+		"\tEntries: %s",
 		a.NumberOfEntries,
 		AdditionalInformationEntriess(a.Entries))
 }
@@ -4602,10 +4602,10 @@ func (o OnBoardDevicesExtendedInformation) SlotSegment() string {
 }
 
 func (o OnBoardDevicesExtendedInformation) String() string {
-	return fmt.Sprintf("On Board Devices Extended Information:\n\t\t"+
-		"Reference Designation: %s\n\t\t"+
-		"Device Type: %s\n\t\t"+
-		"Device Type Instance: %d\n\t\t"+
+	return fmt.Sprintf("On Board Devices Extended Information\n"+
+		"\tReference Designation: %s\n"+
+		"\tDevice Type: %s\n"+
+		"\tDevice Type Instance: %d\n"+
 		"%s\n",
 		o.ReferenceDesignation,
 		o.DeviceType,
@@ -4665,9 +4665,9 @@ type ManagementControllerHostInterface struct {
 }
 
 func (m ManagementControllerHostInterface) String() string {
-	return fmt.Sprintf("Management Controller Host Interface:\n\t\t"+
-		"Type: %s\n\t\t"+
-		"MC Host Interface Data: %s\n",
+	return fmt.Sprintf("Management Controller Host Interface\n"+
+		"\tType: %s\n"+
+		"\tMC Host Interface Data: %s\n",
 		m.Type,
 		m.MCHostInterfaceData)
 }
@@ -4956,14 +4956,14 @@ func (c CharacteristicsExt2) String() string {
 }
 
 func (b BIOSInformation) String() string {
-	s := fmt.Sprintf("BIOS Information"+
-		"\n\tVendor: %s"+
-		"\n\tVersion: %s"+
-		"\n\tRelease Date: %s"+
-		"\n\tAddress: 0x%4X0"+
-		"\n\tRuntime Size: %s"+
-		"\n\tROM Size: %s"+
-		"\n\tCharacteristics:%s",
+	s := fmt.Sprintf("BIOS Information\n"+
+		"\tVendor: %s\n"+
+		"\tVersion: %s\n"+
+		"\tRelease Date: %s\n"+
+		"\tAddress: 0x%4X0\n"+
+		"\tRuntime Size: %s\n"+
+		"\tROM Size: %s\n"+
+		"\tCharacteristics:%s",
 		b.Vendor,
 		b.BIOSVersion,
 		b.ReleaseDate,
