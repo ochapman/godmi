@@ -128,7 +128,7 @@ type infoCommon struct {
 	Handle SMBIOSStructureHandle
 }
 
-type SMBIOS_EPS struct {
+type entryPoint struct {
 	Anchor        []byte //4
 	Checksum      byte
 	Length        byte
@@ -4766,8 +4766,8 @@ func newdmiHeader(data []byte) *dmiHeader {
 		data: data}
 }
 
-func newSMBIOS_EPS() (eps *SMBIOS_EPS, err error) {
-	eps = new(SMBIOS_EPS)
+func newEntryPoint() (eps *entryPoint, err error) {
+	eps = new(entryPoint)
 
 	mem, err := getMem(0xF0000, 0x10000)
 	if err != nil {
@@ -4790,7 +4790,7 @@ func newSMBIOS_EPS() (eps *SMBIOS_EPS, err error) {
 	return
 }
 
-func (e SMBIOS_EPS) StructureTableMem() ([]byte, error) {
+func (e entryPoint) StructureTableMem() ([]byte, error) {
 	return getMem(e.TableAddress, uint32(e.TableLength))
 }
 
@@ -5029,7 +5029,7 @@ func (h dmiHeader) BaseboardInformation() *BaseboardInformation {
 	}
 }
 
-func (e SMBIOS_EPS) StructureTable() map[SMBIOSStructureType]interface{} {
+func (e entryPoint) StructureTable() map[SMBIOSStructureType]interface{} {
 	tmem, err := e.StructureTableMem()
 	if err != nil {
 		return nil
@@ -5042,7 +5042,7 @@ func (e SMBIOS_EPS) StructureTable() map[SMBIOSStructureType]interface{} {
 }
 
 func init() {
-	eps, err := newSMBIOS_EPS()
+	eps, err := newEntryPoint()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		panic(err)
