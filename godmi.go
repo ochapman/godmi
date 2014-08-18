@@ -150,9 +150,9 @@ type dmiHeader struct {
 	data []byte
 }
 
-type Characteristics uint64
-type CharacteristicsExt1 byte
-type CharacteristicsExt2 byte
+type BIOSCharacteristics uint64
+type BIOSCharacteristicsExt1 byte
+type BIOSCharacteristicsExt2 byte
 
 type BIOSRuntimeSize uint
 
@@ -177,9 +177,9 @@ type BIOSInformation struct {
 	ReleaseDate                            string
 	RomSize                                BIOSRomSize
 	RuntimeSize                            BIOSRuntimeSize
-	Characteristics                        Characteristics
-	CharacteristicsExt1                    CharacteristicsExt1
-	CharacteristicsExt2                    CharacteristicsExt2
+	Characteristics                        BIOSCharacteristics
+	CharacteristicsExt1                    BIOSCharacteristicsExt1
+	CharacteristicsExt2                    BIOSCharacteristicsExt2
 	SystemBIOSMajorRelease                 byte
 	SystemBIOSMinorRelease                 byte
 	EmbeddedControllerFirmwareMajorRelease byte
@@ -343,7 +343,7 @@ func (b BaseboardInformation) String() string {
 
 // BIOS Characteristics
 const (
-	BIOSCharacteristicsReserved0 = 1 << iota
+	BIOSCharacteristicsReserved0 BIOSCharacteristics = 1 << iota
 	BIOSCharacteristicsReserved1
 	BIOSCharacteristicsUnknown
 	BIOSCharacteristicsNotSupported
@@ -379,61 +379,10 @@ const (
 	//Bit47:63 Reserved for system vendor
 )
 
-var sBIOSCharacteristics = [...]string{
-	"BIOS characteristics not supported", /* 3 */
-	"ISA is supported",
-	"MCA is supported",
-	"EISA is supported",
-	"PCI is supported",
-	"PC Card (PCMCIA) is supported",
-	"PNP is supported",
-	"APM is supported",
-	"BIOS is upgradeable",
-	"BIOS shadowing is allowed",
-	"VLB is supported",
-	"ESCD support is available",
-	"Boot from CD is supported",
-	"Selectable boot is supported",
-	"BIOS ROM is socketed",
-	"Boot from PC Card (PCMCIA) is supported",
-	"EDD is supported",
-	"Japanese floppy for NEC 9800 1.2 MB is supported (int 13h)",
-	"Japanese floppy for Toshiba 1.2 MB is supported (int 13h)",
-	"5.25\"/360 kB floppy services are supported (int 13h)",
-	"5.25\"/1.2 MB floppy services are supported (int 13h)",
-	"3.5\"/720 kB floppy services are supported (int 13h)",
-	"3.5\"/2.88 MB floppy services are supported (int 13h)",
-	"Print screen service is supported (int 5h)",
-	"8042 keyboard services are supported (int 9h)",
-	"Serial services are supported (int 14h)",
-	"Printer services are supported (int 17h)",
-	"CGA/mono video services are supported (int 10h)",
-	"NEC PC-98", /* 31 */
-}
-
-var sCharateristicsExt1 = [...]string{
-	"ACPI is supported", /* 0 */
-	"USB legacy is supported",
-	"AGP is supported",
-	"I2O boot is supported",
-	"LS-120 boot is supported",
-	"ATAPI Zip drive boot is supported",
-	"IEEE 1394 boot is supported",
-	"Smart battery is supported", /* 7 */
-}
-
-var sCharateristicsExt2 = [...]string{
-	"BIOS boot specification is supported", /* 0 */
-	"Function key-initiated network boot is supported",
-	"Targeted content distribution is supported",
-	"UEFI is supported",
-	"System is a virtual machine", /* 4 */
-}
-
 // BIOS Characteristics Extension Bytes(Ext1)
 // Byte 1
 const (
-	BIOSCharacteristicsExt1ACPISupported = 1 << iota
+	BIOSCharacteristicsExt1ACPISupported BIOSCharacteristicsExt1 = 1 << iota
 	BIOSCharacteristicsExt1USBLegacySupported
 	BIOSCharacteristicsExt1AGPSupported
 	BIOSCharacteristicsExt1I2OBootSupported
@@ -446,7 +395,7 @@ const (
 // BIOS Characteristics Extension Bytes(Ext2)
 // Byte 2
 const (
-	BIOSCharacteristicsExt2BIOSBootSpecSupported = 1 << iota
+	BIOSCharacteristicsExt2BIOSBootSpecSupported BIOSCharacteristicsExt2 = 1 << iota
 	BIOSCharacteristicsExt2FuncKeyInitiatedNetworkBootSupported
 	BIOSCharacteristicsExt2EnableTargetedContentDistribution
 	BIOSCharacteristicsExt2UEFISpecSupported
@@ -4913,43 +4862,93 @@ func (h dmiHeader) BIOSInformation() *BIOSInformation {
 		ReleaseDate:            h.FieldString(int(data[0x08])),
 		RomSize:                BIOSRomSize(64 * (data[0x09] + 1)),
 		RuntimeSize:            BIOSRuntimeSize((uint(0x10000) - uint(sas)) << 4),
-		Characteristics:        Characteristics(u64(data[0x0A:0x12])),
+		Characteristics:        BIOSCharacteristics(u64(data[0x0A:0x12])),
 	}
 	if h.Length >= 0x13 {
-		bi.CharacteristicsExt1 = CharacteristicsExt1(data[0x12])
+		bi.CharacteristicsExt1 = BIOSCharacteristicsExt1(data[0x12])
 	}
 	if h.Length >= 0x14 {
-		bi.CharacteristicsExt2 = CharacteristicsExt2(data[0x13])
+		bi.CharacteristicsExt2 = BIOSCharacteristicsExt2(data[0x13])
 	}
 	return bi
 }
 
-func (c Characteristics) String() string {
+func (b BIOSCharacteristics) String() string {
 	var s string
+	chars := [...]string{
+		"BIOS characteristics not supported", /* 3 */
+		"ISA is supported",
+		"MCA is supported",
+		"EISA is supported",
+		"PCI is supported",
+		"PC Card (PCMCIA) is supported",
+		"PNP is supported",
+		"APM is supported",
+		"BIOS is upgradeable",
+		"BIOS shadowing is allowed",
+		"VLB is supported",
+		"ESCD support is available",
+		"Boot from CD is supported",
+		"Selectable boot is supported",
+		"BIOS ROM is socketed",
+		"Boot from PC Card (PCMCIA) is supported",
+		"EDD is supported",
+		"Japanese floppy for NEC 9800 1.2 MB is supported (int 13h)",
+		"Japanese floppy for Toshiba 1.2 MB is supported (int 13h)",
+		"5.25\"/360 kB floppy services are supported (int 13h)",
+		"5.25\"/1.2 MB floppy services are supported (int 13h)",
+		"3.5\"/720 kB floppy services are supported (int 13h)",
+		"3.5\"/2.88 MB floppy services are supported (int 13h)",
+		"Print screen service is supported (int 5h)",
+		"8042 keyboard services are supported (int 9h)",
+		"Serial services are supported (int 14h)",
+		"Printer services are supported (int 17h)",
+		"CGA/mono video services are supported (int 10h)",
+		"NEC PC-98", /* 31 */
+	}
+
 	for i := uint32(4); i < 32; i++ {
-		//fmt.Printf("char\n%064b\n%064b\n", char, 1<<i)
-		if c&(1<<i) != 0 {
-			s += "\n\t\t" + sBIOSCharacteristics[i-3]
+		if b&(1<<i) != 0 {
+			s += "\n\t\t" + chars[i-3]
 		}
 	}
 	return s
 }
 
-func (c CharacteristicsExt1) String() string {
+func (b BIOSCharacteristicsExt1) String() string {
 	var s string
+	chars := [...]string{
+		"ACPI is supported", /* 0 */
+		"USB legacy is supported",
+		"AGP is supported",
+		"I2O boot is supported",
+		"LS-120 boot is supported",
+		"ATAPI Zip drive boot is supported",
+		"IEEE 1394 boot is supported",
+		"Smart battery is supported", /* 7 */
+	}
+
 	for i := uint32(0); i < 7; i++ {
-		if c&(1<<i) != 0 {
-			s += "\n\t\t" + sCharateristicsExt1[i]
+		if b&(1<<i) != 0 {
+			s += "\n\t\t" + chars[i]
 		}
 	}
 	return s
 }
 
-func (c CharacteristicsExt2) String() string {
+func (b BIOSCharacteristicsExt2) String() string {
 	var s string
+	chars := [...]string{
+		"BIOS boot specification is supported", /* 0 */
+		"Function key-initiated network boot is supported",
+		"Targeted content distribution is supported",
+		"UEFI is supported",
+		"System is a virtual machine", /* 4 */
+	}
+
 	for i := uint32(0); i < 5; i++ {
-		if c&(1<<i) != 0 {
-			s += "\n\t\t" + sCharateristicsExt2[i]
+		if b&(1<<i) != 0 {
+			s += "\n\t\t" + chars[i]
 		}
 	}
 	return s
