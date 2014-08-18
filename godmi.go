@@ -224,9 +224,9 @@ func (h dmiHeader) ChassisInformation() *ChassisInformation {
 		BootUpState:                  ChassisState(data[0x09]),
 		PowerSupplyState:             ChassisState(data[0xA]),
 		ThermalState:                 ChassisState(data[0x0B]),
-		SecurityStatus:               SecurityStatus(data[0x0C]),
+		SecurityStatus:               ChassisSecurityStatus(data[0x0C]),
 		OEMdefined:                   u16(data[0x0D : 0x0D+4]),
-		Height:                       Height(data[0x11]),
+		Height:                       ChassisHeight(data[0x11]),
 		NumberOfPowerCords:           data[0x12],
 		ContainedElementCount:        data[0x13],
 		ContainedElementRecordLength: data[0x14],
@@ -236,29 +236,7 @@ func (h dmiHeader) ChassisInformation() *ChassisInformation {
 	}
 }
 
-func (c ChassisInformation) String() string {
-	return fmt.Sprintf("Chassis Information\n"+
-		"\tManufacturer: %s\n"+
-		"\tType: %s\n"+
-		"\tLock: %s\n"+
-		"\tVersion: %s\n"+
-		"\tSerial Number: %s\n"+
-		"\tAsset Tag: %s\n"+
-		"\tBoot-up State: %s\n"+
-		"\tPower Supply State: %s\n"+
-		"\tThermal State: %s\n"+
-		"\tSecurity Status: %s",
-		c.Manufacturer,
-		c.Type,
-		c.Lock,
-		c.Version,
-		c.SerialNumber,
-		c.AssetTag,
-		c.BootUpState,
-		c.PowerSupplyState,
-		c.ThermalState,
-		c.SecurityStatus)
-}
+
 
 type ProcessorType byte
 

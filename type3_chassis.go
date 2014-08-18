@@ -117,25 +117,25 @@ func (c ChassisState) String() string {
 	return states[c-1]
 }
 
-type ContainedElementType byte
+type ChassisContainedElementType byte
 
-type ContainedElements struct {
-	Type    ContainedElementType
+type ChassisContainedElements struct {
+	Type    ChassisContainedElementType
 	Minimum byte
 	Maximum byte
 }
 
-type SecurityStatus byte
+type ChassisSecurityStatus byte
 
 const (
-	SecurityStatusOther SecurityStatus = 1 + iota
-	SecurityStatusUnknown
-	SecurityStatusNone
-	SecurityStatusExternalInterfaceLockedOut
-	SecurityStatusExternalInterfaceEnabled
+	ChassisSecurityStatusOther ChassisSecurityStatus = 1 + iota
+	ChassisSecurityStatusUnknown
+	ChassisSecurityStatusNone
+	ChassisSecurityStatusExternalInterfaceLockedOut
+	ChassisSecurityStatusExternalInterfaceEnabled
 )
 
-func (s SecurityStatus) String() string {
+func (s ChassisSecurityStatus) String() string {
 	status := [...]string{
 		"Other",
 		"Unknown",
@@ -146,7 +146,7 @@ func (s SecurityStatus) String() string {
 	return status[s-1]
 }
 
-type Height byte
+type ChassisHeight byte
 
 type ChassisInformation struct {
 	infoCommon
@@ -159,13 +159,13 @@ type ChassisInformation struct {
 	BootUpState                  ChassisState
 	PowerSupplyState             ChassisState
 	ThermalState                 ChassisState
-	SecurityStatus               SecurityStatus
+	SecurityStatus               ChassisSecurityStatus
 	OEMdefined                   uint16
-	Height                       Height
+	Height                       ChassisHeight
 	NumberOfPowerCords           byte
 	ContainedElementCount        byte
 	ContainedElementRecordLength byte
-	ContainedElements            ContainedElements
+	ContainedElements            ChassisContainedElements
 	SKUNumber                    string
 }
 
