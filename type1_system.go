@@ -11,21 +11,21 @@ import (
 	"fmt"
 )
 
-type WakeUpType byte
+type SystemInformationWakeUpType byte
 
 const (
-	Reserved WakeUpType = iota
-	Other
-	Unknown
-	APM_Timer
-	Modem_Ring
-	LAN_Remote
-	Power_Switch
-	PCI_PME
-	AC_Power_Restored
+	SystemInformationReserved SystemInformationWakeUpType = iota
+	SystemInformationOther
+	SystemInformationUnknown
+	SystemInformationAPM_Timer
+	SystemInformationModem_Ring
+	SystemInformationLAN_Remote
+	SystemInformationPower_Switch
+	SystemInformationPCI_PME
+	SystemInformationAC_Power_Restored
 )
 
-func (w WakeUpType) String() string {
+func (w SystemInformationWakeUpType) String() string {
 	types := [...]string{
 		"Reserved", /* 0x00 */
 		"Other",
@@ -47,7 +47,7 @@ type SystemInformation struct {
 	Version      string
 	SerialNumber string
 	UUID         string
-	WakeUpType   WakeUpType
+	WakeUpType   SystemInformationWakeUpType
 	SKUNumber    string
 	Family       string
 }
