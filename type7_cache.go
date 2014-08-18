@@ -6,23 +6,27 @@
 */
 package godmi
 
-type OperationalMode byte
-
-const (
-	OperationalModeWriteThrough OperationalMode = iota
-	OperationalModeWriteBack
-	OperationalModeVariesWithMemoryAddress
-	OperationalModeUnknown
+import (
+	"fmt"
 )
 
-func (o OperationalMode) String() string {
+type CacheOperationalMode byte
+
+const (
+	CacheOperationalModeWriteThrough CacheOperationalMode = iota
+	CacheOperationalModeWriteBack
+	CacheOperationalModeVariesWithMemoryAddress
+	CacheOperationalModeUnknown
+)
+
+func (c CacheOperationalMode) String() string {
 	modes := [...]string{
 		"Write Through",
 		"Write Back",
 		"Varies With Memory Address",
 		"Unknown",
 	}
-	return modes[o]
+	return modes[c]
 }
 
 type CacheLocation byte
@@ -47,9 +51,9 @@ func (c CacheLocation) String() string {
 type CacheLevel byte
 
 const (
-	Level1 CacheLevel = iota
-	Level2
-	Level3
+	CacheLevel1 CacheLevel = iota
+	CacheLevel2
+	CacheLevel3
 )
 
 func (c CacheLevel) String() string {
@@ -62,7 +66,7 @@ func (c CacheLevel) String() string {
 }
 
 type CacheConfiguration struct {
-	Mode     OperationalMode
+	Mode     CacheOperationalMode
 	Enabled  bool
 	Location CacheLocation
 	Socketed bool
@@ -75,7 +79,7 @@ func NewCacheConfiguration(u uint16) CacheConfiguration {
 	c.Socketed = (u&0x10 == 1)
 	c.Location = CacheLocation((u >> 5) & 0x3)
 	c.Enabled = (u&(0x1<<7) == 1)
-	c.Mode = OperationalMode((u >> 8) & 0x7)
+	c.Mode = CacheOperationalMode((u >> 8) & 0x7)
 	return c
 }
 
@@ -124,20 +128,20 @@ func (c CacheSize) String() string {
 	return fmt.Sprintf("%s * %s", c.Size, c.Granularity)
 }
 
-type SRAMType uint16
+type CacheSRAMType uint16
 
 const (
-	SRAMTypeOther SRAMType = 1 << iota
-	SRAMTypeUnknown
-	SRAMTypeNonBurst
-	SRAMTypeBurst
-	SRAMTypePipelineBurst
-	SRAMTypeSynchronous
-	SRAMTypeAsynchronous
-	SRAMTypeReserved
+	CacheSRAMTypeOther CacheSRAMType = 1 << iota
+	CacheSRAMTypeUnknown
+	CacheSRAMTypeNonBurst
+	CacheSRAMTypeBurst
+	CacheSRAMTypePipelineBurst
+	CacheSRAMTypeSynchronous
+	CacheSRAMTypeAsynchronous
+	CacheSRAMTypeReserved
 )
 
-func (s SRAMType) String() string {
+func (c CacheSRAMType) String() string {
 	types := [...]string{
 		"Other",
 		"Unknown",
@@ -148,23 +152,23 @@ func (s SRAMType) String() string {
 		"Asynchronous",
 		"Reserved",
 	}
-	return types[s/2]
+	return types[c/2]
 }
 
 type CacheSpeed byte
 
-type ErrorCorrectionType byte
+type CacheErrorCorrectionType byte
 
 const (
-	ErrorCorrectionTypeOther ErrorCorrectionType = 1 + iota
-	ErrorCorrectionTypeUnknown
-	ErrorCorrectionTypeNone
-	ErrorCorrectionTypeParity
-	ErrorCorrectionTypeSinglebitECC
-	ErrorCorrectionTypeMultibitECC
+	CacheErrorCorrectionTypeOther CacheErrorCorrectionType = 1 + iota
+	CacheErrorCorrectionTypeUnknown
+	CacheErrorCorrectionTypeNone
+	CacheErrorCorrectionTypeParity
+	CacheErrorCorrectionTypeSinglebitECC
+	CacheErrorCorrectionTypeMultibitECC
 )
 
-func (e ErrorCorrectionType) String() string {
+func (c CacheErrorCorrectionType) String() string {
 	types := [...]string{
 		"Other",
 		"Unknown",
@@ -173,20 +177,20 @@ func (e ErrorCorrectionType) String() string {
 		"Single-bit ECC",
 		"Multi-bit ECC",
 	}
-	return types[e-1]
+	return types[c-1]
 }
 
-type SystemCacheType byte
+type CacheSystemCacheType byte
 
 const (
-	SystemCacheTypeOther SystemCacheType = 1 + iota
-	SystemCacheTypeUnknown
-	SystemCacheTypeInstruction
-	SystemCacheTypeData
-	SystemCacheTypeUnified
+	CacheSystemCacheTypeOther CacheSystemCacheType = 1 + iota
+	CacheSystemCacheTypeUnknown
+	CacheSystemCacheTypeInstruction
+	CacheSystemCacheTypeData
+	CacheSystemCacheTypeUnified
 )
 
-func (s SystemCacheType) String() string {
+func (c CacheSystemCacheType) String() string {
 	types := [...]string{
 		"Other",
 		"Unknown",
@@ -194,7 +198,7 @@ func (s SystemCacheType) String() string {
 		"Data",
 		"Unified",
 	}
-	return types[s-1]
+	return types[c-1]
 }
 
 type CacheAssociativity byte
@@ -216,7 +220,7 @@ const (
 	CacheAssociativity20waySetAssociative
 )
 
-func (a CacheAssociativity) String() string {
+func (c CacheAssociativity) String() string {
 	caches := [...]string{
 		"Other",
 		"Unknown",
@@ -233,7 +237,7 @@ func (a CacheAssociativity) String() string {
 		"64-way Set-Associative",
 		"20-way Set-Associative",
 	}
-	return caches[a]
+	return caches[c]
 }
 
 type CacheInformation struct {
@@ -242,10 +246,10 @@ type CacheInformation struct {
 	Configuration       CacheConfiguration
 	MaximumCacheSize    CacheSize
 	InstalledSize       CacheSize
-	SupportedSRAMType   SRAMType
-	CurrentSRAMType     SRAMType
+	SupportedSRAMType   CacheSRAMType
+	CurrentSRAMType     CacheSRAMType
 	CacheSpeed          CacheSpeed
-	ErrorCorrectionType ErrorCorrectionType
-	SystemCacheType     SystemCacheType
+	ErrorCorrectionType CacheErrorCorrectionType
+	SystemCacheType     CacheSystemCacheType
 	Associativity       CacheAssociativity
 }

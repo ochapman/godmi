@@ -273,11 +273,11 @@ func (h dmiHeader) CacheInformation() *CacheInformation {
 		Configuration:       NewCacheConfiguration(u16(data[0x05:0x07])),
 		MaximumCacheSize:    NewCacheSize(u16(data[0x07:0x09])),
 		InstalledSize:       NewCacheSize(u16(data[0x09:0x0B])),
-		SupportedSRAMType:   SRAMType(u16(data[0x0B:0x0D])),
-		CurrentSRAMType:     SRAMType(u16(data[0x0D:0x0F])),
+		SupportedSRAMType:   CacheSRAMType(u16(data[0x0B:0x0D])),
+		CurrentSRAMType:     CacheSRAMType(u16(data[0x0D:0x0F])),
 		CacheSpeed:          CacheSpeed(data[0x0F]),
-		ErrorCorrectionType: ErrorCorrectionType(data[0x10]),
-		SystemCacheType:     SystemCacheType(data[0x11]),
+		ErrorCorrectionType: CacheErrorCorrectionType(data[0x10]),
+		SystemCacheType:     CacheSystemCacheType(data[0x11]),
 		Associativity:       CacheAssociativity(data[0x12]),
 	}
 }
