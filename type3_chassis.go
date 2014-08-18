@@ -1,0 +1,194 @@
+/*
+* File Name:	type3_chassis.go
+* Description:	
+* Author:	Chapman Ou <ochapman.cn@gmail.com>
+* Created:	2014-08-18 23:07:35
+*/
+
+package godmi
+
+import (
+	"fmt"
+)
+
+type ChassisType byte
+
+const (
+	ChssisTypeOther ChassisType = 1 + iota
+	ChssisTypeUnknown
+	ChssisTypeDesktop
+	ChssisTypeLowProfileDesktop
+	ChssisTypePizzaBox
+	ChssisTypeMiniTower
+	ChssisTypeTower
+	ChssisTypePortable
+	ChssisTypeLaptop
+	ChssisTypeNotebook
+	ChssisTypeHandHeld
+	ChssisTypeDockingStation
+	ChssisTypeAllinOne
+	ChssisTypeSubNotebook
+	ChssisTypeSpaceSaving
+	ChssisTypeLunchBox
+	ChssisTypeMainServerChassis
+	ChssisTypeExpansionChassis
+	ChssisTypeSubChassis
+	ChssisTypeBusExpansionChassis
+	ChssisTypePeripheralChassis
+	ChssisTypeRAIDChassis
+	ChssisTypeRackMountChassis
+	ChssisTypeSealedcasePC
+	ChssisTypeMultiSystem
+	ChssisTypeCompactPCI
+	ChssisTypeAdvancedTCA
+	ChssisTypeBlade
+	ChssisTypeBladeEnclosure
+)
+
+func (c ChassisType) String() string {
+	types := [...]string{
+		"Other",
+		"Unknown",
+		"Desktop",
+		"LowProfileDesktop",
+		"PizzaBox",
+		"MiniTower",
+		"Tower",
+		"Portable",
+		"Laptop",
+		"Notebook",
+		"HandHeld",
+		"DockingStation",
+		"AllinOne",
+		"SubNotebook",
+		"SpaceSaving",
+		"LunchBox",
+		"MainServerChassis",
+		"ExpansionChassis",
+		"SubChassis",
+		"BusExpansionChassis",
+		"PeripheralChassis",
+		"RAIDChassis",
+		"RackMountChassis",
+		"SealedcasePC",
+		"MultiSystem",
+		"CompactPCI",
+		"AdvancedTCA",
+		"Blade",
+		"BladeEnclosure",
+	}
+	c &= 0x7F
+	if c >= 0x01 && c < 0x1D {
+		return types[c-1]
+	}
+	return OUT_OF_SPEC
+}
+
+type ChassisLock byte
+
+func (c ChassisLock) String() string {
+	locks := [...]string{
+		"Not Present", /* 0x00 */
+		"Present",     /* 0x01 */
+	}
+	return locks[c]
+}
+
+type ChassisState byte
+
+const (
+	ChassisStateOther ChassisState = 1 + iota
+	ChassisStateUnknown
+	ChassisStateSafe
+	ChassisStateWarning
+	ChassisStateCritical
+	ChassisStateNonRecoverable
+)
+
+func (c ChassisState) String() string {
+	states := [...]string{
+		"Other",
+		"Unknown",
+		"Safe",
+		"Warning",
+		"Critical",
+		"NonRecoverable",
+	}
+	return states[c-1]
+}
+
+type ContainedElementType byte
+
+type ContainedElements struct {
+	Type    ContainedElementType
+	Minimum byte
+	Maximum byte
+}
+
+type SecurityStatus byte
+
+const (
+	SecurityStatusOther SecurityStatus = 1 + iota
+	SecurityStatusUnknown
+	SecurityStatusNone
+	SecurityStatusExternalInterfaceLockedOut
+	SecurityStatusExternalInterfaceEnabled
+)
+
+func (s SecurityStatus) String() string {
+	status := [...]string{
+		"Other",
+		"Unknown",
+		"None",
+		"ExternalInterfaceLockedOut",
+		"ExternalInterfaceEnabled",
+	}
+	return status[s-1]
+}
+
+type Height byte
+
+type ChassisInformation struct {
+	infoCommon
+	Manufacturer                 string
+	Type                         ChassisType
+	Lock                         ChassisLock
+	Version                      string
+	AssetTag                     string
+	SerialNumber                 string
+	BootUpState                  ChassisState
+	PowerSupplyState             ChassisState
+	ThermalState                 ChassisState
+	SecurityStatus               SecurityStatus
+	OEMdefined                   uint16
+	Height                       Height
+	NumberOfPowerCords           byte
+	ContainedElementCount        byte
+	ContainedElementRecordLength byte
+	ContainedElements            ContainedElements
+	SKUNumber                    string
+}
+
+func (c ChassisInformation) String() string {
+	return fmt.Sprintf("Chassis Information\n"+
+		"\tManufacturer: %s\n"+
+		"\tType: %s\n"+
+		"\tLock: %s\n"+
+		"\tVersion: %s\n"+
+		"\tSerial Number: %s\n"+
+		"\tAsset Tag: %s\n"+
+		"\tBoot-up State: %s\n"+
+		"\tPower Supply State: %s\n"+
+		"\tThermal State: %s\n"+
+		"\tSecurity Status: %s",
+		c.Manufacturer,
+		c.Type,
+		c.Lock,
+		c.Version,
+		c.SerialNumber,
+		c.AssetTag,
+		c.BootUpState,
+		c.PowerSupplyState,
+		c.ThermalState,
+		c.SecurityStatus)
+}
