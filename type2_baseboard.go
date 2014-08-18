@@ -11,19 +11,19 @@ import (
 	"fmt"
 )
 
-type FeatureFlags byte
+type BaseboardFeatureFlags byte
 
 // Baseboard feature flags
 const (
-	FeatureFlagsHostingBoard = 1 << iota
-	FeatureFlagsAtLeastOneDaughter
-	FeatureFlagsRemovable
-	FeatureFlagsRepleaceable
-	FeatureFlagsHotSwappable
+	BaseboardFeatureFlagsHostingBoard BaseboardFeatureFlags = 1 << iota
+	BaseboardFeatureFlagsAtLeastOneDaughter
+	BaseboardFeatureFlagsRemovable
+	BaseboardFeatureFlagsRepleaceable
+	BaseboardFeatureFlagsHotSwappable
 	//FeatureFlagsReserved = 000b
 )
 
-func (f FeatureFlags) String() string {
+func (f BaseboardFeatureFlags) String() string {
 	features := [...]string{
 		"Board is a hosting board", /* 0 */
 		"Board requires at least one daughter board",
@@ -40,25 +40,25 @@ func (f FeatureFlags) String() string {
 	return s
 }
 
-type BoardType byte
+type BaseboardType byte
 
 const (
-	BoardTypeUnknown BoardType = 1 + iota
-	BoardTypeOther
-	BoardTypeServerBlade
-	BoardTypeConnectivitySwitch
-	BoardTypeSystemManagementModule
-	BoardTypeProcessorModule
-	BoardTypeIOModule
-	BoardTypeMemModule
-	BoardTypeDaughterBoard
-	BoardTypeMotherboard
-	BoardTypeProcessorMemmoryModule
-	BoardTypeProcessorIOModule
-	BoardTypeInterconnectBoard
+	BaseboardTypeUnknown BaseboardType = 1 + iota
+	BaseboardTypeOther
+	BaseboardTypeServerBlade
+	BaseboardTypeConnectivitySwitch
+	BaseboardTypeSystemManagementModule
+	BaseboardTypeProcessorModule
+	BaseboardTypeIOModule
+	BaseboardTypeMemModule
+	BaseboardTypeDaughterBoard
+	BaseboardTypeMotherboard
+	BaseboardTypeProcessorMemmoryModule
+	BaseboardTypeProcessorIOModule
+	BaseboardTypeInterconnectBoard
 )
 
-func (b BoardType) String() string {
+func (b BaseboardType) String() string {
 	types := [...]string{
 		"Unknown", /* 0x01 */
 		"Other",
@@ -74,7 +74,7 @@ func (b BoardType) String() string {
 		"Processor+I/O Module",
 		"Interconnect Board", /* 0x0D */
 	}
-	if b > BoardTypeUnknown && b < BoardTypeInterconnectBoard {
+	if b > BaseboardTypeUnknown && b < BaseboardTypeInterconnectBoard {
 		return types[b-1]
 	}
 	return "Out Of Spec"
@@ -87,10 +87,10 @@ type BaseboardInformation struct {
 	Version                        string
 	SerialNumber                   string
 	AssetTag                       string
-	FeatureFlags                   FeatureFlags
+	FeatureFlags                   BaseboardFeatureFlags
 	LocationInChassis              string
 	ChassisHandle                  uint16
-	BoardType                      BoardType
+	BoardType                      BaseboardType
 	NumberOfContainedObjectHandles byte
 	ContainedObjectHandles         []byte
 }

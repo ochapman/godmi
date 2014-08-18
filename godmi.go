@@ -4716,9 +4716,9 @@ func (h dmiHeader) BaseboardInformation() *BaseboardInformation {
 		Version:           h.FieldString(int(data[0x06])),
 		SerialNumber:      h.FieldString(int(data[0x07])),
 		AssetTag:          h.FieldString(int(data[0x08])),
-		FeatureFlags:      FeatureFlags(data[0x09]),
+		FeatureFlags:      BaseboardFeatureFlags(data[0x09]),
 		LocationInChassis: h.FieldString(int(data[0x0A])),
-		BoardType:         BoardType(data[0x0D]),
+		BoardType:         BaseboardType(data[0x0D]),
 	}
 }
 
