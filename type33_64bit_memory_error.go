@@ -4,6 +4,12 @@
 * Author:	Chapman Ou <ochapman.cn@gmail.com>
 * Created:	2014-08-20
 */
+package godmi
+
+import (
+	"fmt"
+)
+
 type _64BitMemoryErrorInformation struct {
 	infoCommon
 	Type              MemoryErrorInformationType
