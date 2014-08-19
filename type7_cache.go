@@ -253,3 +253,27 @@ type CacheInformation struct {
 	SystemCacheType     CacheSystemCacheType
 	Associativity       CacheAssociativity
 }
+
+func (c CacheInformation) String() string {
+	return fmt.Sprintf("Cache Information\n"+
+		"\tSocket Designation: %s\n"+
+		"\tConfiguration: %s\n"+
+		"\tMaximum Cache Size: %s\n"+
+		"\tInstalled Size: %s\n"+
+		"\tSupportedSRAM Type: %s\n"+
+		"\tCurrentSRAM Type: %s\n"+
+		"\tCache Speed: %s\n"+
+		"\tError Correction Type: %s\n"+
+		"\tSystem Cache Type: %s\n"+
+		"\tAssociativity: %s",
+		c.SocketDesignation,
+		c.Configuration,
+		c.MaximumCacheSize,
+		c.InstalledSize,
+		c.SupportedSRAMType,
+		c.CurrentSRAMType,
+		c.CacheSpeed,
+		c.ErrorCorrectionType,
+		c.SystemCacheType,
+		c.Associativity)
+}
