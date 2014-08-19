@@ -4,6 +4,12 @@
 * Author:	Chapman Ou <ochapman.cn@gmail.com>
 * Created:	2014-08-19
 */
+package godmi
+
+import (
+	"fmt"
+)
+
 type TemperatureProbeStatus byte
 
 const (
