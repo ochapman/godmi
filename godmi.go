@@ -373,12 +373,7 @@ type SystemConfigurationOptions struct {
 	strings string
 }
 
-//Type 11
-type OEMStrings struct {
-	infoCommon
-	Count   byte
-	strings string
-}
+
 
 func (h dmiHeader) SystemConfigurationOptions() *SystemConfigurationOptions {
 	var sc SystemConfigurationOptions
@@ -402,10 +397,6 @@ func (h dmiHeader) OEMStrings() *OEMStrings {
 		o.strings += fmt.Sprintf("strings: %d %s\n\t\t", i, h.FieldString(int(data[i])))
 	}
 	return &o
-}
-
-func (o OEMStrings) String() string {
-	return fmt.Sprintf("OEM strings: %s", o.strings)
 }
 
 type GroupAssociationsItem struct {
