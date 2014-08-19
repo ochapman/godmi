@@ -310,24 +310,6 @@ func (h dmiHeader) SystemSlot() *SystemSlot {
 	}
 }
 
-type BIOSLanguageInformationFlag byte
-
-const (
-	BIOSLanguageInformationFlagLongFormat BIOSLanguageInformationFlag = iota
-	BIOSLanguageInformationFlagAbbreviatedFormat
-)
-
-func NewBIOSLanguageInformationFlag(f byte) BIOSLanguageInformationFlag {
-	return BIOSLanguageInformationFlag(f & 0xFE)
-}
-
-type BIOSLanguageInformation struct {
-	infoCommon
-	InstallableLanguage []string
-	Flags               BIOSLanguageInformationFlag
-	CurrentLanguage     string
-}
-
 func (h dmiHeader) BIOSLanguageInformation() *BIOSLanguageInformation {
 	var bl BIOSLanguageInformation
 	data := h.data
@@ -338,16 +320,6 @@ func (h dmiHeader) BIOSLanguageInformation() *BIOSLanguageInformation {
 	bl.Flags = NewBIOSLanguageInformationFlag(data[0x05])
 	bl.CurrentLanguage = bl.InstallableLanguage[data[0x15]]
 	return &bl
-}
-
-func (b BIOSLanguageInformation) String() string {
-	return fmt.Sprintf("BIOS Language Information:\n"+
-		"\tInstallable Languages %s\n"+
-		"\tFlags: %s\n"+
-		"\tCurrent Language: %s",
-		b.InstallableLanguage,
-		b.Flags,
-		b.CurrentLanguage)
 }
 
 func (h dmiHeader) OnBoardDeviceInformation() *OnBoardDeviceInformation {
