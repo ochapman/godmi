@@ -476,21 +476,6 @@ func (h dmiHeader) HardwareSecurity() *HardwareSecurity {
 	return &hw
 }
 
-type SystemPowerControlsMonth byte
-type SystemPowerControlsDayOfMonth byte
-type SystemPowerControlsHour byte
-type SystemPowerControlsMinute byte
-type SystemPowerControlsSecond byte
-
-type SystemPowerControls struct {
-	infoCommon
-	NextScheduledPowerOnMonth      SystemPowerControlsMonth
-	NextScheduledPowerOnDayOfMonth SystemPowerControlsDayOfMonth
-	NextScheduledPowerOnHour       SystemPowerControlsHour
-	NextScheduledPowerMinute       SystemPowerControlsMinute
-	NextScheduledPowerSecond       SystemPowerControlsSecond
-}
-
 func (h dmiHeader) SystemPowerControls() *SystemPowerControls {
 	data := h.data
 	return &SystemPowerControls{
@@ -500,20 +485,6 @@ func (h dmiHeader) SystemPowerControls() *SystemPowerControls {
 		NextScheduledPowerMinute:       SystemPowerControlsMinute(bcd(data[0x07:0x08])),
 		NextScheduledPowerSecond:       SystemPowerControlsSecond(bcd(data[0x08:0x09])),
 	}
-}
-
-func (s SystemPowerControls) String() string {
-	return fmt.Sprintf("System Power Controls\n"+
-		"\tNext Scheduled Power-on Month: %d"+
-		"\tNext Scheduled Power-on Day-of-month: %d"+
-		"\tNext Scheduled Power-on Hour: %d"+
-		"\tNext Scheduled Power-on Minute: %d"+
-		"\tNext Scheduled Power-on Second: %d",
-		s.NextScheduledPowerOnMonth,
-		s.NextScheduledPowerOnDayOfMonth,
-		s.NextScheduledPowerOnHour,
-		s.NextScheduledPowerMinute,
-		s.NextScheduledPowerSecond)
 }
 
 type VoltageProbeStatus byte
