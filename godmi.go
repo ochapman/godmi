@@ -359,11 +359,6 @@ func (h dmiHeader) OEMStrings() *OEMStrings {
 	return &o
 }
 
-type GroupAssociationsItem struct {
-	Type   SMBIOSStructureType
-	Handle SMBIOSStructureHandle
-}
-
 func (h dmiHeader) GroupAssociations() *GroupAssociations {
 	var ga GroupAssociations
 	data := h.data

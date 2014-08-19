@@ -10,6 +10,11 @@ import (
 	"fmt"
 )
 
+type GroupAssociationsItem struct {
+	Type   SMBIOSStructureType
+	Handle SMBIOSStructureHandle
+}
+
 type GroupAssociations struct {
 	infoCommon
 	GroupName string
