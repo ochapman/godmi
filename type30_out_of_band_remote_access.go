@@ -10,7 +10,6 @@ import (
 	"fmt"
 )
 
-
 type OutOfBandRemoteAccessConnections struct {
 	OutBoundEnabled bool
 	InBoundEnabled  bool
