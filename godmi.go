@@ -367,14 +367,6 @@ func (h dmiHeader) OnBoardDeviceInformation() *OnBoardDeviceInformation {
 	return &d
 }
 
-type SystemConfigurationOptions struct {
-	infoCommon
-	Count   byte
-	strings string
-}
-
-
-
 func (h dmiHeader) SystemConfigurationOptions() *SystemConfigurationOptions {
 	var sc SystemConfigurationOptions
 	data := h.data
@@ -383,10 +375,6 @@ func (h dmiHeader) SystemConfigurationOptions() *SystemConfigurationOptions {
 		sc.strings += fmt.Sprintf("string %d: %s\n\t\t", i, h.FieldString(int(data[0x04+i])))
 	}
 	return &sc
-}
-
-func (s SystemConfigurationOptions) String() string {
-	return fmt.Sprintf("System Configuration Option\n\t\t%s", s.strings)
 }
 
 func (h dmiHeader) OEMStrings() *OEMStrings {
