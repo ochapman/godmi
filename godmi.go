@@ -350,48 +350,6 @@ func (b BIOSLanguageInformation) String() string {
 		b.CurrentLanguage)
 }
 
-type OnBoardDeviceTypeOfDevice byte
-
-const (
-	OnBoardDeviceOther OnBoardDeviceTypeOfDevice = 1 + iota
-	OnBoardDeviceUnknown
-	OnBoardDeviceVideo
-	OnBoardDeviceSCSIController
-	OnBoardDeviceEthernet
-	OnBoardDeviceTokenRing
-	OnBoardDeviceSound
-	OnBoardDevicePATAController
-	OnBoardDeviceSATAController
-	OnBoardDeviceSASController
-)
-
-func (t OnBoardDeviceTypeOfDevice) String() string {
-	types := [...]string{
-		"Other",
-		"Unknown",
-		"Video",
-		"SCSI Controller",
-		"Ethernet",
-		"Token Ring",
-		"Sound",
-		"PATA Controller",
-		"SATA Controller",
-		"SAS Controller",
-	}
-	return types[t-1]
-}
-
-type OnBoardDeviceType struct {
-	status       bool
-	typeOfDevice OnBoardDeviceTypeOfDevice
-}
-
-type OnBoardDeviceInformation struct {
-	infoCommon
-	Type        []OnBoardDeviceType
-	Description []string
-}
-
 func (h dmiHeader) OnBoardDeviceInformation() *OnBoardDeviceInformation {
 	var d OnBoardDeviceInformation
 	data := h.data
@@ -407,16 +365,6 @@ func (h dmiHeader) OnBoardDeviceInformation() *OnBoardDeviceInformation {
 		d.Description = append(d.Description, desc)
 	}
 	return &d
-}
-
-func (d OnBoardDeviceInformation) String() string {
-	var info string
-	title := "On Board Devices Information"
-	for i, v := range d.Type {
-		s := fmt.Sprintf("Device %d: Enabled: %v: Description: %s", i, v.status, v.typeOfDevice, d.Description[i])
-		info += "\n\t\t" + s
-	}
-	return title + "\n\t\t" + info
 }
 
 type SystemConfigurationOptions struct {
