@@ -4,6 +4,7 @@
 * Author:	Chapman Ou <ochapman.cn@gmail.com>
 * Created:	2014-08-19
 */
+
 package godmi
 
 import (
@@ -195,4 +196,18 @@ type PortInformation struct {
 	ExternalReferenceDesignator string
 	ExternalConnectorType       PortConnectorType
 	Type                        PortType
+}
+
+func (p PortInformation) String() string {
+	return fmt.Sprintf("Port Information\n"+
+		"\tInternal Reference Designator: %s\n"+
+		"\tInternal Connector Type: %s\n"+
+		"\tExternal Reference Designator: %s\n"+
+		"\tExternal Connector Type: %s\n"+
+		"\tType: %s",
+		p.InternalReferenceDesignator,
+		p.InternalConnectorType,
+		p.ExternalReferenceDesignator,
+		p.ExternalConnectorType,
+		p.Type)
 }
