@@ -364,13 +364,6 @@ type GroupAssociationsItem struct {
 	Handle SMBIOSStructureHandle
 }
 
-// Type 14
-type GroupAssociations struct {
-	infoCommon
-	GroupName string
-	Item      []GroupAssociationsItem
-}
-
 func (h dmiHeader) GroupAssociations() *GroupAssociations {
 	var ga GroupAssociations
 	data := h.data
@@ -385,14 +378,6 @@ func (h dmiHeader) GroupAssociations() *GroupAssociations {
 		ga.Item = append(ga.Item, gai)
 	}
 	return &ga
-}
-
-func (g GroupAssociations) String() string {
-	return fmt.Sprintf("Group Associations:\n"+
-		"\tGroup Name: %s\n"+
-		"\tItem: %#v\n",
-		g.GroupName,
-		g.Item)
 }
 
 type PhysicalMemoryArrayLocation byte
