@@ -77,4 +77,3 @@ func (m MemoryChannel) String() string {
 		m.LoadHandle)
 }
 
-
