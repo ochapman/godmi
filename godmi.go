@@ -730,14 +730,6 @@ func (h dmiHeader) ManagementControllerHostInterface() *ManagementControllerHost
 	return mc
 }
 
-type Inactive struct {
-	infoCommon
-}
-
-func (i Inactive) String() string {
-	return "Inactive"
-}
-
 func (h dmiHeader) Inactive() *Inactive {
 	return &Inactive{}
 }
