@@ -150,43 +150,6 @@ type dmiHeader struct {
 	data []byte
 }
 
-// BIOS Characteristics
-const (
-	BIOSCharacteristicsReserved0 BIOSCharacteristics = 1 << iota
-	BIOSCharacteristicsReserved1
-	BIOSCharacteristicsUnknown
-	BIOSCharacteristicsNotSupported
-	BIOSCharacteristicsISASupported
-	BIOSCharacteristicsMCASupported
-	BIOSCharacteristicsEISASupported
-	BIOSCharacteristicsPCISupported
-	BIOSCharacteristicsPCMCIASupported
-	BIOSCharacteristicsPlugPlaySupported
-	BIOSCharacteristicsAPMSupported
-	BIOSCharacteristicsUpgradeable
-	BIOSCharacteristicsShadowingIsAllowed
-	BIOSCharacteristicsVLVESASupported
-	BIOSCharacteristicsESCDSupported
-	BIOSCharacteristicsBootFromCDSupported
-	BIOSCharacteristicsSelectableBootSupported
-	BIOSCharacteristicsBIOSROMIsSockectd
-	BIOSCharacteristicsBootFromPCMCIASupported
-	BIOSCharacteristicsEDDSupported
-	BIOSCharacteristicsJPFloppyNECSupported
-	BIOSCharacteristicsJPFloppyToshibaSupported
-	BIOSCharacteristics525_360KBFloppySupported
-	BIOSCharacteristics525_1_2MBFloppySupported
-	BIOSCharacteristics35_720KBFloppySupported
-	BIOSCharacteristics35_2_88MBFloppySupported
-	BIOSCharacteristicsPrintScreenSupported
-	BIOSCharacteristics8042KeyboardSupported
-	BIOSCharacteristicsSerialSupported
-	BIOSCharacteristicsPrinterSupported
-	BIOSCharacteristicsCGAMonoSupported
-	BIOSCharacteristicsNECPC98
-	//Bit32:47 Reserved for BIOS vendor
-	//Bit47:63 Reserved for system vendor
-)
 
 func (h dmiHeader) ChassisInformation() *ChassisInformation {
 	data := h.data
