@@ -188,30 +188,6 @@ const (
 	//Bit47:63 Reserved for system vendor
 )
 
-// BIOS Characteristics Extension Bytes(Ext1)
-// Byte 1
-const (
-	BIOSCharacteristicsExt1ACPISupported BIOSCharacteristicsExt1 = 1 << iota
-	BIOSCharacteristicsExt1USBLegacySupported
-	BIOSCharacteristicsExt1AGPSupported
-	BIOSCharacteristicsExt1I2OBootSupported
-	BIOSCharacteristicsExt1LS120SupperDiskBootSupported
-	BIOSCharacteristicsExt1ATAPIZIPDriveBootSupported
-	BIOSCharacteristicsExt11394BootSupported
-	BIOSCharacteristicsExt1SmartBatterySupported
-)
-
-// BIOS Characteristics Extension Bytes(Ext2)
-// Byte 2
-const (
-	BIOSCharacteristicsExt2BIOSBootSpecSupported BIOSCharacteristicsExt2 = 1 << iota
-	BIOSCharacteristicsExt2FuncKeyInitiatedNetworkBootSupported
-	BIOSCharacteristicsExt2EnableTargetedContentDistribution
-	BIOSCharacteristicsExt2UEFISpecSupported
-	BIOSCharacteristicsExt2VirtualMachine
-	// Bits 5:7 Reserved for future assignment
-)
-
 func (h dmiHeader) ChassisInformation() *ChassisInformation {
 	data := h.data
 	return &ChassisInformation{

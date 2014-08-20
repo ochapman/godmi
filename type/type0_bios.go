@@ -57,6 +57,30 @@ func (b BIOSCharacteristics) String() string {
 
 type BIOSCharacteristicsExt1 byte
 
+// BIOS Characteristics Extension Bytes(Ext1)
+// Byte 1
+const (
+	BIOSCharacteristicsExt1ACPISupported BIOSCharacteristicsExt1 = 1 << iota
+	BIOSCharacteristicsExt1USBLegacySupported
+	BIOSCharacteristicsExt1AGPSupported
+	BIOSCharacteristicsExt1I2OBootSupported
+	BIOSCharacteristicsExt1LS120SupperDiskBootSupported
+	BIOSCharacteristicsExt1ATAPIZIPDriveBootSupported
+	BIOSCharacteristicsExt11394BootSupported
+	BIOSCharacteristicsExt1SmartBatterySupported
+)
+
+// BIOS Characteristics Extension Bytes(Ext2)
+// Byte 2
+const (
+	BIOSCharacteristicsExt2BIOSBootSpecSupported BIOSCharacteristicsExt2 = 1 << iota
+	BIOSCharacteristicsExt2FuncKeyInitiatedNetworkBootSupported
+	BIOSCharacteristicsExt2EnableTargetedContentDistribution
+	BIOSCharacteristicsExt2UEFISpecSupported
+	BIOSCharacteristicsExt2VirtualMachine
+	// Bits 5:7 Reserved for future assignment
+)
+
 func (b BIOSCharacteristicsExt1) String() string {
 	var s string
 	chars := [...]string{
