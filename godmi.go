@@ -734,14 +734,6 @@ func (h dmiHeader) Inactive() *Inactive {
 	return &Inactive{}
 }
 
-type EndOfTable struct {
-	infoCommon
-}
-
-func (e EndOfTable) String() string {
-	return "End-of-Table"
-}
-
 func (h dmiHeader) EndOfTable() *EndOfTable {
 	return &EndOfTable{}
 }
