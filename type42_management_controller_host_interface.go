@@ -49,6 +49,14 @@ type ManagementControllerHostInterface struct {
 	Data ManagementControllerHostInterfaceData
 }
 
+func (m ManagementControllerHostInterface) MCHostInterfaceData() string {
+	if m.Type == 0xF0 {
+		return fmt.Sprintf("Vendor ID:0x%02X%02X%02X%02X",
+			m.Data[0x01], m.Data[0x02], m.Data[0x03], m.Data[0x04])
+	}
+	return ""
+}
+
 func (m ManagementControllerHostInterface) String() string {
 	return fmt.Sprintf("Management Controller Host Interface\n"+
 		"\tType: %s\n"+
