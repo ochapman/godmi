@@ -148,31 +148,6 @@ type dmiHeader struct {
 	data []byte
 }
 
-
-func (h dmiHeader) ChassisInformation() *ChassisInformation {
-	data := h.data
-	return &ChassisInformation{
-		Manufacturer:                 h.FieldString(int(data[0x04])),
-		Type:                         ChassisType(data[0x05]),
-		Lock:                         ChassisLock(data[0x05] >> 7),
-		Version:                      h.FieldString(int(data[0x06])),
-		SerialNumber:                 h.FieldString(int(data[0x07])),
-		AssetTag:                     h.FieldString(int(data[0x08])),
-		BootUpState:                  ChassisState(data[0x09]),
-		PowerSupplyState:             ChassisState(data[0xA]),
-		ThermalState:                 ChassisState(data[0x0B]),
-		SecurityStatus:               ChassisSecurityStatus(data[0x0C]),
-		OEMdefined:                   u16(data[0x0D : 0x0D+4]),
-		Height:                       ChassisHeight(data[0x11]),
-		NumberOfPowerCords:           data[0x12],
-		ContainedElementCount:        data[0x13],
-		ContainedElementRecordLength: data[0x14],
-		// TODO: 7.4.4
-		//ci.ContainedElements:
-		SKUNumber: h.FieldString(int(data[0x15])),
-	}
-}
-
 func (h dmiHeader) ProcessorInformation() *ProcessorInformation {
 	data := h.data
 	return &ProcessorInformation{
@@ -702,7 +677,7 @@ func (h dmiHeader) Decode() interface{} {
 	case SMBIOSStructureTypeBaseBoard:
 		return h.BaseboardInformation()
 	case SMBIOSStructureTypeChassis:
-		return h.ChassisInformation()
+		return NewChassisInformation(h)
 	case SMBIOSStructureTypeProcessor:
 		return h.ProcessorInformation()
 	case SMBIOSStructureTypeCache:
