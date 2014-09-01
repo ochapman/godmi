@@ -239,6 +239,13 @@ func newBIOSInformation(h dmiHeader) dmiTyper {
 	return bi
 }
 
+func GetBIOSInformation() *BIOSInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeBIOS]; ok {
+		return d.(*BIOSInformation)
+	}
+	return nil
+}
+
 func init() {
 	addTypeFunc(SMBIOSStructureTypeBIOS, newBIOSInformation)
 }

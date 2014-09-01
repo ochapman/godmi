@@ -1008,13 +1008,6 @@ func GetManagementControllerHostInterface() *ManagementControllerHostInterface {
 	return nil
 }
 
-func GetBIOSInformation() *BIOSInformation {
-	if d, ok := gdmi[SMBIOSStructureTypeBIOS]; ok {
-		return d.(*BIOSInformation)
-	}
-	return nil
-}
-
 func GetSystemInformation() *SystemInformation {
 	if d, ok := gdmi[SMBIOSStructureTypeSystem]; ok {
 		return d.(*SystemInformation)
