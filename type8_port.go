@@ -1,9 +1,9 @@
 /*
 * File Name:	type8_port.go
-* Description:	
+* Description:
 * Author:	Chapman Ou <ochapman.cn@gmail.com>
 * Created:	2014-08-19
-*/
+ */
 
 package godmi
 
@@ -210,4 +210,26 @@ func (p PortInformation) String() string {
 		p.ExternalReferenceDesignator,
 		p.ExternalConnectorType,
 		p.Type)
+}
+
+func newPortInformation(h dmiHeader) dmiTyper {
+	data := h.data
+	return &PortInformation{
+		InternalReferenceDesignator: h.FieldString(int(data[0x04])),
+		InternalConnectorType:       PortConnectorType(data[0x05]),
+		ExternalReferenceDesignator: h.FieldString(int(data[0x06])),
+		ExternalConnectorType:       PortConnectorType(data[0x07]),
+		Type: PortType(data[0x08]),
+	}
+}
+
+func GetPortInformation() *PortInformation {
+	if d, ok := gdmi[SMBIOSStructureTypePortConnector]; ok {
+		return d.(*PortInformation)
+	}
+	return nil
+}
+
+func init() {
+	addTypeFunc(SMBIOSStructureTypePortConnector, newPortInformation)
 }

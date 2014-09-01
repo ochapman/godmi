@@ -149,17 +149,6 @@ type dmiHeader struct {
 	data []byte
 }
 
-func (h dmiHeader) PortInformation() *PortInformation {
-	data := h.data
-	return &PortInformation{
-		InternalReferenceDesignator: h.FieldString(int(data[0x04])),
-		InternalConnectorType:       PortConnectorType(data[0x05]),
-		ExternalReferenceDesignator: h.FieldString(int(data[0x06])),
-		ExternalConnectorType:       PortConnectorType(data[0x07]),
-		Type: PortType(data[0x08]),
-	}
-}
-
 func (h dmiHeader) SystemSlot() *SystemSlot {
 	data := h.data
 	return &SystemSlot{
@@ -693,13 +682,6 @@ func Init() {
 		panic(err)
 	}
 	gdmi = eps.StructureTable()
-}
-
-func GetPortInformation() *PortInformation {
-	if d, ok := gdmi[SMBIOSStructureTypePortConnector]; ok {
-		return d.(*PortInformation)
-	}
-	return nil
 }
 
 func GetSystemSlot() *SystemSlot {
