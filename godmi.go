@@ -693,27 +693,6 @@ func (h dmiHeader) FieldString(offset int) string {
 	return string(d[index : index+ib])
 }
 
-func (h dmiHeader) BIOSInformation() *BIOSInformation {
-	data := h.data
-	sas := u16(data[0x06:0x08])
-	bi := &BIOSInformation{
-		Vendor:                 h.FieldString(int(data[0x04])),
-		BIOSVersion:            h.FieldString(int(data[0x05])),
-		StartingAddressSegment: sas,
-		ReleaseDate:            h.FieldString(int(data[0x08])),
-		RomSize:                BIOSRomSize(64 * (data[0x09] + 1)),
-		RuntimeSize:            BIOSRuntimeSize((uint(0x10000) - uint(sas)) << 4),
-		Characteristics:        BIOSCharacteristics(u64(data[0x0A:0x12])),
-	}
-	if h.Length >= 0x13 {
-		bi.CharacteristicsExt1 = BIOSCharacteristicsExt1(data[0x12])
-	}
-	if h.Length >= 0x14 {
-		bi.CharacteristicsExt2 = BIOSCharacteristicsExt2(data[0x13])
-	}
-	return bi
-}
-
 func (h dmiHeader) SystemInformation() *SystemInformation {
 	data := h.data
 	version := h.FieldString(int(data[0x06]))
