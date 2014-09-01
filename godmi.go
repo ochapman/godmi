@@ -769,13 +769,6 @@ func GetBIOSLanguageInformation() *BIOSLanguageInformation {
 	return nil
 }
 
-func GetChassisInformation() *ChassisInformation {
-	if d, ok := gdmi[SMBIOSStructureTypeChassis]; ok {
-		return d.(*ChassisInformation)
-	}
-	return nil
-}
-
 func GetProcessorInformation() *ProcessorInformation {
 	if d, ok := gdmi[SMBIOSStructureTypeProcessor]; ok {
 		return d.(*ProcessorInformation)

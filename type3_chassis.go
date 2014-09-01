@@ -193,7 +193,7 @@ func (c ChassisInformation) String() string {
 		c.SecurityStatus)
 }
 
-func NewChassisInformation(h dmiHeader) *ChassisInformation {
+func newChassisInformation(h dmiHeader) dmiTyper {
 	data := h.data
 	return &ChassisInformation{
 		Manufacturer:                 h.FieldString(int(data[0x04])),
@@ -217,8 +217,11 @@ func NewChassisInformation(h dmiHeader) *ChassisInformation {
 	}
 }
 
-func newChassisInformation(h dmiHeader) dmiTyper {
-	return NewChassisInformation(h)
+func GetChassisInformation() *ChassisInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeChassis]; ok {
+		return d.(*ChassisInformation)
+	}
+	return nil
 }
 
 func init() {
