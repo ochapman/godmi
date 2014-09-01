@@ -113,6 +113,9 @@ func TestBIOS(t *testing.T) {
 
 func TestSystem(t *testing.T) {
 	si := GetSystemInformation()
+	if si == nil {
+		t.Skip("GetSystemInformation() is nil")
+	}
 	checkInfo(si, "system-manufacturer", t)
 	m := map[string]string{
 		"system-manufacturer":  si.Manufacturer,
@@ -126,6 +129,9 @@ func TestSystem(t *testing.T) {
 
 func TestBaseboard(t *testing.T) {
 	bi := GetBaseboardInformation()
+	if bi == nil {
+		t.Skip("GetBaseBoardInformation() is nil")
+	}
 	checkInfo(bi, "baseboard-manufacturer", t)
 	m := map[string]string{
 		"baseboard-manufacturer":  bi.Manufacturer,
@@ -139,6 +145,9 @@ func TestBaseboard(t *testing.T) {
 
 func TestChassis(t *testing.T) {
 	ci := GetChassisInformation()
+	if ci == nil {
+		t.Skip("GetChassisInformation() is nil")
+	}
 	checkInfo(ci, "chassis-manufacturer", t)
 	m := map[string]string{
 		"chassis-manufacturer":  ci.Manufacturer,
@@ -152,6 +161,9 @@ func TestChassis(t *testing.T) {
 
 func TestProcessor(t *testing.T) {
 	pi := GetProcessorInformation()
+	if pi == nil {
+		t.Skip("GetProcessorInformation() is nil")
+	}
 	checkInfo(pi, "processor-family", t)
 	m := map[string]string{
 		"processor-family":       pi.Family.String(),

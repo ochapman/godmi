@@ -12,8 +12,8 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"syscall"
 	"sync"
+	"syscall"
 )
 
 const OUT_OF_SPEC = "<OUT OF SPEC>"
@@ -546,7 +546,6 @@ func (h dmiHeader) IPMIDeviceInformation() *IPMIDeviceInformation {
 	}
 }
 
-
 func (h dmiHeader) SystemPowerSupply() *SystemPowerSupply {
 	data := h.data
 	return &SystemPowerSupply{
@@ -617,7 +616,6 @@ func (h dmiHeader) EndOfTable() *EndOfTable {
 	return &EndOfTable{}
 }
 
-
 func newdmiHeader(data []byte) *dmiHeader {
 	if len(data) < 0x04 {
 		return nil
@@ -669,10 +667,13 @@ func (h dmiHeader) Next() *dmiHeader {
 	return newdmiHeader(next[index+2:])
 }
 
-func (h dmiHeader) newType() interface{} {
+func (h dmiHeader) newType() (interface{}, error) {
 	t := h.SMType
-	newfn := getTypeFunc(t)
-	return newfn(h)
+	newfn, err := getTypeFunc(t)
+	if err != nil {
+		return nil, err
+	}
+	return newfn(h), nil
 }
 
 func (h dmiHeader) Decode() interface{} {
@@ -832,9 +833,13 @@ func (e entryPoint) StructureTable() map[SMBIOSStructureType]interface{} {
 	m := make(map[SMBIOSStructureType]interface{})
 	for hd := newdmiHeader(tmem); hd != nil; hd = hd.Next() {
 		//m[hd.SMType] = hd.Decode()
-		if hd.SMType == SMBIOSStructureTypeChassis {
-			m[hd.SMType] = hd.newType()
+		//if hd.SMType == SMBIOSStructureTypeChassis {
+		newtype, err := hd.newType()
+		if err != nil {
+			continue
 		}
+		m[hd.SMType] = newtype
+		//}
 	}
 	return m
 }
@@ -843,7 +848,7 @@ type dmiTyper interface {
 	String() string
 }
 
-type newFunction func (d dmiHeader) dmiTyper
+type newFunction func(d dmiHeader) dmiTyper
 
 type typeFunc map[SMBIOSStructureType]newFunction
 
@@ -854,12 +859,12 @@ func addTypeFunc(t SMBIOSStructureType, f newFunction) {
 	g_typeFunc[t] = f
 }
 
-func getTypeFunc(t SMBIOSStructureType) newFunction {
-	f, ok := g_typeFunc[t]
+func getTypeFunc(t SMBIOSStructureType) (fn newFunction, err error) {
+	fn, ok := g_typeFunc[t]
 	if !ok {
-		panic(fmt.Sprintf("type %s have no NewFunction", t))
+		return fn, fmt.Errorf("type %s have no NewFunction", t)
 	}
-	return f
+	return fn, nil
 }
 
 func Init() {
