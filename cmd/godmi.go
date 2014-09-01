@@ -16,6 +16,7 @@ import (
 )
 
 func main() {
+	godmi.Init()
 	infos := []interface{}{
 		godmi.GetPortInformation(),
 		godmi.GetSystemSlot(),

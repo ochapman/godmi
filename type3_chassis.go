@@ -216,3 +216,11 @@ func NewChassisInformation(h dmiHeader) *ChassisInformation {
 		SKUNumber: h.FieldString(int(data[0x15])),
 	}
 }
+
+func newChassisInformation(h dmiHeader) dmiTyper {
+	return NewChassisInformation(h)
+}
+
+func init() {
+	addTypeFunc(SMBIOSStructureTypeChassis, newChassisInformation)
+}

@@ -13,6 +13,7 @@ import (
 	"os"
 	"strconv"
 	"syscall"
+	"sync"
 )
 
 const OUT_OF_SPEC = "<OUT OF SPEC>"
@@ -668,6 +669,12 @@ func (h dmiHeader) Next() *dmiHeader {
 	return newdmiHeader(next[index+2:])
 }
 
+func (h dmiHeader) newType() interface{} {
+	t := h.SMType
+	newfn := getTypeFunc(t)
+	return newfn(h)
+}
+
 func (h dmiHeader) Decode() interface{} {
 	switch h.SMType {
 	case SMBIOSStructureTypeBIOS:
@@ -824,12 +831,38 @@ func (e entryPoint) StructureTable() map[SMBIOSStructureType]interface{} {
 	}
 	m := make(map[SMBIOSStructureType]interface{})
 	for hd := newdmiHeader(tmem); hd != nil; hd = hd.Next() {
-		m[hd.SMType] = hd.Decode()
+		//m[hd.SMType] = hd.Decode()
+		if hd.SMType == SMBIOSStructureTypeChassis {
+			m[hd.SMType] = hd.newType()
+		}
 	}
 	return m
 }
 
-func init() {
+type dmiTyper interface {
+	String() string
+}
+
+type newFunction func (d dmiHeader) dmiTyper
+
+type typeFunc map[SMBIOSStructureType]newFunction
+
+var g_typeFunc = make(typeFunc)
+var g_wg sync.WaitGroup
+
+func addTypeFunc(t SMBIOSStructureType, f newFunction) {
+	g_typeFunc[t] = f
+}
+
+func getTypeFunc(t SMBIOSStructureType) newFunction {
+	f, ok := g_typeFunc[t]
+	if !ok {
+		panic(fmt.Sprintf("type %s have no NewFunction", t))
+	}
+	return f
+}
+
+func Init() {
 	eps, err := newEntryPoint()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

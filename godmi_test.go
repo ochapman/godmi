@@ -21,6 +21,10 @@ func dmidecode(arg ...string) string {
 	return string(output)
 }
 
+func init() {
+	Init()
+}
+
 func dmidecode_s(kw string) string {
 	output := dmidecode("-s", kw)
 	return strings.TrimSpace(output)
