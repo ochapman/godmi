@@ -796,6 +796,56 @@ type ProcessorInformation struct {
 	Family2           ProcessorFamily
 }
 
+func (p ProcessorInformation) String() string {
+	return fmt.Sprintf("Processor Information\n"+
+		"\tSocket Designation: %s\n"+
+		"\tProcessor Type: %s\n"+
+		"\tFamily: %s\n"+
+		"\tManufacturer: %s\n"+
+		"\tID: %s\n"+
+		"\tVersion: %s\n"+
+		"\tVoltage: %s\n"+
+		"\tExternal Clock: %d\n"+
+		"\tMax Speed: %d\n"+
+		"\tCurrent Speed: %d\n"+
+		"\tStatus: %s\n"+
+		"\tUpgrade: %s\n"+
+		"\tL1 Cache Handle: %d\n"+
+		"\tL2 Cache Handle: %d\n"+
+		"\tL3 Cache Handle: %d\n"+
+		"\tSerial Number: %s\n"+
+		"\tAsset Tag: %s\n"+
+		"\tPart Number: %s\n"+
+		"\tCore Count: %d\n"+
+		"\tCore Enabled: %d\n"+
+		"\tThread Count: %d\n"+
+		"\tCharacteristics: %s\n"+
+		"\tFamily2: %s",
+		p.SocketDesignation,
+		p.ProcessorType,
+		p.Family,
+		p.Manufacturer,
+		p.ID,
+		p.Version,
+		p.Voltage,
+		p.ExternalClock,
+		p.MaxSpeed,
+		p.CurrentSpeed,
+		p.Status,
+		p.Upgrade,
+		p.L1CacheHandle,
+		p.L2CacheHandle,
+		p.L3CacheHandle,
+		p.SerialNumber,
+		p.AssetTag,
+		p.PartNumber,
+		p.CoreCount,
+		p.CoreEnabled,
+		p.ThreadCount,
+		p.Characteristics,
+		p.Family2)
+}
+
 func newProcessorInformation(h dmiHeader) dmiTyper {
 	data := h.data
 	return &ProcessorInformation{

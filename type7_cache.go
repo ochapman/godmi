@@ -1,9 +1,9 @@
 /*
 * File Name:	type7_cache.go
-* Description:	
+* Description:
 * Author:	Chapman Ou <ochapman.cn@gmail.com>
 * Created:	2014-08-19
-*/
+ */
 package godmi
 
 import (
@@ -276,4 +276,24 @@ func (c CacheInformation) String() string {
 		c.ErrorCorrectionType,
 		c.SystemCacheType,
 		c.Associativity)
+}
+
+func newCacheInformation(h dmiHeader) dmiTyper {
+	data := h.data
+	return &CacheInformation{
+		SocketDesignation:   h.FieldString(int(data[0x04])),
+		Configuration:       NewCacheConfiguration(u16(data[0x05:0x07])),
+		MaximumCacheSize:    NewCacheSize(u16(data[0x07:0x09])),
+		InstalledSize:       NewCacheSize(u16(data[0x09:0x0B])),
+		SupportedSRAMType:   CacheSRAMType(u16(data[0x0B:0x0D])),
+		CurrentSRAMType:     CacheSRAMType(u16(data[0x0D:0x0F])),
+		CacheSpeed:          CacheSpeed(data[0x0F]),
+		ErrorCorrectionType: CacheErrorCorrectionType(data[0x10]),
+		SystemCacheType:     CacheSystemCacheType(data[0x11]),
+		Associativity:       CacheAssociativity(data[0x12]),
+	}
+}
+
+func init() {
+	addTypeFunc(SMBIOSStructureTypeCache, newCacheInformation)
 }
