@@ -149,23 +149,6 @@ type dmiHeader struct {
 	data []byte
 }
 
-func (h dmiHeader) SystemSlot() *SystemSlot {
-	data := h.data
-	return &SystemSlot{
-		Designation:          h.FieldString(int(data[0x04])),
-		Type:                 SystemSlotType(data[0x05]),
-		DataBusWidth:         SystemSlotDataBusWidth(data[0x06]),
-		CurrentUsage:         SystemSlotUsage(data[0x07]),
-		Length:               SystemSlotLength(data[0x08]),
-		ID:                   SystemSlotID(u16(data[0x09:0x0A])),
-		Characteristics1:     SystemSlotCharacteristics1(data[0x0B]),
-		Characteristics2:     SystemSlotCharacteristics2(data[0x0C]),
-		SegmentGroupNumber:   SystemSlotSegmengGroupNumber(u16(data[0x0D:0x0F])),
-		BusNumber:            SystemSlotNumber(data[0x0F]),
-		DeviceFunctionNumber: SystemSlotNumber(data[0x10]),
-	}
-}
-
 func (h dmiHeader) BIOSLanguageInformation() *BIOSLanguageInformation {
 	var bl BIOSLanguageInformation
 	data := h.data
@@ -682,13 +665,6 @@ func Init() {
 		panic(err)
 	}
 	gdmi = eps.StructureTable()
-}
-
-func GetSystemSlot() *SystemSlot {
-	if d, ok := gdmi[SMBIOSStructureTypeSystemSlots]; ok {
-		return d.(*SystemSlot)
-	}
-	return nil
 }
 
 func GetOnBoardDeviceInformation() *OnBoardDeviceInformation {
