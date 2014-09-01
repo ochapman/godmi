@@ -693,21 +693,6 @@ func (h dmiHeader) FieldString(offset int) string {
 	return string(d[index : index+ib])
 }
 
-func (h dmiHeader) SystemInformation() *SystemInformation {
-	data := h.data
-	version := h.FieldString(int(data[0x06]))
-	return &SystemInformation{
-		Manufacturer: h.FieldString(int(data[0x04])),
-		ProductName:  h.FieldString(int(data[0x05])),
-		Version:      version,
-		SerialNumber: h.FieldString(int(data[0x07])),
-		UUID:         uuid(data[0x08:0x18], version),
-		WakeUpType:   SystemInformationWakeUpType(data[0x18]),
-		SKUNumber:    h.FieldString(int(data[0x19])),
-		Family:       h.FieldString(int(data[0x1A])),
-	}
-}
-
 func (h dmiHeader) BaseboardInformation() *BaseboardInformation {
 	data := h.data
 	return &BaseboardInformation{
@@ -1004,13 +989,6 @@ func GetOnBoardDevicesExtendedInformation() *OnBoardDevicesExtendedInformation {
 func GetManagementControllerHostInterface() *ManagementControllerHostInterface {
 	if d, ok := gdmi[SMBIOSStructureTypeManagementControllerHostInterface]; ok {
 		return d.(*ManagementControllerHostInterface)
-	}
-	return nil
-}
-
-func GetSystemInformation() *SystemInformation {
-	if d, ok := gdmi[SMBIOSStructureTypeSystem]; ok {
-		return d.(*SystemInformation)
 	}
 	return nil
 }
