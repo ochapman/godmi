@@ -676,88 +676,6 @@ func (h dmiHeader) newType() (interface{}, error) {
 	return newfn(h), nil
 }
 
-func (h dmiHeader) Decode() interface{} {
-	switch h.SMType {
-	case SMBIOSStructureTypeBIOS:
-		return h.BIOSInformation()
-	case SMBIOSStructureTypeSystem:
-		return h.SystemInformation()
-	case SMBIOSStructureTypeBaseBoard:
-		return h.BaseboardInformation()
-	case SMBIOSStructureTypeChassis:
-		return NewChassisInformation(h)
-	case SMBIOSStructureTypeProcessor:
-		return h.ProcessorInformation()
-	case SMBIOSStructureTypeCache:
-		return h.CacheInformation()
-	case SMBIOSStructureTypePortConnector:
-		return h.PortInformation()
-	case SMBIOSStructureTypeSystemSlots:
-		return h.SystemSlot()
-	case SMBIOSStructureTypeOnBoardDevices:
-		return h.OnBoardDeviceInformation()
-	case SMBIOSStructureTypeBIOSLanguage:
-		return h.BIOSLanguageInformation()
-	case SMBIOSStructureTypeSystemConfigurationOptions:
-		return h.SystemConfigurationOptions()
-	case SMBIOSStructureTypeOEMStrings:
-		return h.OEMStrings()
-	case SMBIOSStructureTypeGroupAssociations:
-		return h.GroupAssociations()
-	case SMBIOSStructureTypePhysicalMemoryArray:
-		return h.PhysicalMemoryArray()
-	case SMBIOSStructureTypeMemoryDevice:
-		return h.MemoryDevice()
-	case SMBIOSStructureType32_bitMemoryError:
-		return h._32BitMemoryErrorInformation()
-	case SMBIOSStructureTypeBuilt_inPointingDevice:
-		return h.BuiltinPointingDevice()
-	case SMBIOSStructureTypePortableBattery:
-		return h.PortableBattery()
-	case SMBIOSStructureTypeSystemReset:
-		return h.SystemReset()
-	case SMBIOSStructureTypeHardwareSecurity:
-		return h.HardwareSecurity()
-	case SMBIOSStructureTypeSystemPowerControls:
-		return h.SystemPowerControls()
-	case SMBIOSStructureTypeVoltageProbe:
-		return h.VoltageProbe()
-	case SMBIOSStructureTypeCoolingDevice:
-		return h.CoolingDevice()
-	case SMBIOSStructureTypeTemperatureProbe:
-		return h.TemperatureProbe()
-	case SMBIOSStructureTypeElectricalCurrentProbe:
-		return h.ElectricalCurrentProbe()
-	case SMBIOSStructureTypeOut_of_bandRemoteAccess:
-		return h.OutOfBandRemoteAccess()
-	case SMBIOSStructureTypeSystemBoot:
-		return h.SystemBootInformation()
-	case SMBIOSStructureType64_bitMemoryError:
-		return h._64BitMemoryErrorInformation()
-	case SMBIOSStructureTypeManagementDevice:
-		return h.ManagementDevice()
-	case SMBIOSStructureTypeManagementDeviceComponent:
-		return h.ManagementDeviceComponent()
-	case SMBIOSStructureTypeMemoryChannel:
-		return h.MemoryChannel()
-	case SMBIOSStructureTypeIPMIDevice:
-		return h.IPMIDeviceInformation()
-	case SMBIOSStructureTypePowerSupply:
-		return h.SystemPowerSupply()
-	case SMBIOSStructureTypeAdditionalInformation:
-		return h.AdditionalInformation()
-	case SMBIOSStructureTypeOnBoardDevicesExtendedInformation:
-		return h.OnBoardDevicesExtendedInformation()
-	case SMBIOSStructureTypeManagementControllerHostInterface:
-		return h.ManagementControllerHostInterface()
-	case SMBIOSStructureTypeInactive:
-		return h.Inactive()
-	case SMBIOSStructureTypeEndOfTable:
-		return h.EndOfTable()
-	}
-	return nil
-}
-
 func (h dmiHeader) FieldString(offset int) string {
 	d := h.data
 	index := int(h.Length)
@@ -832,14 +750,11 @@ func (e entryPoint) StructureTable() map[SMBIOSStructureType]interface{} {
 	}
 	m := make(map[SMBIOSStructureType]interface{})
 	for hd := newdmiHeader(tmem); hd != nil; hd = hd.Next() {
-		//m[hd.SMType] = hd.Decode()
-		//if hd.SMType == SMBIOSStructureTypeChassis {
 		newtype, err := hd.newType()
 		if err != nil {
 			continue
 		}
 		m[hd.SMType] = newtype
-		//}
 	}
 	return m
 }
