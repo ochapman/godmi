@@ -1,9 +1,9 @@
 /*
 * File Name:	type2_baseboard.go
-* Description:	
+* Description:
 * Author:	Chapman Ou <ochapman.cn@gmail.com>
 * Created:	2014-08-18 22:58:31
-*/
+ */
 
 package godmi
 
@@ -113,4 +113,29 @@ func (b BaseboardInformation) String() string {
 		b.FeatureFlags,
 		b.LocationInChassis,
 		b.BoardType)
+}
+
+func newBaseboardInformation(h dmiHeader) dmiTyper {
+	data := h.data
+	return &BaseboardInformation{
+		Manufacturer:      h.FieldString(int(data[0x04])),
+		ProductName:       h.FieldString(int(data[0x05])),
+		Version:           h.FieldString(int(data[0x06])),
+		SerialNumber:      h.FieldString(int(data[0x07])),
+		AssetTag:          h.FieldString(int(data[0x08])),
+		FeatureFlags:      BaseboardFeatureFlags(data[0x09]),
+		LocationInChassis: h.FieldString(int(data[0x0A])),
+		BoardType:         BaseboardType(data[0x0D]),
+	}
+}
+
+func GetBaseboardInformation() *BaseboardInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeBaseBoard]; ok {
+		return d.(*BaseboardInformation)
+	}
+	return nil
+}
+
+func init() {
+	addTypeFunc(SMBIOSStructureTypeBaseBoard, newBaseboardInformation)
 }

@@ -1,9 +1,9 @@
 /*
 * File Name:	type3_chassis.go
-* Description:	
+* Description:
 * Author:	Chapman Ou <ochapman.cn@gmail.com>
 * Created:	2014-08-18 23:07:35
-*/
+ */
 
 package godmi
 
