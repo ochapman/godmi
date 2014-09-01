@@ -161,23 +161,6 @@ func (h dmiHeader) BIOSLanguageInformation() *BIOSLanguageInformation {
 	return &bl
 }
 
-func (h dmiHeader) OnBoardDeviceInformation() *OnBoardDeviceInformation {
-	var d OnBoardDeviceInformation
-	data := h.data
-	n := (data[0x01] - 4) / 2
-	for i := byte(1); i <= n; i++ {
-		var t OnBoardDeviceType
-		index := 4 + 2*(i-1)
-		sindex := 5 + 2*(i-1)
-		t.status = data[index]&0x80 != 0
-		t.typeOfDevice = OnBoardDeviceTypeOfDevice(data[index] & 0x7F)
-		d.Type = append(d.Type, t)
-		desc := h.FieldString(int(data[sindex]))
-		d.Description = append(d.Description, desc)
-	}
-	return &d
-}
-
 func (h dmiHeader) SystemConfigurationOptions() *SystemConfigurationOptions {
 	var sc SystemConfigurationOptions
 	data := h.data
@@ -665,13 +648,6 @@ func Init() {
 		panic(err)
 	}
 	gdmi = eps.StructureTable()
-}
-
-func GetOnBoardDeviceInformation() *OnBoardDeviceInformation {
-	if d, ok := gdmi[SMBIOSStructureTypeOnBoardDevices]; ok {
-		return d.(*OnBoardDeviceInformation)
-	}
-	return nil
 }
 
 func GetBIOSLanguageInformation() *BIOSLanguageInformation {
