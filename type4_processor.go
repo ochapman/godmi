@@ -1,9 +1,9 @@
 /*
 * File Name:	type4_processor.go
-* Description:	
+* Description:
 * Author:	Chapman Ou <ochapman.cn@gmail.com>
 * Created:	2014-08-18 23:18:50
-*/
+ */
 package godmi
 
 import (
@@ -794,4 +794,45 @@ type ProcessorInformation struct {
 	ThreadCount       byte
 	Characteristics   ProcessorCharacteristics
 	Family2           ProcessorFamily
+}
+
+func newProcessorInformation(h dmiHeader) dmiTyper {
+	data := h.data
+	return &ProcessorInformation{
+		SocketDesignation: h.FieldString(int(data[0x04])),
+		ProcessorType:     ProcessorType(data[0x05]),
+		Family:            ProcessorFamily(data[0x06]),
+		Manufacturer:      h.FieldString(int(data[0x07])),
+		// TODO:
+		//pi.ProcessorID
+		Version:         h.FieldString(int(data[0x10])),
+		Voltage:         ProcessorVoltage(data[0x11]),
+		ExternalClock:   u16(data[0x12:0x14]),
+		MaxSpeed:        u16(data[0x14:0x16]),
+		CurrentSpeed:    u16(data[0x16:0x18]),
+		Status:          ProcessorStatus(data[0x18]),
+		Upgrade:         ProcessorUpgrade(data[0x19]),
+		L1CacheHandle:   u16(data[0x1A:0x1C]),
+		L2CacheHandle:   u16(data[0x1C:0x1E]),
+		L3CacheHandle:   u16(data[0x1E:0x20]),
+		SerialNumber:    h.FieldString(int(data[0x20])),
+		AssetTag:        h.FieldString(int(data[0x21])),
+		PartNumber:      h.FieldString(int(data[0x22])),
+		CoreCount:       data[0x23],
+		CoreEnabled:     data[0x24],
+		ThreadCount:     data[0x25],
+		Characteristics: ProcessorCharacteristics(u16(data[0x26:0x28])),
+		Family2:         ProcessorFamily(data[0x28]),
+	}
+}
+
+func GetProcessorInformation() *ProcessorInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeProcessor]; ok {
+		return d.(*ProcessorInformation)
+	}
+	return nil
+}
+
+func init() {
+	addTypeFunc(SMBIOSStructureTypeProcessor, newProcessorInformation)
 }
