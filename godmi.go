@@ -149,47 +149,6 @@ type dmiHeader struct {
 	data []byte
 }
 
-func (h dmiHeader) BIOSLanguageInformation() *BIOSLanguageInformation {
-	var bl BIOSLanguageInformation
-	data := h.data
-	cnt := data[0x04]
-	for i := byte(1); i <= cnt; i++ {
-		bl.InstallableLanguage = append(bl.InstallableLanguage, h.FieldString(int(data[i])))
-	}
-	bl.Flags = NewBIOSLanguageInformationFlag(data[0x05])
-	bl.CurrentLanguage = bl.InstallableLanguage[data[0x15]]
-	return &bl
-}
-
-func (h dmiHeader) GroupAssociations() *GroupAssociations {
-	var ga GroupAssociations
-	data := h.data
-	ga.GroupName = h.FieldString(int(data[0x04]))
-	cnt := (h.Length - 5) / 3
-	items := data[5:]
-	var i byte
-	for i = 0; i < cnt; i++ {
-		var gai GroupAssociationsItem
-		gai.Type = SMBIOSStructureType(items[i*3])
-		gai.Handle = SMBIOSStructureHandle(u16(items[i*3+1:]))
-		ga.Item = append(ga.Item, gai)
-	}
-	return &ga
-}
-
-func (h dmiHeader) PhysicalMemoryArray() *PhysicalMemoryArray {
-	data := h.data
-	return &PhysicalMemoryArray{
-		Location:                PhysicalMemoryArrayLocation(data[0x04]),
-		Use:                     PhysicalMemoryArrayUse(data[0x05]),
-		ErrorCorrection:         PhysicalMemoryArrayErrorCorrection(data[0x06]),
-		MaximumCapacity:         u32(data[0x07:0x0B]),
-		ErrorInformationHandle:  u16(data[0x0B:0x0D]),
-		NumberOfMemoryDevices:   u16(data[0x0D:0x0F]),
-		ExtendedMaximumCapacity: u64(data[0x0F:]),
-	}
-}
-
 func (h dmiHeader) MemoryDevice() *MemoryDevice {
 	data := h.data
 	return &MemoryDevice{
@@ -630,30 +589,9 @@ func Init() {
 	gdmi = eps.StructureTable()
 }
 
-func GetBIOSLanguageInformation() *BIOSLanguageInformation {
-	if d, ok := gdmi[SMBIOSStructureTypeBIOSLanguage]; ok {
-		return d.(*BIOSLanguageInformation)
-	}
-	return nil
-}
-
 func GetCacheInformation() *CacheInformation {
 	if d, ok := gdmi[SMBIOSStructureTypeCache]; ok {
 		return d.(*CacheInformation)
-	}
-	return nil
-}
-
-func GetGroupAssociations() *GroupAssociations {
-	if d, ok := gdmi[SMBIOSStructureTypeGroupAssociations]; ok {
-		return d.(*GroupAssociations)
-	}
-	return nil
-}
-
-func GetPhysicalMemoryArray() *PhysicalMemoryArray {
-	if d, ok := gdmi[SMBIOSStructureTypePhysicalMemoryArray]; ok {
-		return d.(*PhysicalMemoryArray)
 	}
 	return nil
 }

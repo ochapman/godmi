@@ -1,9 +1,9 @@
 /*
 * File Name:	type16_phymem.go
-* Description:	
+* Description:
 * Author:	Chapman Ou <ochapman.cn@gmail.com>
 * Created:	2014-08-19
-*/
+ */
 
 package godmi
 
@@ -127,4 +127,28 @@ func (p PhysicalMemoryArray) String() string {
 		p.ErrorInformationHandle,
 		p.NumberOfMemoryDevices,
 		p.ExtendedMaximumCapacity)
+}
+
+func newPhysicalMemoryArray(h dmiHeader) dmiTyper {
+	data := h.data
+	return &PhysicalMemoryArray{
+		Location:                PhysicalMemoryArrayLocation(data[0x04]),
+		Use:                     PhysicalMemoryArrayUse(data[0x05]),
+		ErrorCorrection:         PhysicalMemoryArrayErrorCorrection(data[0x06]),
+		MaximumCapacity:         u32(data[0x07:0x0B]),
+		ErrorInformationHandle:  u16(data[0x0B:0x0D]),
+		NumberOfMemoryDevices:   u16(data[0x0D:0x0F]),
+		ExtendedMaximumCapacity: u64(data[0x0F:]),
+	}
+}
+
+func GetPhysicalMemoryArray() *PhysicalMemoryArray {
+	if d, ok := gdmi[SMBIOSStructureTypePhysicalMemoryArray]; ok {
+		return d.(*PhysicalMemoryArray)
+	}
+	return nil
+}
+
+func init() {
+	addTypeFunc(SMBIOSStructureTypePhysicalMemoryArray, newPhysicalMemoryArray)
 }

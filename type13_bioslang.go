@@ -1,9 +1,9 @@
 /*
 * File Name:	type13_bioslang.go
-* Description:	
+* Description:
 * Author:	Chapman Ou <ochapman.cn@gmail.com>
 * Created:	2014-08-19
-*/
+ */
 package godmi
 
 import (
@@ -36,4 +36,27 @@ func (b BIOSLanguageInformation) String() string {
 		b.InstallableLanguage,
 		b.Flags,
 		b.CurrentLanguage)
+}
+
+func newBIOSLanguageInformation(h dmiHeader) dmiTyper {
+	var bl BIOSLanguageInformation
+	data := h.data
+	cnt := data[0x04]
+	for i := byte(1); i <= cnt; i++ {
+		bl.InstallableLanguage = append(bl.InstallableLanguage, h.FieldString(int(data[i])))
+	}
+	bl.Flags = NewBIOSLanguageInformationFlag(data[0x05])
+	bl.CurrentLanguage = bl.InstallableLanguage[data[0x15]]
+	return &bl
+}
+
+func GetBIOSLanguageInformation() *BIOSLanguageInformation {
+	if d, ok := gdmi[SMBIOSStructureTypeBIOSLanguage]; ok {
+		return d.(*BIOSLanguageInformation)
+	}
+	return nil
+}
+
+func init() {
+	addTypeFunc(SMBIOSStructureTypeBIOSLanguage, newBIOSLanguageInformation)
 }
