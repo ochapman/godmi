@@ -149,15 +149,6 @@ type dmiHeader struct {
 	data []byte
 }
 
-func (h dmiHeader) BuiltinPointingDevice() *BuiltinPointingDevice {
-	data := h.data
-	return &BuiltinPointingDevice{
-		Type:            BuiltinPointingDeviceType(data[0x04]),
-		Interface:       BuiltinPointingDeviceInterface(data[0x05]),
-		NumberOfButtons: data[0x06],
-	}
-}
-
 func (h dmiHeader) PortableBattery() *PortableBattery {
 	data := h.data
 	return &PortableBattery{
@@ -552,20 +543,6 @@ func Init() {
 func GetCacheInformation() *CacheInformation {
 	if d, ok := gdmi[SMBIOSStructureTypeCache]; ok {
 		return d.(*CacheInformation)
-	}
-	return nil
-}
-
-func Get_32BitMemoryErrorInformation() *_32BitMemoryErrorInformation {
-	if d, ok := gdmi[SMBIOSStructureType32_bitMemoryError]; ok {
-		return d.(*_32BitMemoryErrorInformation)
-	}
-	return nil
-}
-
-func GetBuiltinPointingDevice() *BuiltinPointingDevice {
-	if d, ok := gdmi[SMBIOSStructureTypeBuilt_inPointingDevice]; ok {
-		return d.(*BuiltinPointingDevice)
 	}
 	return nil
 }

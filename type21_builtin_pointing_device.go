@@ -1,9 +1,9 @@
 /*
 * File Name:	type21_builtin_pointing_device.go
-* Description:	
+* Description:
 * Author:	Chapman Ou <ochapman.cn@gmail.com>
 * Created:	2014-08-19
-*/
+ */
 package godmi
 
 import (
@@ -88,4 +88,24 @@ func (b BuiltinPointingDevice) String() string {
 		b.Interface,
 		b.NumberOfButtons,
 	)
+}
+
+func newBuiltinPointingDevice(h dmiHeader) dmiTyper {
+	data := h.data
+	return &BuiltinPointingDevice{
+		Type:            BuiltinPointingDeviceType(data[0x04]),
+		Interface:       BuiltinPointingDeviceInterface(data[0x05]),
+		NumberOfButtons: data[0x06],
+	}
+}
+
+func GetBuiltinPointingDevice() *BuiltinPointingDevice {
+	if d, ok := gdmi[SMBIOSStructureTypeBuilt_inPointingDevice]; ok {
+		return d.(*BuiltinPointingDevice)
+	}
+	return nil
+}
+
+func init() {
+	addTypeFunc(SMBIOSStructureTypeBuilt_inPointingDevice, newBuiltinPointingDevice)
 }
