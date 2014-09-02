@@ -149,33 +149,6 @@ type dmiHeader struct {
 	data []byte
 }
 
-func (h dmiHeader) MemoryDevice() *MemoryDevice {
-	data := h.data
-	return &MemoryDevice{
-		PhysicalMemoryArrayHandle:  u16(data[0x04:0x06]),
-		ErrorInformationHandle:     u16(data[0x06:0x08]),
-		TotalWidth:                 u16(data[0x08:0x0A]),
-		DataWidth:                  u16(data[0x0A:0x0C]),
-		Size:                       u16(data[0x0C:0x0e]),
-		FormFactor:                 MemoryDeviceFormFactor(data[0x0E]),
-		DeviceSet:                  data[0x0F],
-		DeviceLocator:              h.FieldString(int(data[0x10])),
-		BankLocator:                h.FieldString(int(data[0x11])),
-		Type:                       MemoryDeviceType(data[0x12]),
-		TypeDetail:                 MemoryDeviceTypeDetail(u16(data[0x13:0x15])),
-		Speed:                      u16(data[0x15:0x17]),
-		Manufacturer:               h.FieldString(int(data[0x17])),
-		SerialNumber:               h.FieldString(int(data[0x18])),
-		PartNumber:                 h.FieldString(int(data[0x1A])),
-		Attributes:                 data[0x1B],
-		ExtendedSize:               u32(data[0x1C:0x20]),
-		ConfiguredMemoryClockSpeed: u16(data[0x20:0x22]),
-		MinimumVoltage:             u16(data[0x22:0x24]),
-		MaximumVoltage:             u16(data[0x24:0x26]),
-		ConfiguredVoltage:          u16(data[0x26:0x28]),
-	}
-}
-
 func (h dmiHeader) _32BitMemoryErrorInformation() *_32BitMemoryErrorInformation {
 	data := h.data
 	return &_32BitMemoryErrorInformation{
@@ -592,13 +565,6 @@ func Init() {
 func GetCacheInformation() *CacheInformation {
 	if d, ok := gdmi[SMBIOSStructureTypeCache]; ok {
 		return d.(*CacheInformation)
-	}
-	return nil
-}
-
-func GetMemoryDevice() *MemoryDevice {
-	if d, ok := gdmi[SMBIOSStructureTypeMemoryDevice]; ok {
-		return d.(*MemoryDevice)
 	}
 	return nil
 }
