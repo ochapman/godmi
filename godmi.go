@@ -149,27 +149,6 @@ type dmiHeader struct {
 	data []byte
 }
 
-func (h dmiHeader) PortableBattery() *PortableBattery {
-	data := h.data
-	return &PortableBattery{
-		Location:                  h.FieldString(int(data[0x04])),
-		Manufacturer:              h.FieldString(int(data[0x05])),
-		ManufacturerDate:          h.FieldString(int(data[0x06])),
-		SerialNumber:              h.FieldString(int(data[0x07])),
-		DeviceName:                h.FieldString(int(data[0x08])),
-		DeviceChemistry:           PortableBatteryDeviceChemistry(data[0x09]),
-		DesignCapacity:            u16(data[0x0A:0x0C]),
-		DesignVoltage:             u16(data[0x0C:0x0E]),
-		SBDSVersionNumber:         h.FieldString(int(data[0x0E])),
-		MaximumErrorInBatteryData: data[0x0F],
-		SBDSSerialNumber:          u16(data[0x10:0x12]),
-		SBDSManufactureDate:       u16(data[0x12:0x14]),
-		SBDSDeviceChemistry:       h.FieldString(int(data[0x14])),
-		DesignCapacityMultiplier:  data[0x15],
-		OEMSepecific:              u32(data[0x16:0x1A]),
-	}
-}
-
 func (h dmiHeader) SystemReset() *SystemReset {
 	data := h.data
 	return &SystemReset{
@@ -543,13 +522,6 @@ func Init() {
 func GetCacheInformation() *CacheInformation {
 	if d, ok := gdmi[SMBIOSStructureTypeCache]; ok {
 		return d.(*CacheInformation)
-	}
-	return nil
-}
-
-func GetPortableBattery() *PortableBattery {
-	if d, ok := gdmi[SMBIOSStructureTypePortableBattery]; ok {
-		return d.(*PortableBattery)
 	}
 	return nil
 }

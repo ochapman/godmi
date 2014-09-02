@@ -1,9 +1,9 @@
 /*
 * File Name:	type22_portable_battery.go
-* Description:	
+* Description:
 * Author:	Chapman Ou <ochapman.cn@gmail.com>
 * Created:	2014-08-19
-*/
+ */
 package godmi
 
 import (
@@ -89,4 +89,36 @@ func (p PortableBattery) String() string {
 		p.DesignCapacityMultiplier,
 		p.OEMSepecific,
 	)
+}
+
+func newPortableBattery(h dmiHeader) dmiTyper {
+	data := h.data
+	return &PortableBattery{
+		Location:                  h.FieldString(int(data[0x04])),
+		Manufacturer:              h.FieldString(int(data[0x05])),
+		ManufacturerDate:          h.FieldString(int(data[0x06])),
+		SerialNumber:              h.FieldString(int(data[0x07])),
+		DeviceName:                h.FieldString(int(data[0x08])),
+		DeviceChemistry:           PortableBatteryDeviceChemistry(data[0x09]),
+		DesignCapacity:            u16(data[0x0A:0x0C]),
+		DesignVoltage:             u16(data[0x0C:0x0E]),
+		SBDSVersionNumber:         h.FieldString(int(data[0x0E])),
+		MaximumErrorInBatteryData: data[0x0F],
+		SBDSSerialNumber:          u16(data[0x10:0x12]),
+		SBDSManufactureDate:       u16(data[0x12:0x14]),
+		SBDSDeviceChemistry:       h.FieldString(int(data[0x14])),
+		DesignCapacityMultiplier:  data[0x15],
+		OEMSepecific:              u32(data[0x16:0x1A]),
+	}
+}
+
+func GetPortableBattery() *PortableBattery {
+	if d, ok := gdmi[SMBIOSStructureTypePortableBattery]; ok {
+		return d.(*PortableBattery)
+	}
+	return nil
+}
+
+func init() {
+	addTypeFunc(SMBIOSStructureTypePortableBattery, newPortableBattery)
 }
