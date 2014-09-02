@@ -161,16 +161,6 @@ func (h dmiHeader) BIOSLanguageInformation() *BIOSLanguageInformation {
 	return &bl
 }
 
-func (h dmiHeader) SystemConfigurationOptions() *SystemConfigurationOptions {
-	var sc SystemConfigurationOptions
-	data := h.data
-	sc.Count = data[0x04]
-	for i := byte(1); i <= sc.Count; i++ {
-		sc.strings += fmt.Sprintf("string %d: %s\n\t\t", i, h.FieldString(int(data[0x04+i])))
-	}
-	return &sc
-}
-
 func (h dmiHeader) GroupAssociations() *GroupAssociations {
 	var ga GroupAssociations
 	data := h.data
@@ -650,13 +640,6 @@ func GetBIOSLanguageInformation() *BIOSLanguageInformation {
 func GetCacheInformation() *CacheInformation {
 	if d, ok := gdmi[SMBIOSStructureTypeCache]; ok {
 		return d.(*CacheInformation)
-	}
-	return nil
-}
-
-func GetSystemConfigurationOptions() *SystemConfigurationOptions {
-	if d, ok := gdmi[SMBIOSStructureTypeSystemConfigurationOptions]; ok {
-		return d.(*SystemConfigurationOptions)
 	}
 	return nil
 }
