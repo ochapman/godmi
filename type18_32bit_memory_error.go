@@ -1,9 +1,9 @@
 /*
 * File Name:	type18_32bit_memory_error.go
-* Description:	
+* Description:
 * Author:	Chapman Ou <ochapman.cn@gmail.com>
 * Created:	2014-08-19
-*/
+ */
 package godmi
 
 import (
@@ -117,4 +117,28 @@ func (m _32BitMemoryErrorInformation) String() string {
 		m.ErrorAddress,
 		m.Resolution,
 	)
+}
+
+func new_32BitMemoryErrorInformation(h dmiHeader) dmiTyper {
+	data := h.data
+	return &_32BitMemoryErrorInformation{
+		Type:              MemoryErrorInformationType(data[0x04]),
+		Granularity:       MemoryErrorInformationGranularity(data[0x05]),
+		Operation:         MemoryErrorInformationOperation(data[0x06]),
+		VendorSyndrome:    u32(data[0x07:0x0B]),
+		ArrayErrorAddress: u32(data[0x0B:0x0F]),
+		ErrorAddress:      u32(data[0x0F:0x13]),
+		Resolution:        u32(data[0x13:0x22]),
+	}
+}
+
+func Get_32BitMemoryErrorInformation() *_32BitMemoryErrorInformation {
+	if d, ok := gdmi[SMBIOSStructureType32_bitMemoryError]; ok {
+		return d.(*_32BitMemoryErrorInformation)
+	}
+	return nil
+}
+
+func init() {
+	addTypeFunc(SMBIOSStructureType32_bitMemoryError, new_32BitMemoryErrorInformation)
 }
